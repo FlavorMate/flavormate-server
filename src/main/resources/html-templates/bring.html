@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <title>[(${name})] von [(${author})]</title>
+
+    <meta http-equiv="Refresh" th:content="|0; url=${baseUrl}/public/${id}|"/>
+
+    <script th:utext="${json}" type="application/ld+json">
+    </script>
+</head>
+
+<body>
+<p>
+    Du wirst gleich auf die Rezeptseite weitergeleitet...
+</p>
+<a th:href="|${baseUrl}/public/${id}|">Zum Rezept</a>
+</body>
+
+</html>

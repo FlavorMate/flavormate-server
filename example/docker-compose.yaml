@@ -1,0 +1,44 @@
+services:
+  backend:
+    container_name: flavormate_backend
+    image: ghcr.io/flavormate/flavormate-server:latest
+    env_file: ".env"
+    volumes:
+      - ./data/backend/secret.key:/opt/app/secret.key
+      - ./data/files:/opt/files
+    restart: unless-stopped
+    ports:
+      - 8080:${FLAVORMATE_PORT:-8095}
+    networks:
+      - flavormate
+    healthcheck:
+      test: "curl --fail --silent localhost:${FLAVORMATE_PORT:-8095}${FLAVORMATE_PATH:-}/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  postgresql:
+    container_name: flavormate_db
+    image: postgres:16
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - flavormate
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+
+networks:
+  flavormate:
+    external: false
