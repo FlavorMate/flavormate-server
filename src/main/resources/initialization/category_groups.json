@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "label": "baking_desserts"
+  },
+  {
+    "id": 2,
+    "label": "continents"
+  },
+  {
+    "id": 3,
+    "label": "preparation_methods"
+  },
+  {
+    "id": 4,
+    "label": "drinks"
+  },
+  {
+    "id": 5,
+    "label": "seasonal"
+  }
+]
