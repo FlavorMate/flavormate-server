@@ -7,7 +7,7 @@ on:
       - '.github/workflows/release-workflow.yaml'
       - 'pom.xml'
   push:
-    branches: [ main, feature/github-actions ]
+    branches: [ main ]
     paths:
       - 'src/**'
       - '.github/workflows/release-workflow.yaml'
@@ -34,7 +34,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B package --file pom.xml -DskipTests
 
       - name: Cache JAR File
         id: artifact-upload
@@ -45,6 +45,9 @@ jobs:
           retention-days: 1
 
   docker-build:
+    needs:
+      - project-build
+
     runs-on: ubuntu-latest
 
     permissions:
@@ -63,7 +66,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: flavormate-jar
-          path: target/flavormate-server.jar
+          path: target
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -77,17 +80,18 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=true
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          platforms: linux/amd64,linux/arm64
 
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@v6
         with:
           context: .
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -98,3 +102,9 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+
+      - name: Remove untagged images
+        uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          delete-untagged: true
+          token: ${{ secrets.GITHUB_TOKEN }}
