@@ -42,9 +42,7 @@ public class S03_InitAdminAccount extends AScript {
 
 		try {
 			var account = new AccountDraft(username, displayname, password, mail);
-			var createdAccount = accountService.create(account);
-			createdAccount.setValid(true);
-			accountRepository.save(createdAccount);
+			accountService.createAdmin(account);
 			log("Admin account created");
 		} catch (Exception e) {
 			warning("Admin account could not be created!");
