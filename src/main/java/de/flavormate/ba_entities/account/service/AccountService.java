@@ -77,6 +77,16 @@ public class AccountService extends BaseService implements ICRUDService<Account,
 		return account;
 	}
 
+	@Transactional
+	public void createAdmin(AccountDraft newAccount) throws CustomException {
+		var adminRole = roleRepository.findByLabel("ROLE_ADMIN").get();
+
+		var account = create(newAccount);
+		account.setValid(true);
+		account.getRoles().add(adminRole);
+		accountRepository.save(account);
+	}
+
 	@Override
 	public Account update(Long id, JsonNode json) throws CustomException {
 		var account = this.findById(id);
