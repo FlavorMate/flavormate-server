@@ -1,4 +1,5 @@
 FROM eclipse-temurin:21-jre-alpine
+
 # needed for docker health command
 RUN apk add --no-cache curl
 
