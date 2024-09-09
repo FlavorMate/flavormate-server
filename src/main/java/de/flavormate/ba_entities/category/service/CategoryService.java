@@ -69,4 +69,13 @@ public class CategoryService extends BaseService implements ICRUDService<Categor
 	public Page<Category> findBySearch(String language, String searchTerm, Pageable pageable) {
 		return repository.findBySearch(language, searchTerm, pageable);
 	}
+
+	public List<Category> findByRaw(String language) {
+		var categories = repository.findByRaw(language);
+		for (var category : categories) {
+			category.getRecipes().clear();
+		}
+
+		return categories;
+	}
 }

@@ -29,4 +29,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	@Query("select new de.flavormate.ba_entities.category.model.Category(c, l.value) from Category c join c.localizations l where l.id.language = :language and lower(l.value) like lower(concat('%', :search, '%')) order by l.value")
 	Page<Category> findBySearch(@Param("language") String language, @Param("search") String searchTerm, Pageable pageable);
 
+	@Query("select new de.flavormate.ba_entities.category.model.Category(c, l.value) from Category c join c.localizations l where l.id.language = :language order by l.value")
+	List<Category> findByRaw(String language);
 }

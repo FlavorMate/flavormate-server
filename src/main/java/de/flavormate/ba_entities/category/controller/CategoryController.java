@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v2/categories")
 public class CategoryController implements IExtractRecipesController, IPageableL10nController<Category>, ISearchL10nController<Category> {
@@ -51,5 +53,11 @@ public class CategoryController implements IExtractRecipesController, IPageableL
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
 
 		return service.findByNotEmpty(language, pageable);
+	}
+
+	@GetMapping("/raw")
+	public List<Category> findByRaw(@RequestParam String language) {
+
+		return service.findByRaw(language);
 	}
 }
