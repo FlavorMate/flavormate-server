@@ -1,686 +1,572 @@
 [
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6d8",
+    "id": 1,
     "label": "Becher",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6d9",
+    "id": 2,
     "label": "Beet(e)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6da",
+    "id": 3,
     "label": "Beutel",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6db",
+    "id": 4,
     "label": "Blatt",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6dc",
+    "id": 5,
     "label": "Blätter",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6dd",
+    "id": 6,
     "label": "Bund",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6de",
+    "id": 7,
     "label": "Bündel",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6df",
+    "id": 8,
     "label": "cl",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e0",
+    "id": 9,
     "label": "cm",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e1",
+    "id": 10,
     "label": "dicke",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e2",
+    "id": 11,
     "label": "dl",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e3",
+    "id": 12,
     "label": "Dose(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e4",
+    "id": 13,
     "label": "dünne",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e5",
+    "id": 14,
     "label": "Ecke(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e6",
+    "id": 15,
     "label": "Eimer",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e7",
+    "id": 16,
     "label": "einige",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e8",
+    "id": 17,
     "label": "einige Stiele",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6e9",
+    "id": 18,
     "label": "Esslöffel",
-    "shortLabel": "EL",
-    "version": 1
+    "shortLabel": "EL"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6ea",
+    "id": 19,
     "label": "Esslöffel, gehäuft",
-    "shortLabel": "EL, gehäuft",
-    "version": 1
+    "shortLabel": "EL, gehäuft"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6eb",
+    "id": 20,
     "label": "Esslöffel, gestrichen",
-    "shortLabel": "EL, gestr.",
-    "version": 1
+    "shortLabel": "EL, gestr."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6ec",
+    "id": 21,
     "label": "etwas",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6ed",
+    "id": 22,
     "label": "eventuell",
-    "shortLabel": "evtl.",
-    "version": 1
+    "shortLabel": "evtl."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6ee",
+    "id": 23,
     "label": "extra",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6ef",
+    "id": 24,
     "label": "Fässchen",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f0",
+    "id": 25,
     "label": "Fläschchen",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f1",
+    "id": 26,
     "label": "Flasche(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f2",
+    "id": 27,
     "label": "Gramm",
-    "shortLabel": "gr",
-    "version": 1
+    "shortLabel": "gr"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f3",
+    "id": 28,
     "label": "Glas",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f4",
+    "id": 29,
     "label": "Gläser",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f5",
+    "id": 30,
     "label": "große Dose(n)",
-    "shortLabel": "gr. Dose(n)",
-    "version": 1
+    "shortLabel": "gr. Dose(n)"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f6",
+    "id": 31,
     "label": "große Flasche(n)",
-    "shortLabel": "gr. Flasche(n)",
-    "version": 1
+    "shortLabel": "gr. Flasche(n)"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f7",
+    "id": 32,
     "label": "großes Glas",
-    "shortLabel": "gr. Glas",
-    "version": 1
+    "shortLabel": "gr. Glas"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f8",
+    "id": 33,
     "label": "große Gläser",
-    "shortLabel": "gr. Gläser",
-    "version": 1
+    "shortLabel": "gr. Gläser"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6f9",
+    "id": 34,
     "label": "großer Kopf",
-    "shortLabel": "gr. Kopf",
-    "version": 1
+    "shortLabel": "gr. Kopf"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6fa",
+    "id": 35,
     "label": "große Scheibe(n)",
-    "shortLabel": "gr. Scheibe(n)",
-    "version": 1
+    "shortLabel": "gr. Scheibe(n)"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6fb",
+    "id": 36,
     "label": "große(s) Stück(e)",
-    "shortLabel": "gr. Stück(e)",
-    "version": 1
+    "shortLabel": "gr. Stück(e)"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6fc",
+    "id": 37,
     "label": "große",
-    "shortLabel": "gr.",
-    "version": 1
+    "shortLabel": "gr."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6fd",
+    "id": 38,
     "label": "großen",
-    "shortLabel": "gr.",
-    "version": 1
+    "shortLabel": "gr."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6fe",
+    "id": 39,
     "label": "großer",
-    "shortLabel": "gr.",
-    "version": 1
+    "shortLabel": "gr."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d6ff",
+    "id": 40,
     "label": "großes",
-    "shortLabel": "gr.",
-    "version": 1
+    "shortLabel": "gr."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d700",
+    "id": 41,
     "label": "halbe",
-    "shortLabel": "1/2",
-    "version": 1
+    "shortLabel": "1/2"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d701",
+    "id": 42,
     "label": "Halm(e)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d702",
+    "id": 43,
     "label": "Handvoll",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d703",
+    "id": 44,
     "label": "Kästchen",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d704",
+    "id": 45,
     "label": "Kilogramm",
-    "shortLabel": "kg",
-    "version": 1
+    "shortLabel": "kg"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d705",
+    "id": 46,
     "label": "kleiner Bund",
-    "shortLabel": "kl. Bund",
-    "version": 1
+    "shortLabel": "kl. Bund"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d706",
+    "id": 47,
     "label": "kleine Dose(n)",
-    "shortLabel": "kl. Dose(n)",
-    "version": 1
+    "shortLabel": "kl. Dose(n)"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d707",
+    "id": 48,
     "label": "kleine Flasche(n)",
-    "shortLabel": "kl. Flasche(n)",
-    "version": 1
+    "shortLabel": "kl. Flasche(n)"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d708",
+    "id": 49,
     "label": "kleines Glas",
-    "shortLabel": "kl. Glas",
-    "version": 1
+    "shortLabel": "kl. Glas"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d709",
+    "id": 50,
     "label": "kleine Gläser",
-    "shortLabel": "kl. Gläser",
-    "version": 1
+    "shortLabel": "kl. Gläser"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d70a",
+    "id": 51,
     "label": "kleiner Kopf",
-    "shortLabel": "kl. Kopf",
-    "version": 1
+    "shortLabel": "kl. Kopf"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d70b",
+    "id": 52,
     "label": "kleine Scheibe(n)",
-    "shortLabel": "kl. Scheibe(n)",
-    "version": 1
+    "shortLabel": "kl. Scheibe(n)"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d70c",
+    "id": 53,
     "label": "kleine Stange(n)",
-    "shortLabel": "kl. Stange(n)",
-    "version": 1
+    "shortLabel": "kl. Stange(n)"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d70d",
+    "id": 54,
     "label": "kleine(s) Stück(e)",
-    "shortLabel": "kl. Stück(e)",
-    "version": 1
+    "shortLabel": "kl. Stück(e)"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d70e",
+    "id": 55,
     "label": "kleine",
-    "shortLabel": "kl.",
-    "version": 1
+    "shortLabel": "kl."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d70f",
+    "id": 56,
     "label": "kleiner",
-    "shortLabel": "kl.",
-    "version": 1
+    "shortLabel": "kl."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d710",
+    "id": 57,
     "label": "kleines",
-    "shortLabel": "kl.",
-    "version": 1
+    "shortLabel": "kl."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d711",
+    "id": 58,
     "label": "Knolle(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d712",
+    "id": 59,
     "label": "Kopf",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d713",
+    "id": 60,
     "label": "Köpfe",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d714",
+    "id": 61,
     "label": "Körner",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d715",
+    "id": 62,
     "label": "Kugel(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d716",
+    "id": 63,
     "label": "Liter",
-    "shortLabel": "L",
-    "version": 1
+    "shortLabel": "L"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d717",
+    "id": 64,
     "label": "mittel große",
-    "shortLabel": "mittel gr.",
-    "version": 1
+    "shortLabel": "mittel gr."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d718",
+    "id": 65,
     "label": "mittel großer",
-    "shortLabel": "mittel gr.",
-    "version": 1
+    "shortLabel": "mittel gr."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d719",
+    "id": 66,
     "label": "mittel großes",
-    "shortLabel": "mittel gr.",
-    "version": 1
+    "shortLabel": "mittel gr."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d71a",
+    "id": 67,
     "label": "mehr",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d71b",
+    "id": 68,
     "label": "Milligramm",
-    "shortLabel": "mg",
-    "version": 1
+    "shortLabel": "mg"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d71c",
+    "id": 69,
     "label": "Milliliter",
-    "shortLabel": "ml",
-    "version": 1
+    "shortLabel": "ml"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d71d",
+    "id": 70,
     "label": "Messerspitze",
-    "shortLabel": "Msp.",
-    "version": 1
+    "shortLabel": "Msp."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d71e",
+    "id": 71,
     "label": "nach Belieben",
-    "shortLabel": "n. B.",
-    "version": 1
+    "shortLabel": "n. B."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d71f",
+    "id": 72,
     "label": "Paar",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d720",
+    "id": 73,
     "label": "Paket",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d721",
+    "id": 74,
     "label": "Päckchen",
-    "shortLabel": "Pck.",
-    "version": 1
+    "shortLabel": "Pck."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d722",
+    "id": 75,
     "label": "Paket",
-    "shortLabel": "Pkt.",
-    "version": 1
+    "shortLabel": "Pkt."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d723",
+    "id": 76,
     "label": "Platte(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d724",
+    "id": 77,
     "label": "Portion(en)",
-    "shortLabel": "Port.",
-    "version": 1
+    "shortLabel": "Port."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d725",
+    "id": 78,
     "label": "Prise(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d726",
+    "id": 79,
     "label": "Prozent",
-    "shortLabel": "%",
-    "version": 1
+    "shortLabel": "%"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d727",
+    "id": 80,
     "label": "Riegel",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d728",
+    "id": 81,
     "label": "Ring(e)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d729",
+    "id": 82,
     "label": "Rippe(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d72a",
+    "id": 83,
     "label": "Rispe(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d72b",
+    "id": 84,
     "label": "Rolle(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d72c",
+    "id": 85,
     "label": "Schälchen",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d72d",
+    "id": 86,
     "label": "Scheibe(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d72e",
+    "id": 87,
     "label": "Schuss",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d72f",
+    "id": 88,
     "label": "Spritzer",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d730",
+    "id": 89,
     "label": "Stange(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d731",
+    "id": 90,
     "label": "Stängel",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d732",
+    "id": 91,
     "label": "Staude(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d733",
+    "id": 92,
     "label": "Stiel(e)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d734",
+    "id": 93,
     "label": "Streifen",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d735",
+    "id": 94,
     "label": "Stück(e)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d736",
+    "id": 95,
     "label": "Tablette(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d737",
+    "id": 96,
     "label": "Tafel(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d738",
+    "id": 97,
     "label": "Tasse(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d739",
+    "id": 98,
     "label": "Teil(e)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d73a",
+    "id": 99,
     "label": "Teelöffel",
-    "shortLabel": "TL",
-    "version": 1
+    "shortLabel": "TL"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d73b",
+    "id": 100,
     "label": "Teelöffel gehäuft",
-    "shortLabel": "TL gehäuft",
-    "version": 1
+    "shortLabel": "TL gehäuft"
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d73c",
+    "id": 101,
     "label": "Teelöffel gestrichen",
-    "shortLabel": "TL gestr.",
-    "version": 1
+    "shortLabel": "TL gestr."
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d73d",
+    "id": 102,
     "label": "Topf",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d73e",
+    "id": 103,
     "label": "Tropfen",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d73f",
+    "id": 104,
     "label": "Tube(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d740",
+    "id": 105,
     "label": "Tüte(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d741",
+    "id": 106,
     "label": "viel",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d742",
+    "id": 107,
     "label": "wenig",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d743",
+    "id": 108,
     "label": "Würfel",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d744",
+    "id": 109,
     "label": "Wurzel(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d745",
+    "id": 110,
     "label": "Zehe(n)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60a7bcf8bd1a606276e4d746",
+    "id": 111,
     "label": "Zweig(e)",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60b53e2878aa8710b0e1af2f",
+    "id": 112,
     "label": "ganze",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   },
   {
-    "mongoId": "60c4b5c378aa8710b0e71f74",
+    "id": 113,
     "label": "",
-    "shortLabel": "",
-    "version": 2
+    "shortLabel": ""
   },
   {
-    "mongoId": "64496ab836a5dc58ca0f3b1c",
+    "id": 114,
     "label": "Abrieb",
-    "shortLabel": "",
-    "version": 1
+    "shortLabel": ""
   }
 ]
