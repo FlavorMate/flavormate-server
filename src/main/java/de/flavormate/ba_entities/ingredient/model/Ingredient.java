@@ -24,9 +24,8 @@ public class Ingredient extends BaseEntity {
 	@Column(nullable = false)
 	private Double amount;
 
-	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "unit_id", referencedColumnName = "id", nullable = false)
+	@JoinColumn(name = "unit_id", referencedColumnName = "id")
 	private Unit unit;
 
 	@NotNull

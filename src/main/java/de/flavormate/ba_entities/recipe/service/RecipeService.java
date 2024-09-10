@@ -409,6 +409,6 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 
 	@Override
 	public Page<Recipe> findByPage(RecipeDiet diet, Pageable pageable) throws CustomException {
-		return repository.findByDiet(diet, pageable);
+		return repository.findByDiet(RecipeDiet.getFilterNames(diet), pageable);
 	}
 }
