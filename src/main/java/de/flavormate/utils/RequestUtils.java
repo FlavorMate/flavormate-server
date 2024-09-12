@@ -6,11 +6,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
+
 /**
  * Utility class for handling common operations related to request parameters.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequestUtils {
+	private static final List<String> NOT_CASE_SENSITIVE = List.of("createdOn", "lastModifiedOn");
 
 	/**
 	 * Converts request parameters to a Spring Data {@link Pageable} object.
@@ -24,8 +27,13 @@ public class RequestUtils {
 	public static Pageable convertPageable(Integer page, Integer size, String sortBy,
 	                                       String sortDirection) {
 
-		var sort = Sort.by(
-				Sort.Order.by(sortBy).with(Sort.Direction.fromString(sortDirection)).ignoreCase());
+		var order = Sort.Order.by(sortBy).with(Sort.Direction.fromString(sortDirection));
+
+		if (!NOT_CASE_SENSITIVE.contains(sortBy)) {
+			order = order.ignoreCase();
+		}
+
+		var sort = Sort.by(order);
 
 		return size == -1 ? Pageable.unpaged() : PageRequest.of(page, size, sort);
 	}

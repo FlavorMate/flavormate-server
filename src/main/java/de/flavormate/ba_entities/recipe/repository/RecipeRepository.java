@@ -33,7 +33,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 			value = "SELECT * FROM RECIPES WHERE diet = ANY (?1) AND course LIKE ?2 ORDER BY RANDOM() LIMIT ?3")
 	List<Recipe> findRandomRecipeByDiet(String[] diets, String course, int amount);
 
-	@Query("select r from Recipe r where r.diet in :diet order by r.label")
+	@Query("select r from Recipe r where r.diet in :diet")
 	Page<Recipe> findByDiet(@Param("diet") String[] diet, Pageable pageable);
 
 }
