@@ -1,6 +1,6 @@
 package de.flavormate.ba_entities.unit.model;
 
-import de.flavormate.aa_interfaces.models.ManualBaseEntity;
+import de.flavormate.aa_interfaces.models.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -49,7 +49,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
-public class Unit extends ManualBaseEntity {
+public class Unit extends BaseEntity {
 
 	/**
 	 * The label of the unit. This field is marked as non-nullable in the database.
@@ -57,9 +57,4 @@ public class Unit extends ManualBaseEntity {
 	@NotNull
 	@Column(nullable = false)
 	private String label;
-
-	/**
-	 * The short label of the unit.
-	 */
-	private String shortLabel;
 }

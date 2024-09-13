@@ -5,6 +5,7 @@ import de.flavormate.ba_entities.highlight.repository.HighlightRepository;
 import de.flavormate.ba_entities.tag.repository.TagRepository;
 import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.repository.TokenRepository;
+import de.flavormate.ba_entities.unit.repository.UnitRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,9 @@ public class S99_CleanScript extends AScript {
 	private TagRepository tagRepository;
 
 	@Autowired
+	private UnitRepository unitRepository;
+
+	@Autowired
 	private TokenRepository tokenRepository;
 
 	public S99_CleanScript() {
@@ -38,10 +42,12 @@ public class S99_CleanScript extends AScript {
 
 		cleanHighlights();
 		cleanTags();
+		cleanUnits();
 		cleanTokens();
 
 		log("Finished database cleaning");
 	}
+
 
 	private Boolean cleanHighlights() {
 		try {
@@ -91,6 +97,29 @@ public class S99_CleanScript extends AScript {
 			return true;
 		} catch (Exception e) {
 			warning("Tags could not be cleaned");
+			return false;
+		}
+	}
+
+	private boolean cleanUnits() {
+		try {
+			var units = unitRepository.findEmpty();
+
+			if (units.isEmpty()) {
+				log("Skipping unit cleaning");
+				return true;
+			}
+
+			log("Found {} invalid units", units.size());
+
+			log("Deleting invalid units");
+			
+			unitRepository.deleteAll(units);
+
+			log("Deleted {} units", units.size());
+			return true;
+		} catch (Exception e) {
+			warning("Units could not be cleaned");
 			return false;
 		}
 	}

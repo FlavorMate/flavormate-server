@@ -24,7 +24,7 @@ public class Ingredient extends BaseEntity {
 	@Column(nullable = false)
 	private Double amount;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "unit_id", referencedColumnName = "id")
 	private Unit unit;
 

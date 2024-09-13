@@ -32,6 +32,8 @@ import de.flavormate.ba_entities.serving.model.Serving;
 import de.flavormate.ba_entities.story.repository.StoryRepository;
 import de.flavormate.ba_entities.tag.model.Tag;
 import de.flavormate.ba_entities.tag.repository.TagRepository;
+import de.flavormate.ba_entities.unit.model.Unit;
+import de.flavormate.ba_entities.unit.repository.UnitRepository;
 import de.flavormate.utils.JSONUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -65,11 +67,12 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	private final StoryRepository storyRepository;
 	private final TagRepository tagRepository;
 	private final TemplateEngine templateEngine;
+	private final UnitRepository unitRepository;
 
 	@Value("${flavorMate.files}")
 	private URL ROOT;
 
-	protected RecipeService(RecipeRepository repository, AuthorRepository authorRepository, BookRepository bookRepository, CategoryRepository categoryRepository, FileRepository fileRepository, HighlightRepository highlightRepository, StoryRepository storyRepository, TagRepository tagRepository, TemplateEngine templateEngine) {
+	protected RecipeService(RecipeRepository repository, AuthorRepository authorRepository, BookRepository bookRepository, CategoryRepository categoryRepository, FileRepository fileRepository, HighlightRepository highlightRepository, StoryRepository storyRepository, TagRepository tagRepository, TemplateEngine templateEngine, UnitRepository unitRepository) {
 		this.repository = repository;
 		this.authorRepository = authorRepository;
 		this.bookRepository = bookRepository;
@@ -79,6 +82,7 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 		this.storyRepository = storyRepository;
 		this.tagRepository = tagRepository;
 		this.templateEngine = templateEngine;
+		this.unitRepository = unitRepository;
 	}
 
 
@@ -94,8 +98,18 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 						.filter(Objects::nonNull).toList();
 
 		var ingredientGroups = form.ingredientGroups().stream().map(iG -> {
-			var ingredients = iG.ingredients().stream().map(i -> (Ingredient) Ingredient.builder()
-					.amount(i.amount()).label(i.label()).unit(i.unit()).build()).toList();
+			var ingredients = iG.ingredients().stream().map(i -> {
+				Unit unit = null;
+				if (i.unit() != null) {
+					unit = unitRepository.findByLabel(i.unit().getLabel()).orElse(null);
+					if (unit == null) {
+						i.unit().setId(null);
+						unit = unitRepository.save(i.unit());
+					}
+				}
+				return (Ingredient) Ingredient.builder()
+						.amount(i.amount()).label(i.label()).unit(unit).build();
+			}).toList();
 			return (IngredientGroup) IngredientGroup.builder().ingredients(ingredients)
 					.label(iG.label()).build();
 		}).toList();
@@ -198,8 +212,19 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 
 			var ingredientGroups = data.ingredientGroups().stream().map(iG -> {
 				var ingredients = iG
-						.ingredients().stream().map(i -> (Ingredient) Ingredient.builder()
-								.amount(i.amount()).label(i.label()).unit(i.unit()).build())
+						.ingredients().stream().map(i -> {
+							Unit unit = null;
+							if (i.unit() != null) {
+								unit = unitRepository.findByLabel(i.unit().getLabel()).orElse(null);
+								if (unit == null) {
+									i.unit().setId(null);
+									unit = unitRepository.save(i.unit());
+								}
+							}
+
+							return (Ingredient) Ingredient.builder()
+									.amount(i.amount()).label(i.label()).unit(unit).build();
+						})
 						.toList();
 				return (IngredientGroup) IngredientGroup.builder().ingredients(ingredients)
 						.label(iG.label()).build();
