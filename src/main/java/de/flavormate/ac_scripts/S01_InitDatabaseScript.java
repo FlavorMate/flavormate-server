@@ -13,8 +13,6 @@ import de.flavormate.ba_entities.categoryGroup.repository.CategoryGroupLocalizat
 import de.flavormate.ba_entities.categoryGroup.repository.CategoryGroupRepository;
 import de.flavormate.ba_entities.role.model.Role;
 import de.flavormate.ba_entities.role.repository.RoleRepository;
-import de.flavormate.ba_entities.unit.model.Unit;
-import de.flavormate.ba_entities.unit.repository.UnitRepository;
 import de.flavormate.utils.JSONUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,9 +41,6 @@ public class S01_InitDatabaseScript extends AScript {
 	@Value("classpath*:initialization/l10n/categoryGroups/*.json")
 	private Resource[] categoryGroupsLocalizationsFiles;
 
-	@Value("classpath:initialization/units.json")
-	private Resource unitsFile;
-
 	@Autowired
 	private RoleRepository roleRepository;
 
@@ -61,9 +56,6 @@ public class S01_InitDatabaseScript extends AScript {
 	@Autowired
 	private CategoryGroupLocalizationRepository categoryGroupLocalizationRepository;
 
-	@Autowired
-	private UnitRepository unitRepository;
-
 	public S01_InitDatabaseScript() {
 		super("Initialize Database");
 	}
@@ -72,7 +64,6 @@ public class S01_InitDatabaseScript extends AScript {
 		log("Starting database initialization");
 
 		initializeRoles();
-		initializeUnits();
 
 		initializeCategoryGroups();
 		initializeCategoryGroupLocalizations();
@@ -227,30 +218,6 @@ public class S01_InitDatabaseScript extends AScript {
 			return true;
 		} catch (Exception e) {
 			warning("Category group localizations could not be initialized");
-			return false;
-		}
-	}
-
-	private Boolean initializeUnits() {
-		try {
-			if (unitRepository.count() > 0) {
-				log("Skipping unit initialization");
-				return true;
-			}
-
-			log("Reading units from JSON file");
-			var unitsArr = JSONUtils.mapper.readValue(unitsFile.getInputStream(), Unit[].class);
-			var units = Arrays.asList(unitsArr);
-
-			log("Found {} units", units.size());
-
-			log("Saving units into the database");
-			unitRepository.saveAll(units);
-
-			log("Saved {} units", units.size());
-			return true;
-		} catch (Exception e) {
-			warning("Units could not be initialized");
 			return false;
 		}
 	}

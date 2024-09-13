@@ -138,34 +138,28 @@ public class ScraperService {
 					.collect(Collectors.toCollection(ArrayList::new));
 
 			var ttt = ingredients.stream().map(i -> {
-				var list = new ArrayList<String>(Arrays.asList(i.split(" ")));// List.of(i.split("
-				// "));//
-				// .removeAll();
+				var list = new ArrayList<String>(Arrays.asList(i.split(" ")));
 				list.removeAll(Arrays.asList("", null));
 
 				String[] parts = list.toArray(new String[0]);
 
 				double amount = NumberUtils.tryParseDouble(parts[0], -1);
 				String label;
-				Optional<Unit> unit;
+				Unit unit;
 
 				int startIndex = 0;
 
 				if (amount < 0) {
-					var unitList = unitRepository.findByLabelOrShortLabel(parts[0], parts[0]);
-					unit = unitList.isEmpty() ? Optional.empty() : Optional.of(unitList.get(0));
-					if (unit.isEmpty()) {
-						unit = unitRepository.findByLabel("");
+					unit = unitRepository.findByLabel(parts[0]).orElse(null);
+					if (unit == null) {
 						startIndex = 0;
 					} else {
 						startIndex = 1;
 					}
 				} else {
-					var unitList = unitRepository.findByLabelOrShortLabel(parts[1], parts[1]);
-					unit = unitList.isEmpty() ? Optional.empty() : Optional.of(unitList.get(0));
+					unit = unitRepository.findByLabel(parts[1]).orElse(null);
 
-					if (unit.isEmpty()) {
-						unit = unitRepository.findByLabel("");
+					if (unit == null) {
 						startIndex = 1;
 					} else {
 						startIndex = 2;
@@ -174,7 +168,7 @@ public class ScraperService {
 
 				label = String.join(" ", List.of(parts).subList(startIndex, parts.length));
 
-				return new IngredientDraft(amount, unit.get(), label);
+				return new IngredientDraft(amount, unit, label);
 			}).toList();
 
 			return new IngredientGroupDraft("", ttt);
