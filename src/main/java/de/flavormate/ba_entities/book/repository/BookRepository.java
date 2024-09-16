@@ -15,6 +15,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	@Query("select b from Book b where b.id in :ids")
 	Page<Book> findByIds(@Param("ids") List<Long> ids, Pageable pageable);
 
+	@Query("select b from Book b where b.id in :ids")
+	List<Book> findByIds(@Param("ids") List<Long> ids);
+
 	@Query("select b from Book b where b.id = :id and (b.visible or b.owner.account.username = :username)")
 	Optional<Book> findById(@Param("id") Long id, @Param("username") String username);
 

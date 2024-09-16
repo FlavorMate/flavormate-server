@@ -90,5 +90,9 @@ public class BookController implements ICRUDController<Book, BookDraft>, IExtrac
 		return service.subscribed(id);
 	}
 
+	@GetMapping("/own")
+	public List<Book> findOwn() throws CustomException {
+		return service.findOwn();
+	}
 
 }

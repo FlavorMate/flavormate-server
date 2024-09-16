@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService extends BaseService implements ICRUDService<Book, BookDraft>, IPageableService<Book>, ISearchService<Book> {
@@ -31,11 +32,13 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 	private final AuthorRepository authorRepository;
 
 	private final RecipeRepository recipeRepository;
+	private final BookRepository bookRepository;
 
-	protected BookService(BookRepository repository, AuthorRepository authorRepository, RecipeRepository recipeRepository) {
+	protected BookService(BookRepository repository, AuthorRepository authorRepository, RecipeRepository recipeRepository, BookRepository bookRepository) {
 		this.repository = repository;
 		this.authorRepository = authorRepository;
 		this.recipeRepository = recipeRepository;
+		this.bookRepository = bookRepository;
 	}
 
 	@Override
@@ -56,7 +59,12 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 
 	@Override
 	public Book update(Long id, JsonNode json) throws CustomException {
+		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Author.class));
 		var book = this.findById(id);
+
+		if (!book.getOwner().getId().equals(author.getId())) {
+			throw new ForbiddenException(Book.class);
+		}
 
 		if (json.has("label")) {
 			var label = JSONUtils.parseObject(json.get("label"), String.class);
@@ -73,13 +81,18 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 
 	@Override
 	public boolean deleteById(Long id) throws CustomException {
+		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Author.class));
 		var book = findById(id);
+
+		if (!book.getOwner().getId().equals(author.getId())) {
+			throw new ForbiddenException(Book.class);
+		}
 
 		var authors = authorRepository.findAllByBookIds(List.of((id)));
 
-		for (var author : authors) {
-			author.getBooks().removeIf(b -> b.getId().equals(id));
-			authorRepository.save(author);
+		for (var a : authors) {
+			a.getBooks().removeIf(b -> b.getId().equals(id));
+			authorRepository.save(a);
 		}
 
 
@@ -108,11 +121,20 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
 				.orElseThrow(() -> new NotFoundException(Author.class));
 
-		var ids = author.getBooks().stream().map(BaseEntity::getId).toList();
+		var ids = author.getBooks().stream().map(BaseEntity::getId).collect(Collectors.toList());
+		ids.addAll(author.getSubscribedBooks().stream().map(BaseEntity::getId).toList());
 
 		return repository.findByIds(ids, pageable);
 	}
 
+	public List<Book> findOwn() throws CustomException {
+		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
+				.orElseThrow(() -> new NotFoundException(Author.class));
+
+		var ids = author.getBooks().stream().map(BaseEntity::getId).toList();
+
+		return repository.findByIds(ids);
+	}
 
 	@Override
 	public Page<Book> findBySearch(String searchTerm, Pageable pageable) {
@@ -127,7 +149,12 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 	}
 
 	public Book toggleRecipe(Long bookId, Long recipeId) throws CustomException {
+		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Author.class));
 		var book = findById(bookId);
+
+		if (!book.getOwner().getId().equals(author.getId())) {
+			throw new ForbiddenException(Book.class);
+		}
 
 		var recipe = recipeRepository.findById(recipeId)
 				.orElseThrow(() -> new NotFoundException(Recipe.class));
@@ -155,13 +182,14 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 			throw new ForbiddenException(Book.class);
 		}
 
-		var bookIsPresent =
-				author.getSubscribedBooks().removeIf(b -> b.getId().equals(book.getId()));
+		var authorIsPresent =
+				book.getSubscriber().removeIf(a -> a.getId().equals(author.getId()));
 
-		if (!bookIsPresent)
-			author.getSubscribedBooks().add(book);
+		if (!authorIsPresent) {
+			book.getSubscriber().add(author);
+		}
 
-		authorRepository.save(author);
+		bookRepository.save(book);
 
 		return true;
 	}
