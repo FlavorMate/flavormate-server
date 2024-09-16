@@ -344,6 +344,12 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 		return repository.findAll();
 	}
 
+	public Recipe findByIdL10n(Long id, String language) throws CustomException {
+		var recipe = repository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
+		recipe.translate(language);
+		return recipe;
+	}
+
 	/**
 	 * Changes the owner of a recipe identified by its unique ID and updates the necessary author
 	 * information.

@@ -125,6 +125,12 @@ public class Recipe extends BaseEntity {
 
 	private String url;
 
+	public void translate(String language) {
+		for (var category : categories) {
+			var l10n = category.getLocalizations().stream().filter(c -> c.getId().getLanguage().equals(language)).findFirst().get();
+			category.setLabel(l10n.getValue());
+		}
+	}
 
 	public void toggleBook(Book book) {
 		var bookFound = this.books.removeIf(b -> b.getId().equals(book.getId()));

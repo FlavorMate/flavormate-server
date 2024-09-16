@@ -87,6 +87,11 @@ public class RecipeController implements ICRUDController<Recipe, RecipeDraft>, I
 		return service.findById(id);
 	}
 
+	@GetMapping("/{id}/l10n")
+	public Recipe findByIdL10n(@PathVariable Long id, @RequestParam String language) throws CustomException {
+		return service.findByIdL10n(id, language);
+	}
+
 	@Override
 	public List<Recipe> findAll() throws CustomException {
 		return service.findAll();
