@@ -106,12 +106,6 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>10.18.0</version>
-        </dependency>
     </dependencies>
     <build>
         <finalName>flavormate-server</finalName>
