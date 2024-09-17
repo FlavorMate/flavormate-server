@@ -1,4 +1,6 @@
 package de.flavormate.ba_entities.recipe.wrapper;
 
-public record ScrapeResponse(RecipeDraft recipe, String image) {
+import java.util.List;
+
+public record ScrapeResponse(RecipeDraft recipe, List<String> images) {
 }

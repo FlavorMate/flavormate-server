@@ -9,10 +9,10 @@ import de.flavormate.ba_entities.recipe.enums.RecipeCourse;
 import de.flavormate.ba_entities.recipe.enums.RecipeDiet;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.service.RecipeService;
-import de.flavormate.ba_entities.recipe.service.ScraperService;
 import de.flavormate.ba_entities.recipe.wrapper.ChangeOwnerForm;
 import de.flavormate.ba_entities.recipe.wrapper.RecipeDraft;
 import de.flavormate.ba_entities.recipe.wrapper.ScrapeResponse;
+import de.flavormate.ba_entities.scrape.service.ScrapeService;
 import de.flavormate.utils.RequestUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -25,16 +25,16 @@ import java.util.List;
 public class RecipeController implements ICRUDController<Recipe, RecipeDraft>, ISearchDietController<Recipe>, IPageableDietController<Recipe> {
 
 	private final RecipeService service;
-	private final ScraperService scraperService;
+	private final ScrapeService scrapeService;
 
-	protected RecipeController(RecipeService service, ScraperService scraperService) {
+	protected RecipeController(RecipeService service, ScrapeService scrapeService) {
 		this.service = service;
-		this.scraperService = scraperService;
+		this.scrapeService = scrapeService;
 	}
 
 	@GetMapping("/crawl")
 	public ScrapeResponse crawl(@RequestParam String url) throws Exception {
-		return scraperService.scrape(url);
+		return scrapeService.fetchAndParseRecipe(url);
 	}
 
 	@GetMapping("/random/{diet}")
@@ -58,7 +58,6 @@ public class RecipeController implements ICRUDController<Recipe, RecipeDraft>, I
 			throws CustomException {
 		return service.changeOwner(id, form);
 	}
-
 
 	@Secured({"ROLE_USER", "ROLE_ANONYMOUS"})
 	@GetMapping("/{id}/bring/{serving}")
