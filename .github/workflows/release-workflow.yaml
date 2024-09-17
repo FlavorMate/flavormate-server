@@ -7,11 +7,8 @@ on:
       - '.github/workflows/release-workflow.yaml'
       - 'pom.xml'
   push:
+    tags: [ v* ]
     branches: [ main ]
-    paths:
-      - 'src/**'
-      - '.github/workflows/release-workflow.yaml'
-      - 'pom.xml'
 
 env:
   REGISTRY: ghcr.io

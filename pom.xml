@@ -11,7 +11,7 @@
     </parent>
     <groupId>de.flavormate</groupId>
     <artifactId>server</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0+10mc</version>
     <name>FlavorMate</name>
     <description>The backend for FlavorMate</description>
     <properties>
