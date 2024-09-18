@@ -1,7 +1,7 @@
 services:
   backend:
     container_name: flavormate_backend
-    image: ghcr.io/flavormate/flavormate-server:latest
+    image: ghcr.io/flavormate/flavormate-server:1
     env_file: ".env"
     volumes:
       - ./data/backend/secret.key:/opt/app/secret.key
