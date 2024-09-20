@@ -11,7 +11,7 @@ import de.flavormate.ba_entities.instruction.wrapper.InstructionDraft;
 import de.flavormate.ba_entities.instructionGroup.wrapper.InstructionGroupDraft;
 import de.flavormate.ba_entities.recipe.wrapper.RecipeDraft;
 import de.flavormate.ba_entities.recipe.wrapper.ScrapeResponse;
-import de.flavormate.ba_entities.scrape.model.ScrapeResult;
+import de.flavormate.ba_entities.scrape.model.LD_JSON;
 import de.flavormate.ba_entities.serving.wrapper.ServingDraft;
 import de.flavormate.ba_entities.tag.wrapper.TagDraft;
 import de.flavormate.ba_entities.unit.model.Unit;
@@ -49,22 +49,28 @@ public class ScrapeService {
 
 	public ScrapeResponse fetchAndParseRecipe(String url) throws IOException, CustomException {
 		var scrapeResult = fetch(url);
-
-		var categories = getCategories(scrapeResult.getRecipeCategory());
-		var ingredientGroups = getIngredientGroups(ScrapeResult.extractIngredients(scrapeResult.getRecipeIngredient()));
-		var instructionGroups = getInstructionGroups(ScrapeResult.extractInstructions(scrapeResult.getRecipeInstructions()));
-		var serving = getServiceDraft(scrapeResult.getRecipeYield());
-		var tags = getTags(scrapeResult.getKeywords());
-		var cookTime = getDuration(scrapeResult.getCookTime());
-		var prepTime = getDuration(scrapeResult.getPrepTime());
-		var description = StringUtils.trimToNull(scrapeResult.getDescription());
-		var label = StringUtils.trimToNull(scrapeResult.getName());
-
-		var files = getFiles(scrapeResult.getImage());
-
-		var recipe = new RecipeDraft(categories, ingredientGroups, instructionGroups, serving, tags, cookTime, prepTime, Duration.ZERO, null, null, description, label, url, null);
+		return processScrapeResult(scrapeResult);
+	}
 
 
+	public List<ScrapeResponse> processScrapeResults(List<LD_JSON> results) {
+		return results.stream().map(this::processScrapeResult).toList();
+	}
+
+	public ScrapeResponse processScrapeResult(LD_JSON result) {
+		var categories = getCategories(result.getRecipeCategory());
+		var ingredientGroups = getIngredientGroups(LD_JSON.extractIngredients(result.getRecipeIngredient()));
+		var instructionGroups = getInstructionGroups(LD_JSON.extractInstructions(result.getRecipeInstructions()));
+		var serving = getServiceDraft(result.getRecipeYield());
+		var tags = getTags(result.getKeywords());
+		var cookTime = getDuration(result.getCookTime());
+		var prepTime = getDuration(result.getPrepTime());
+		var description = StringUtils.trimToNull(result.getDescription());
+		var label = StringUtils.trimToNull(result.getName());
+
+		var files = getFiles(result.getImage());
+
+		var recipe = new RecipeDraft(categories, ingredientGroups, instructionGroups, serving, tags, cookTime, prepTime, Duration.ZERO, null, null, description, label, null, null);
 		return new ScrapeResponse(recipe, files);
 	}
 
@@ -91,7 +97,7 @@ public class ScrapeService {
 	}
 
 
-	private ScrapeResult fetch(String url) throws IOException, CustomException {
+	private LD_JSON fetch(String url) throws IOException, CustomException {
 		// Fetch the HTML page using JSoup
 		Document document = Jsoup.connect(url).get();
 
@@ -117,15 +123,15 @@ public class ScrapeService {
 				for (JsonNode node : rootNode) {
 					if (isRecipeNode(node)) {
 						// Parse the node into a Recipe object and add to the list
-						return JSONUtils.mapper.treeToValue(node, ScrapeResult.class);
+						return JSONUtils.mapper.treeToValue(node, LD_JSON.class);
 					}
 				}
 			} else if (isRecipeNode(rootNode)) {
 				// If it's a single object and a recipe, parse and add it to the list
-				return JSONUtils.mapper.treeToValue(rootNode, ScrapeResult.class);
+				return JSONUtils.mapper.treeToValue(rootNode, LD_JSON.class);
 			}
 		}
-		throw new NotFoundException(ScrapeResult.class);
+		throw new NotFoundException(LD_JSON.class);
 	}
 
 	// Helper method to check if a JsonNode is a Recipe
@@ -194,8 +200,15 @@ public class ScrapeService {
 	}
 
 	private ServingDraft getServiceDraft(String recipeYield) {
-		var amount = NumberUtils.tryParseDouble(recipeYield, -1);
-		return new ServingDraft(amount, "");
+		var parts = recipeYield.split(" ");
+		if (parts.length == 1) {
+			var amount = NumberUtils.tryParseDouble(recipeYield, -1);
+			return new ServingDraft(amount, "");
+		} else {
+			var amount = NumberUtils.tryParseDouble(parts[0], -1);
+			var label = String.join(" ", List.of(parts).subList(1, parts.length));
+			return new ServingDraft(amount, label);
+		}
 	}
 
 	private List<TagDraft> getTags(List<String> keywords) {
