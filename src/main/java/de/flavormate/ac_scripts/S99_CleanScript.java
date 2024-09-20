@@ -1,16 +1,22 @@
 package de.flavormate.ac_scripts;
 
 import de.flavormate.aa_interfaces.scripts.AScript;
+import de.flavormate.ba_entities.file.repository.FileRepository;
+import de.flavormate.ba_entities.file.service.FileService;
 import de.flavormate.ba_entities.highlight.repository.HighlightRepository;
 import de.flavormate.ba_entities.tag.repository.TagRepository;
 import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.repository.TokenRepository;
 import de.flavormate.ba_entities.unit.repository.UnitRepository;
 import jakarta.transaction.Transactional;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.function.Predicate;
 
@@ -18,18 +24,23 @@ import java.util.function.Predicate;
 @Transactional
 public class S99_CleanScript extends AScript {
 
+	@Value("${flavorMate.files}")
+	URI filePath;
+	@Value("${flavorMate.files-backup}")
+	URI backupPath;
+
 	@Value("${flavorMate.highlight.days}")
 	private int HIGHLIGHT_DAYS;
-
+	@Autowired
+	private FileRepository fileRepository;
+	@Autowired
+	private FileService fileService;
 	@Autowired
 	private HighlightRepository highlightRepository;
-
 	@Autowired
 	private TagRepository tagRepository;
-
 	@Autowired
 	private UnitRepository unitRepository;
-
 	@Autowired
 	private TokenRepository tokenRepository;
 
@@ -40,6 +51,8 @@ public class S99_CleanScript extends AScript {
 	public void run() {
 		log("Starting database cleaning");
 
+		cleanFiles();
+		cleanBackupFiles();
 		cleanHighlights();
 		cleanTags();
 		cleanUnits();
@@ -48,6 +61,49 @@ public class S99_CleanScript extends AScript {
 		log("Finished database cleaning");
 	}
 
+	private Boolean cleanFiles() {
+		if (fileRepository.count() == 0) {
+			log("Skipping file cleaning");
+			return true;
+		}
+
+		try {
+			var files = fileRepository.findAll();
+
+			for (var file : files) {
+				var path = Paths.get(filePath.getPath(), file.getPath());
+				if (!Files.exists(path)) {
+					log("File {} not found, deleting...", file.getPath());
+					fileRepository.deleteById(file.getId());
+				}
+			}
+
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private Boolean cleanBackupFiles() {
+
+		if (fileRepository.count() == 0) {
+			log("Skipping file cleaning");
+			return true;
+		}
+
+		try {
+			var path = Paths.get(backupPath.getPath());
+			var files = path.toFile().listFiles();
+
+			for (var file : files) {
+				log("Deleting temporary backup path {}", file.getPath());
+				FileUtils.forceDelete(file);
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 	private Boolean cleanHighlights() {
 		try {
@@ -113,7 +169,7 @@ public class S99_CleanScript extends AScript {
 			log("Found {} invalid units", units.size());
 
 			log("Deleting invalid units");
-			
+
 			unitRepository.deleteAll(units);
 
 			log("Deleted {} units", units.size());
