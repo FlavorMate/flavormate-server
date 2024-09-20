@@ -1,5 +1,6 @@
 package de.flavormate.utils;
 
+import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,4 +87,14 @@ public class NumberUtils {
 				throw new IllegalArgumentException("Invalid fraction: " + fraction);
 		}
 	}
+
+	public static String beautifyDouble(double value) {
+		if (value % 1 == 0) {
+			return (int) value + "";
+		} else {
+			return new DecimalFormat("0.00").format(value);
+		}
+	}
 }
+
+
