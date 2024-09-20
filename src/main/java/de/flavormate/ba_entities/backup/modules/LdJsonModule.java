@@ -17,6 +17,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -43,9 +44,12 @@ public class LdJsonModule implements BackupModule<LD_JSON> {
 		Path filesPath = Paths.get(workingDir.toString(), "data");
 		Files.createDirectories(filesPath);
 
+		var ldJsons = new ArrayList<LD_JSON>();
+
 		for (var recipe : recipes) {
 			var recipePath = Paths.get(recipesPath.toString(), recipe.getId() + ".json");
 			var ld_json = LD_JSON.fromRecipe(recipe);
+			ldJsons.add(ld_json);
 
 			JSONUtils.mapper.writeValue(recipePath.toFile(), ld_json);
 
@@ -57,6 +61,8 @@ public class LdJsonModule implements BackupModule<LD_JSON> {
 				}
 			}
 		}
+
+		JSONUtils.mapper.writeValue(Paths.get(recipesPath.toString(), "0_all_recipes.json").toFile(), ldJsons);
 
 		ZipUtils.zipDir(workingDir, zipPath);
 	}
