@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import de.flavormate.ba_entities.scrape.model.ImageObject;
+import de.flavormate.ba_entities.scrape.model.LD_JSON_Image;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,23 +24,23 @@ public class ImageDeserializer extends JsonDeserializer<List<String>> {
 					result.add(p.getValueAsString());
 				} else if (p.currentToken() == JsonToken.START_OBJECT) {
 
-					// Deserialize ImageObject and extract the URL
-					ImageObject imageObject = p.readValueAs(ImageObject.class);
-					result.add(imageObject.url());
+					// Deserialize LD_JSON_Image and extract the URL
+					LD_JSON_Image LDJSONImage = p.readValueAs(LD_JSON_Image.class);
+					result.add(LDJSONImage.url());
 				}
 			}
 		} else if (currentToken == JsonToken.VALUE_STRING) {
 			// If it's a single string, just add it to the result
 			result.add(p.getValueAsString());
 		} else if (currentToken == JsonToken.START_OBJECT) {
-			// Deserialize ImageObject if it's an object
-			ImageObject imageObject = p.readValueAs(ImageObject.class);
-			result.add(imageObject.url());
+			// Deserialize LD_JSON_Image if it's an object
+			LD_JSON_Image LDJSONImage = p.readValueAs(LD_JSON_Image.class);
+			result.add(LDJSONImage.url());
 		} else {
 			// Handle unexpected types by throwing an error or logging
 			ctxt.reportInputMismatch(
 					List.class,
-					"Expected either a string, array, or an ImageObject, but got: " + currentToken
+					"Expected either a string, array, or an LD_JSON_Image, but got: " + currentToken
 			);
 		}
 
