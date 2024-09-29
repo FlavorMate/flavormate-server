@@ -1,18 +1,17 @@
 package de.flavormate.ba_entities.backup.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import de.flavormate.ba_entities.backup.model.BackupType;
+import de.flavormate.ba_entities.backup.model.ImportResponse;
+import de.flavormate.ba_entities.backup.modules.FlavorMateModule;
 import de.flavormate.ba_entities.backup.modules.LdJsonModule;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
-import de.flavormate.ba_entities.recipe.wrapper.ScrapeResponse;
-import de.flavormate.ba_entities.scrape.model.LD_JSON;
-import de.flavormate.utils.JSONUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,6 +29,7 @@ public class BackupService {
 	private final RecipeRepository recipeRepository;
 
 	private final LdJsonModule ldJsonModule;
+	private final FlavorMateModule flavorMateModule;
 
 	@Value("${flavorMate.files-backup}")
 	private URL backupPath;
@@ -47,6 +47,7 @@ public class BackupService {
 		try {
 			switch (type) {
 				case FLAVORMATE:
+					flavorMateModule.backup(workingDir, zipPath, recipes, id);
 					break;
 				case LD_JSON:
 					ldJsonModule.backup(workingDir, zipPath, recipes, id);
@@ -61,19 +62,48 @@ public class BackupService {
 		return zipPath;
 	}
 
-	public List<ScrapeResponse> restoreAll(BackupType type, List<JsonNode> data) throws Exception {
+	public ImportResponse restoreAll(BackupType type, MultipartFile[] data) throws Exception {
+		var response = new ImportResponse();
+		String id = UUID.randomUUID().toString();
+
+		var workingDir = Path.of(backupPath.getPath(), id);
+		createWorkingDir(workingDir);
+
+		for (var file : data) {
+			var zipPath = Path.of(workingDir.toString(), UUID.randomUUID() + ".file");
+			file.transferTo(zipPath);
+		}
+
+
 		try {
-			return switch (type) {
-				case FLAVORMATE -> List.of();
-				case LD_JSON -> {
-					var modifiedData = data.stream().map((d) -> JSONUtils.mapper.convertValue(d, LD_JSON.class)).toList();
-					yield ldJsonModule.restore(modifiedData);
+			switch (type) {
+				case FLAVORMATE -> {
+					response.addImportResponse(flavorMateModule.restore(workingDir));
 				}
-			};
+				case LD_JSON -> {
+					response.addImportResponse(ldJsonModule.restore(workingDir));
+				}
+			}
+
+
+//			return switch (type) {
+//				case FLAVORMATE -> {
+//					var modifiedData = data.stream().map((d) -> JSONUtils.mapper.convertValue(d, FMBackup.class)).toList();
+//					yield flavorMateModule.restore(data);
+//				}
+//				case LD_JSON -> {
+//					var modifiedData = data.stream().map((d) -> JSONUtils.mapper.convertValue(d, LD_JSON.class)).toList();
+//					yield ldJsonModule.restore(modifiedData);
+//				}
+//			};
 		} catch (Exception e) {
 			log.error("Exception occurred: {}", e.getMessage());
 			throw e;
 		}
+
+		removeWorkingDir(workingDir);
+
+		return response;
 	}
 
 

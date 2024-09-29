@@ -1,7 +1,9 @@
 package de.flavormate.ba_entities.serving.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.flavormate.aa_interfaces.models.BaseEntity;
+import de.flavormate.ba_entities.serving.wrapper.ServingDraft;
 import de.flavormate.utils.NumberUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,4 +41,8 @@ public class Serving extends BaseEntity {
 		return requestedAmount + " " + label;
 	}
 
+	@JsonIgnore
+	public ServingDraft toDraft() {
+		return new ServingDraft(amount, label);
+	}
 }

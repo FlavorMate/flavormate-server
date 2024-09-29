@@ -1,8 +1,8 @@
 package de.flavormate.ba_entities.backup.modules;
 
 import de.flavormate.aa_interfaces.modules.BackupModule;
+import de.flavormate.ba_entities.backup.model.ImportResponse;
 import de.flavormate.ba_entities.recipe.model.Recipe;
-import de.flavormate.ba_entities.recipe.wrapper.ScrapeResponse;
 import de.flavormate.ba_entities.scrape.model.LD_JSON;
 import de.flavormate.ba_entities.scrape.service.ScrapeService;
 import de.flavormate.utils.JSONUtils;
@@ -31,8 +31,25 @@ public class LdJsonModule implements BackupModule<LD_JSON> {
 	private URL filePath;
 
 	@Override
-	public List<ScrapeResponse> restore(List<LD_JSON> data) throws Exception {
-		return scrapeService.processScrapeResults(data);
+	public ImportResponse restore(Path workingDirectory) {
+		var response = new ImportResponse();
+
+		// there should be only json files
+		var jsonFiles = workingDirectory.toFile().listFiles();
+
+		for (var jsonFile : jsonFiles) {
+			try {
+				var data = JSONUtils.mapper.readValue(jsonFile, LD_JSON.class);
+
+				var scrape = scrapeService.processScrapeResult(data);
+
+				response.getProcessed().add(scrape);
+
+			} catch (Exception e) {
+				response.incrementFailed();
+			}
+		}
+		return response;
 	}
 
 	@Override

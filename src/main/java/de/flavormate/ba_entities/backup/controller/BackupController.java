@@ -1,9 +1,8 @@
 package de.flavormate.ba_entities.backup.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import de.flavormate.ba_entities.backup.model.BackupType;
+import de.flavormate.ba_entities.backup.model.ImportResponse;
 import de.flavormate.ba_entities.backup.service.BackupService;
-import de.flavormate.ba_entities.recipe.wrapper.ScrapeResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ContentDisposition;
@@ -11,11 +10,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v2/backup")
@@ -54,7 +54,9 @@ public class BackupController {
 	}
 
 	@PostMapping("/")
-	public List<ScrapeResponse> restoreAll(@RequestParam BackupType type, @RequestBody List<JsonNode> result) throws Exception {
-		return backupService.restoreAll(type, result);
+	public ImportResponse restoreAll(@RequestParam BackupType type, @RequestParam Map<String, MultipartFile> fileMap) throws Exception {
+		var files = fileMap.values().toArray(new MultipartFile[0]);
+
+		return backupService.restoreAll(type, files);
 	}
 }
