@@ -114,7 +114,7 @@
     <img
             alt="FlavorMate Logo"
             style="width: 48px; height: 48px"
-            th:src="|${baseUrl}/icons/Icon-512.png|"
+            th:src="|${backendUrl}/icons/icon.png|"
     />
     <div class="h2">FlavorMate</div>
 </header>
@@ -126,7 +126,7 @@
         </p>
 
         <p style="align-self: center">
-            <a class="btn" th:href="|${baseUrl}|">
+            <a class="btn" th:href="|${frontendUrl}|">
                 Zu FlavorMate
             </a>
         </p>
@@ -137,12 +137,11 @@
 <footer>
     &copy; 2024
     <a
+            href="https://flavormate.de"
             style="color: var(--primary); text-decoration: none"
             target="_blank"
-            th:href="|${baseUrl}|"
     >FlavorMate</a
     >
-    All rights reserved.
 </footer>
 </body>
 </html>
