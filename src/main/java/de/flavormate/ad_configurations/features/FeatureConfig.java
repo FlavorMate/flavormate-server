@@ -5,5 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 
 @ConfigurationProperties(prefix = "flavormate.features")
-public record FeatureConfig(Feature registration, Feature importExport, Feature resetPassword, Feature shareRecipes) {
+public record FeatureConfig(Feature registration, Feature importExport, Feature resetPassword, Feature shareRecipes,
+                            Feature story) {
 }
