@@ -56,6 +56,7 @@ public class AccountService extends BaseService implements ICRUDService<Account,
 		var password = passwordEncoder.encode(newAccount.password());
 		var account = Account.builder().displayName(newAccount.displayName())
 				.mail(newAccount.mail()).password(password).roles(List.of(role))
+				.valid(true)
 				.username(newAccount.username()).build();
 
 		account = accountRepository.save(account);
