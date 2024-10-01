@@ -18,7 +18,7 @@ create table accounts
 );
 
 alter table accounts
-    owner to cookbook;
+    owner to ${owner};
 
 create table authors
 (
@@ -36,7 +36,7 @@ create table authors
 );
 
 alter table authors
-    owner to cookbook;
+    owner to ${owner};
 
 create table books
 (
@@ -54,7 +54,7 @@ create table books
 );
 
 alter table books
-    owner to cookbook;
+    owner to ${owner};
 
 create table book_subscriber
 (
@@ -68,7 +68,7 @@ create table book_subscriber
 );
 
 alter table book_subscriber
-    owner to cookbook;
+    owner to ${owner};
 
 create table category_groups
 (
@@ -81,7 +81,7 @@ create table category_groups
 );
 
 alter table category_groups
-    owner to cookbook;
+    owner to ${owner};
 
 create table categories
 (
@@ -97,7 +97,7 @@ create table categories
 );
 
 alter table categories
-    owner to cookbook;
+    owner to ${owner};
 
 create table category_groups_i18n
 (
@@ -110,7 +110,7 @@ create table category_groups_i18n
 );
 
 alter table category_groups_i18n
-    owner to cookbook;
+    owner to ${owner};
 
 create table category_i18n
 (
@@ -123,7 +123,7 @@ create table category_i18n
 );
 
 alter table category_i18n
-    owner to cookbook;
+    owner to ${owner};
 
 create table roles
 (
@@ -136,7 +136,7 @@ create table roles
 );
 
 alter table roles
-    owner to cookbook;
+    owner to ${owner};
 
 create table account_roles
 (
@@ -150,7 +150,7 @@ create table account_roles
 );
 
 alter table account_roles
-    owner to cookbook;
+    owner to ${owner};
 
 create table servings
 (
@@ -164,7 +164,7 @@ create table servings
 );
 
 alter table servings
-    owner to cookbook;
+    owner to ${owner};
 
 create table recipes
 (
@@ -198,7 +198,7 @@ create table recipes
 );
 
 alter table recipes
-    owner to cookbook;
+    owner to ${owner};
 
 create table book_recipe
 (
@@ -212,7 +212,7 @@ create table book_recipe
 );
 
 alter table book_recipe
-    owner to cookbook;
+    owner to ${owner};
 
 create table category_recipe
 (
@@ -226,7 +226,7 @@ create table category_recipe
 );
 
 alter table category_recipe
-    owner to cookbook;
+    owner to ${owner};
 
 create table files
 (
@@ -249,7 +249,7 @@ create table files
 );
 
 alter table files
-    owner to cookbook;
+    owner to ${owner};
 
 alter table accounts
     add constraint fk2plw5lmm66i5lghcbi04sqpg5
@@ -275,7 +275,7 @@ create table highlights
 );
 
 alter table highlights
-    owner to cookbook;
+    owner to ${owner};
 
 create table ingredient_groups
 (
@@ -291,7 +291,7 @@ create table ingredient_groups
 );
 
 alter table ingredient_groups
-    owner to cookbook;
+    owner to ${owner};
 
 create table instruction_groups
 (
@@ -307,7 +307,7 @@ create table instruction_groups
 );
 
 alter table instruction_groups
-    owner to cookbook;
+    owner to ${owner};
 
 create table instructions
 (
@@ -323,7 +323,7 @@ create table instructions
 );
 
 alter table instructions
-    owner to cookbook;
+    owner to ${owner};
 
 create index idx_course
     on recipes (course);
@@ -344,7 +344,7 @@ create table stories
 );
 
 alter table stories
-    owner to cookbook;
+    owner to ${owner};
 
 create table tags
 (
@@ -357,7 +357,7 @@ create table tags
 );
 
 alter table tags
-    owner to cookbook;
+    owner to ${owner};
 
 create table tag_recipe
 (
@@ -371,7 +371,7 @@ create table tag_recipe
 );
 
 alter table tag_recipe
-    owner to cookbook;
+    owner to ${owner};
 
 create table tokens
 (
@@ -391,7 +391,7 @@ create table tokens
 );
 
 alter table tokens
-    owner to cookbook;
+    owner to ${owner};
 
 create table units
 (
@@ -404,7 +404,7 @@ create table units
 );
 
 alter table units
-    owner to cookbook;
+    owner to ${owner};
 
 create table ingredients
 (
@@ -424,5 +424,5 @@ create table ingredients
 );
 
 alter table ingredients
-    owner to cookbook;
+    owner to ${owner};
 
