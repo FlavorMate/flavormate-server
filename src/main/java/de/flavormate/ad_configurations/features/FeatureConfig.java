@@ -24,7 +24,7 @@ public record FeatureConfig(Feature registration, Feature importExport, Feature 
 		}
 
 		if (recovery.enabled()) {
-			enabled.add("resetPassword");
+			enabled.add("recovery");
 		}
 
 		if (shareRecipes.enabled()) {

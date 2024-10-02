@@ -1,7 +1,6 @@
 package de.flavormate.ba_entities.selfService.controller;
 
 import de.flavormate.ab_exeptions.exceptions.CustomException;
-import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.wrapper.AccountDraft;
 import de.flavormate.ba_entities.selfService.service.SelfServiceRegistrationService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class SelfServiceRegistrationController {
 	 * @throws CustomException if an account with the given email or username already exists.
 	 */
 	@PostMapping("/")
-	public Account create(@RequestBody AccountDraft form) throws CustomException {
+	public boolean create(@RequestBody AccountDraft form) throws CustomException {
 		return service.create(form);
 	}
 }

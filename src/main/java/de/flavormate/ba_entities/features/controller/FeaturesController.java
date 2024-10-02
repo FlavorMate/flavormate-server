@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@Secured({"ROLE_ANONYMOUS"})
+@Secured({"ROLE_ANONYMOUS", "ROLE_USER"})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v2/features")

@@ -58,7 +58,7 @@ public class SelfServiceRegistrationService {
 	 * @return the created Account entity.
 	 * @throws CustomException if an account with the given email or username already exists.
 	 */
-	public Account create(@RequestBody AccountDraft form) throws CustomException {
+	public boolean create(@RequestBody AccountDraft form) throws CustomException {
 		var existsByMail = accountRepository.existsByMail(form.mail());
 		var existsByUsername = accountRepository.existsByUsername(form.username());
 
@@ -78,6 +78,6 @@ public class SelfServiceRegistrationService {
 
 		authorRepository.save(author);
 
-		return account;
+		return true;
 	}
 }
