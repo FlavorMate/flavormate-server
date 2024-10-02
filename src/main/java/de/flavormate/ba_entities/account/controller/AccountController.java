@@ -10,7 +10,6 @@ import de.flavormate.ba_entities.account.service.AccountService;
 import de.flavormate.ba_entities.account.wrapper.AccountDraft;
 import de.flavormate.ba_entities.account.wrapper.ChangePasswordForm;
 import de.flavormate.ba_entities.account.wrapper.ForcePasswordForm;
-import jakarta.mail.MessagingException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +27,7 @@ public class AccountController implements ICRUDController<Account, AccountDraft>
 		this.service = service;
 	}
 
-	@Secured({"ROLE_ANONYMOUS", "ROLE_ADMIN"})
+	@Secured({"ROLE_ADMIN"})
 	@Override
 	public Account create(@RequestBody AccountDraft form) throws CustomException {
 		return service.create(form);
@@ -73,20 +72,4 @@ public class AccountController implements ICRUDController<Account, AccountDraft>
 	                              Principal principal) throws NotFoundException, ConflictException {
 		return service.updatePassword(form, principal);
 	}
-
-	@Secured({"ROLE_ANONYMOUS"})
-	@PutMapping("/{mail}/password/reset")
-	public Boolean resetPassword(@PathVariable String mail)
-			throws NotFoundException, MessagingException {
-		return service.resetPassword(mail);
-	}
-
-	@Secured({"ROLE_ANONYMOUS"})
-	@PutMapping("/password/reset/{token}")
-	public Boolean resetPasswordConfirm(@PathVariable String token,
-	                                    @RequestBody ForcePasswordForm form) throws NotFoundException {
-		return service.resetPasswordConfirm(token, form);
-	}
-
-
 }

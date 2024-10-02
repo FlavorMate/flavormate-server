@@ -6,7 +6,6 @@ import de.flavormate.aa_interfaces.services.ICRUDService;
 import de.flavormate.ab_exeptions.exceptions.ConflictException;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
-import de.flavormate.ad_configurations.FlavorMateConfig;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
 import de.flavormate.ba_entities.account.wrapper.AccountDraft;
@@ -15,23 +14,18 @@ import de.flavormate.ba_entities.account.wrapper.ForcePasswordForm;
 import de.flavormate.ba_entities.author.model.Author;
 import de.flavormate.ba_entities.author.repository.AuthorRepository;
 import de.flavormate.ba_entities.book.repository.BookRepository;
-import de.flavormate.ba_entities.email.model.PasswordRecoveryEMail;
-import de.flavormate.ba_entities.email.service.EmailService2;
+import de.flavormate.ba_entities.email.service.EmailService;
 import de.flavormate.ba_entities.file.model.File;
 import de.flavormate.ba_entities.recipe.enums.RecipeDiet;
 import de.flavormate.ba_entities.role.repository.RoleRepository;
-import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.repository.TokenRepository;
 import de.flavormate.utils.JSONUtils;
-import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.AbstractMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class AccountService extends BaseService implements ICRUDService<Account, AccountDraft> {
@@ -39,17 +33,13 @@ public class AccountService extends BaseService implements ICRUDService<Account,
 	private final AuthorRepository authorRepository;
 	private final BookRepository bookRepository;
 	private final RoleRepository roleRepository;
-	private final TokenRepository tokenRepository;
-	private final EmailService2 emailService;
 	private final PasswordEncoder passwordEncoder;
 
-	public AccountService(AccountRepository accountRepository, AuthorRepository authorRepository, BookRepository bookRepository, RoleRepository roleRepository, TokenRepository tokenRepository, EmailService2 emailService, PasswordEncoder passwordEncoder) {
+	public AccountService(AccountRepository accountRepository, AuthorRepository authorRepository, BookRepository bookRepository, RoleRepository roleRepository, TokenRepository tokenRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
 		this.accountRepository = accountRepository;
 		this.authorRepository = authorRepository;
 		this.bookRepository = bookRepository;
 		this.roleRepository = roleRepository;
-		this.tokenRepository = tokenRepository;
-		this.emailService = emailService;
 		this.passwordEncoder = passwordEncoder;
 	}
 
@@ -66,6 +56,7 @@ public class AccountService extends BaseService implements ICRUDService<Account,
 		var password = passwordEncoder.encode(newAccount.password());
 		var account = Account.builder().displayName(newAccount.displayName())
 				.mail(newAccount.mail()).password(password).roles(List.of(role))
+				.valid(true)
 				.username(newAccount.username()).build();
 
 		account = accountRepository.save(account);
@@ -193,42 +184,6 @@ public class AccountService extends BaseService implements ICRUDService<Account,
 		account.setPassword(passwordEncoder.encode(form.newPassword()));
 
 		accountRepository.save(account);
-
-		return true;
-	}
-
-	public Boolean resetPassword(String mail) throws NotFoundException, MessagingException {
-		var account = accountRepository.findByMail(mail)
-				.orElseThrow(() -> new NotFoundException(Account.class));
-
-		Token token = tokenRepository.save(Token.PasswordToken(account));
-
-		Map<String, Object> map =
-				Map.ofEntries(new AbstractMap.SimpleEntry<>("username", account.getUsername()),
-						new AbstractMap.SimpleEntry<>("name", account.getDisplayName()),
-						new AbstractMap.SimpleEntry<>("token", token.getToken()),
-						new AbstractMap.SimpleEntry<>("baseUrl", FlavorMateConfig.getFrontendUrl())
-
-				);
-
-		emailService.sendMail(new PasswordRecoveryEMail(account.getMail(), map));
-
-		return true;
-	}
-
-	public Boolean resetPasswordConfirm(String tokenId, ForcePasswordForm form)
-			throws NotFoundException {
-		Token token = tokenRepository.findByToken(tokenId)
-				.orElseThrow(() -> new NotFoundException(Token.class));
-
-		Account account = accountRepository.findById(token.getOwner().getId())
-				.orElseThrow(() -> new NotFoundException(Account.class));
-
-		account.setPassword(passwordEncoder.encode(form.password()));
-
-		accountRepository.save(account);
-
-		tokenRepository.deleteById(token.getId());
 
 		return true;
 	}

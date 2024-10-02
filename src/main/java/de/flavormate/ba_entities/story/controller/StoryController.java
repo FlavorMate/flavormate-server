@@ -9,12 +9,14 @@ import de.flavormate.ba_entities.story.model.Story;
 import de.flavormate.ba_entities.story.service.StoryService;
 import de.flavormate.ba_entities.story.wrapper.StoryDraft;
 import de.flavormate.utils.RequestUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@ConditionalOnProperty(prefix = "flavormate.features.story", value = "enabled", havingValue = "true")
 @RestController
 @RequestMapping("/v2/stories")
 public class StoryController implements ICRUDController<Story, StoryDraft>, IPageableController<Story>, ISearchController<Story> {
