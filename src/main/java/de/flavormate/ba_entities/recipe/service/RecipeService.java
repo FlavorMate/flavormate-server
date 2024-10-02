@@ -1,6 +1,5 @@
 package de.flavormate.ba_entities.recipe.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.flavormate.aa_interfaces.services.BaseService;
 import de.flavormate.aa_interfaces.services.ICRUDService;
@@ -9,7 +8,6 @@ import de.flavormate.aa_interfaces.services.ISearchDietService;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
 import de.flavormate.ab_exeptions.exceptions.ForbiddenException;
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
-import de.flavormate.ad_configurations.FlavorMateConfig;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.author.model.Author;
 import de.flavormate.ba_entities.author.repository.AuthorRepository;
@@ -27,7 +25,6 @@ import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
 import de.flavormate.ba_entities.recipe.wrapper.ChangeOwnerForm;
 import de.flavormate.ba_entities.recipe.wrapper.RecipeDraft;
-import de.flavormate.ba_entities.schemas.model.RecipeSchema;
 import de.flavormate.ba_entities.serving.model.Serving;
 import de.flavormate.ba_entities.story.repository.StoryRepository;
 import de.flavormate.ba_entities.tag.model.Tag;
@@ -42,7 +39,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -411,30 +407,6 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	public Page<Recipe> findBySearch(String searchTerm, RecipeDiet filter, Pageable pageable) {
 		return repository.findBySearch(RecipeDiet.getFilter(filter),
 				searchTerm, pageable);
-	}
-
-	public String getBring(Long id, Integer serving)
-			throws JsonProcessingException, CustomException {
-		var recipe = this.findById(id);
-
-		Context context = new Context();
-
-		RecipeSchema json = RecipeSchema.fromRecipe(recipe, serving, FlavorMateConfig.getBackendUrl());
-
-		context.setVariable("author", recipe.getAuthor().getAccount().getDisplayName());
-
-		context.setVariable("name", recipe.getLabel());
-
-		context.setVariable("id", recipe.getId());
-
-		context.setVariable("baseUrl", FlavorMateConfig.getFrontendUrl());
-
-
-		context.setVariable("json",
-				JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
-
-
-		return templateEngine.process("bring.html", context);
 	}
 
 
