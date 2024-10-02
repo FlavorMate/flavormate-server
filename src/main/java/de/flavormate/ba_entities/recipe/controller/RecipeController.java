@@ -59,12 +59,6 @@ public class RecipeController implements ICRUDController<Recipe, RecipeDraft>, I
 		return service.changeOwner(id, form);
 	}
 
-	@Secured({"ROLE_USER", "ROLE_ANONYMOUS"})
-	@GetMapping("/{id}/bring/{serving}")
-	public String getBring(@PathVariable Long id, @PathVariable("serving") Integer serving)
-			throws Exception {
-		return service.getBring(id, serving);
-	}
 
 	@Override
 	public Recipe create(RecipeDraft form) throws CustomException {

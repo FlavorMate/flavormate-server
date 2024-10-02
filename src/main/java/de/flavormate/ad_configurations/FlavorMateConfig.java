@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class FlavorMateConfig {
 
-
 	@Getter
 	private static String backendUrl;
 	@Getter

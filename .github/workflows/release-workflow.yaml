@@ -34,14 +34,14 @@ jobs:
           path: target/flavormate-server.jar
           retention-days: 1
 
-  docker-build:
+  release-build:
     needs:
       - project-build
 
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       packages: write
       id-token: write
       attestations: write
@@ -57,6 +57,16 @@ jobs:
         with:
           name: flavormate-jar
           path: target
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "target/flavormate-server.jar"
+          artifactErrorsFailBuild: true
+          generateReleaseNotes: true
+          removeArtifacts: true
+          replacesArtifacts: true
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
