@@ -1,4 +1,4 @@
-package de.flavormate.ba_entities.schemas.model;
+package de.flavormate.ba_entities.bring.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

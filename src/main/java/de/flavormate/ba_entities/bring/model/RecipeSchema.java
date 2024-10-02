@@ -1,8 +1,9 @@
-package de.flavormate.ba_entities.schemas.model;
+package de.flavormate.ba_entities.bring.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.flavormate.ba_entities.recipe.model.Recipe;
+import de.flavormate.ba_entities.tag.model.Tag;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -57,8 +58,7 @@ public class RecipeSchema {
 
 		var name = recipe.getLabel();
 
-		var images =
-				recipe.getFiles().stream().map(f -> backendBaseUrl + "/" + f.getPath()).toList();
+		var images = List.of(recipe.getCoverUrl());
 
 		var author = new AuthorSchema(recipe.getAuthor().getAccount().getDisplayName());
 
@@ -74,7 +74,7 @@ public class RecipeSchema {
 				.toString();
 
 		var keywords =
-				StringUtils.join(recipe.getTags().stream().map(t -> t.getLabel()).toList(), ", ");
+				StringUtils.join(recipe.getTags().stream().map(Tag::getLabel).toList(), ", ");
 
 		var recipeYield = recipe.getServing().toString(serving);
 
