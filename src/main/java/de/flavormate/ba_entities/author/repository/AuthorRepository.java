@@ -19,7 +19,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 
 	Optional<Author> findByAccountUsername(String username);
 
-	@Query("select a.recipes from Author a where a.id = :id")
+	@Query("select r from Author a join a.recipes r where a.id = :id")
 	Page<Recipe> findRecipesFromParent(@Param("id") Long id, Pageable pageable);
 
 	@Query("select a from Author a where lower(a.account.displayName) like lower(concat('%', :searchTerm, '%'))")
