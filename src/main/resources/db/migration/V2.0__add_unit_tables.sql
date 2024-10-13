@@ -13,7 +13,7 @@ alter table public.unit_refs
 
 create table public.unit_localizations
 (
-    id               serial,
+    id               serial primary key,
     created_on       timestamptz default now(),
     last_modified_on timestamptz default now(),
     version          bigint      default 1 not null,
@@ -47,3 +47,10 @@ create table public.unit_conversions
 
 alter table public.unit_conversions
     owner to ${owner};
+
+
+alter table public.ingredients
+    add schema         integer default 1 not null,
+    add unit_localized integer
+        constraint unit_localized_fk
+            references public.unit_localizations;

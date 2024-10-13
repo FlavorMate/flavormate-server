@@ -89,4 +89,11 @@ VALUES (1, 'teaspoon'),
        (88, 'little'),
        (89, 'root'),
        (90, 'whole'),
-       (91, 'zest');
+       (91, 'zest'),
+       (92, 'knife point'),
+       (93, 'glass'),
+       (94, 'medium size'),
+       (95, 'drop'),
+       (96, 'cube'),
+       (97, 'sheet'),
+       (98, 'thick');

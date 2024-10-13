@@ -193,6 +193,8 @@ VALUES
 (69, 70, 1),        -- 1 plate = 1 portion
 
 -- Portion to other units (context-dependent)
-(70, 27, 1) -- 1 portion = 1 piece
+(70, 27, 1),        -- 1 portion = 1 piece
 
+-- Glass
+(94, 3, 1) -- 1 Glas = 1 cup
 ;

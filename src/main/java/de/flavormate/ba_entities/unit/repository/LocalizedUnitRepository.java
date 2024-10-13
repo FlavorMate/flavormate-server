@@ -10,6 +10,9 @@ import java.util.List;
 public interface LocalizedUnitRepository extends JpaRepository<LocalizedUnit, Long> {
 	@Query("SELECT lu FROM LocalizedUnit lu JOIN lu.unitRef u WHERE u.id in :ids AND lu.language = :language")
 	List<LocalizedUnit> findByIdsAndLanguage(@Param("ids") List<Long> ids, @Param("language") String language);
+
+	@Query("SELECT lu FROM LocalizedUnit lu WHERE lower(lu.labelSg) = lower(:label) OR lower(lu.labelPl) = lower(:label) OR lower(lu.labelSgAbrv) = lower(:label) OR lower(lu.labelPlAbrv) = lower(:label)")
+	List<LocalizedUnit> findByLabel(@Param("label") String label);
 }
 
 
