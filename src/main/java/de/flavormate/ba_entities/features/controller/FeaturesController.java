@@ -19,6 +19,6 @@ public class FeaturesController {
 
 	@GetMapping("/")
 	public FeatureResponse getFeatures() {
-		return featuresService.getFeatures();
+		return featuresService.getFeaturesConfig();
 	}
 }

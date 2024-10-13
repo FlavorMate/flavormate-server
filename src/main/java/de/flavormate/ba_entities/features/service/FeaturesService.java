@@ -1,9 +1,9 @@
 package de.flavormate.ba_entities.features.service;
 
-import de.flavormate.ad_configurations.features.FeatureConfig;
+import de.flavormate.ad_configurations.flavormate.CommonConfig;
+import de.flavormate.ad_configurations.flavormate.FeaturesConfig;
 import de.flavormate.ba_entities.features.model.FeatureResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
@@ -11,13 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class FeaturesService {
 
-	private final FeatureConfig features;
-
-	@Value("${flavorMate.app.version}")
-	private String version;
+	private final FeaturesConfig featuresConfig;
+	private final CommonConfig commonConfig;
 
 
-	public FeatureResponse getFeatures() {
-		return new FeatureResponse(version, features.getFeatures());
+	public FeatureResponse getFeaturesConfig() {
+		return new FeatureResponse(commonConfig.version().toString(), featuresConfig.getFeatures());
 	}
 }

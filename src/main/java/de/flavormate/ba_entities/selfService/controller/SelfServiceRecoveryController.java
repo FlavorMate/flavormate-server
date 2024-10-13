@@ -17,28 +17,28 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v2/self-service/recovery")
 public class SelfServiceRecoveryController {
 
-	private final SelfServiceRecoveryService service;
+	private final SelfServiceRecoveryService selfServiceRecoveryService;
 
 	@PutMapping("/{mail}/password/reset")
 	public boolean resetPassword(@PathVariable String mail)
 			throws NotFoundException, MessagingException {
-		return service.resetPassword(mail);
+		return selfServiceRecoveryService.resetPassword(mail);
 	}
 
 	@GetMapping("/password/reset/{token}")
 	public String resetPasswordPage(@PathVariable String token) {
-		return service.resetPasswordPage(token);
+		return selfServiceRecoveryService.resetPasswordPage(token);
 	}
 
 	@GetMapping("/password/reset/success")
 	public String successPage() {
-		return service.successPage();
+		return selfServiceRecoveryService.successPage();
 	}
 
 	@PostMapping(path = "/password/reset/{token}",
 			consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
 	public String resetPasswordConfirm(@PathVariable String token,
 	                                   ForcePasswordForm form) throws NotFoundException {
-		return service.resetPasswordConfirm(token, form);
+		return selfServiceRecoveryService.resetPasswordConfirm(token, form);
 	}
 }

@@ -1,4 +1,4 @@
-package de.flavormate.ad_configurations.features;
+package de.flavormate.ad_configurations.flavormate;
 
 import de.flavormate.ba_entities.features.model.Feature;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,8 +8,8 @@ import java.util.List;
 
 
 @ConfigurationProperties(prefix = "flavormate.features")
-public record FeatureConfig(Feature registration, Feature importExport, Feature recovery, Feature shareRecipes,
-                            Feature story, Feature bring) {
+public record FeaturesConfig(Feature registration, Feature importExport, Feature recovery, Feature shareRecipes,
+                             Feature story, Feature bring) {
 
 
 	public List<String> getFeatures() {

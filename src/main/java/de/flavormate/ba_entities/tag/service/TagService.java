@@ -11,31 +11,27 @@ import de.flavormate.ba_entities.tag.model.Tag;
 import de.flavormate.ba_entities.tag.repository.TagRepository;
 import de.flavormate.ba_entities.tag.wrapper.TagDraft;
 import de.flavormate.utils.JSONUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@RequiredArgsConstructor
 @Service
 public class TagService extends BaseService implements ICRUDService<Tag, TagDraft>, IExtractRecipesService, IPageableService<Tag>, ISearchService<Tag> {
-	private final TagRepository repository;
+	private final TagRepository tagRepository;
 	private final RecipeRepository recipeRepository;
-
-	protected TagService(TagRepository repository, RecipeRepository recipeRepository) {
-		this.repository = repository;
-		this.recipeRepository = recipeRepository;
-	}
 
 	@Override
 	public Tag create(TagDraft body) throws CustomException {
-		if (repository.findByLabel(body.label().toLowerCase()).isPresent()) {
+		if (tagRepository.findByLabel(body.label().toLowerCase()).isPresent()) {
 			throw new ConflictException(Tag.class);
 		}
 
 		var tag = Tag.builder().label(body.label().toLowerCase()).build();
-		return repository.save(tag);
+		return tagRepository.save(tag);
 	}
 
 	@Override
@@ -48,7 +44,7 @@ public class TagService extends BaseService implements ICRUDService<Tag, TagDraf
 		}
 
 
-		return repository.save(tag);
+		return tagRepository.save(tag);
 	}
 
 	@Override
@@ -58,17 +54,17 @@ public class TagService extends BaseService implements ICRUDService<Tag, TagDraf
 
 	@Override
 	public Tag findById(Long id) throws CustomException {
-		return repository.findById(id).orElseThrow(() -> new NotFoundException(Tag.class));
+		return tagRepository.findById(id).orElseThrow(() -> new NotFoundException(Tag.class));
 	}
 
 	@Override
 	public List<Tag> findAll() throws CustomException {
-		return repository.findAll();
+		return tagRepository.findAll();
 	}
 
 	@Override
 	public Page<Tag> findBySearch(String searchTerm, Pageable pageable) {
-		return repository.findBySearch(searchTerm, pageable);
+		return tagRepository.findBySearch(searchTerm, pageable);
 	}
 
 
@@ -79,6 +75,6 @@ public class TagService extends BaseService implements ICRUDService<Tag, TagDraf
 
 	@Override
 	public Page<Tag> findByPage(Pageable pageable) throws CustomException {
-		return repository.findAll(pageable);
+		return tagRepository.findAll(pageable);
 	}
 }

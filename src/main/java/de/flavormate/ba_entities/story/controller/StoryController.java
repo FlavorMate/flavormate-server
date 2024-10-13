@@ -9,6 +9,7 @@ import de.flavormate.ba_entities.story.model.Story;
 import de.flavormate.ba_entities.story.service.StoryService;
 import de.flavormate.ba_entities.story.wrapper.StoryDraft;
 import de.flavormate.utils.RequestUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,13 +19,10 @@ import java.util.List;
 
 @ConditionalOnProperty(prefix = "flavormate.features.story", value = "enabled", havingValue = "true")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v2/stories")
 public class StoryController implements ICRUDController<Story, StoryDraft>, IPageableController<Story>, ISearchController<Story> {
-	private final StoryService service;
-
-	protected StoryController(StoryService service) {
-		this.service = service;
-	}
+	private final StoryService storyService;
 
 	@Override
 	public Page<Story> findBySearch(String searchTerm, int page, int size, String sortBy,
@@ -32,7 +30,7 @@ public class StoryController implements ICRUDController<Story, StoryDraft>, IPag
 
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
 
-		return service.findBySearch(searchTerm, pageable);
+		return storyService.findBySearch(searchTerm, pageable);
 	}
 
 
@@ -53,17 +51,17 @@ public class StoryController implements ICRUDController<Story, StoryDraft>, IPag
 
 	@Override
 	public Story findById(Long id) throws CustomException {
-		return service.findById(id);
+		return storyService.findById(id);
 	}
 
 	@Override
 	public List<Story> findAll() throws CustomException {
-		return service.findAll();
+		return storyService.findAll();
 	}
 
 	@Override
 	public Page<Story> findByPage(int page, int size, String sortBy, String sortDirection) throws CustomException {
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
-		return service.findByPage(pageable);
+		return storyService.findByPage(pageable);
 	}
 }

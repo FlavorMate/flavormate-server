@@ -36,4 +36,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 	@Query("select r from Recipe r where r.diet in :diet")
 	Page<Recipe> findByDiet(@Param("diet") String[] diet, Pageable pageable);
 
+	@Query("SELECT r FROM Recipe r Join r.ingredientGroups ig Join ig.ingredients i WHERE i.id = :ingredient")
+	Recipe findByIngredient(@Param("ingredient") Long id);
 }

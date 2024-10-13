@@ -18,6 +18,7 @@ import de.flavormate.ba_entities.unit.model.Unit;
 import de.flavormate.ba_entities.unit.repository.UnitRepository;
 import de.flavormate.utils.JSONUtils;
 import de.flavormate.utils.NumberUtils;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -36,16 +37,12 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Service
 public class ScrapeService {
 
 	private final CategoryRepository categoryRepository;
 	private final UnitRepository unitRepository;
-
-	public ScrapeService(CategoryRepository categoryRepository, UnitRepository unitRepository) {
-		this.categoryRepository = categoryRepository;
-		this.unitRepository = unitRepository;
-	}
 
 	public ScrapeResponse fetchAndParseRecipe(String url) throws IOException, CustomException {
 		var scrapeResult = fetch(url);

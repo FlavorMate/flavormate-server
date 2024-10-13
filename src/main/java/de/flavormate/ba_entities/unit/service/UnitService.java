@@ -8,19 +8,16 @@ import de.flavormate.ab_exeptions.exceptions.NotFoundException;
 import de.flavormate.ba_entities.unit.model.Unit;
 import de.flavormate.ba_entities.unit.repository.UnitRepository;
 import de.flavormate.ba_entities.unit.wrapper.UnitDraft;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class UnitService extends BaseService implements ICRUDService<Unit, UnitDraft> {
-	private final UnitRepository repository;
-
-	protected UnitService(UnitRepository repository) {
-		this.repository = repository;
-	}
-
-
+	private final UnitRepository unitRepository;
+	
 	@Override
 	public Unit create(UnitDraft form) throws CustomException {
 		throw new UnsupportedOperationException();
@@ -38,11 +35,11 @@ public class UnitService extends BaseService implements ICRUDService<Unit, UnitD
 
 	@Override
 	public Unit findById(Long id) throws CustomException {
-		return repository.findById(id).orElseThrow(() -> new NotFoundException(Unit.class));
+		return unitRepository.findById(id).orElseThrow(() -> new NotFoundException(Unit.class));
 	}
 
 	@Override
 	public List<Unit> findAll() throws CustomException {
-		return repository.findAll();
+		return unitRepository.findAll();
 	}
 }

@@ -8,6 +8,7 @@ import de.flavormate.ba_entities.category.model.Category;
 import de.flavormate.ba_entities.category.service.CategoryService;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.utils.RequestUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,31 +18,28 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v2/categories")
 public class CategoryController implements IExtractRecipesController, IPageableL10nController<Category>, ISearchL10nController<Category> {
 
-	private final CategoryService service;
-
-	protected CategoryController(CategoryService service) {
-		this.service = service;
-	}
+	private final CategoryService categoryService;
 
 	@Override
 	public Page<Recipe> findRecipesFromParent(Long id, int page, int size, String sortBy, String sortDirection) throws CustomException {
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
-		return service.findRecipesFromParent(id, pageable);
+		return categoryService.findRecipesFromParent(id, pageable);
 	}
 
 	@Override
 	public Page<Category> findByPage(String language, int page, int size, String sortBy, String sortDirection) throws CustomException {
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
-		return service.findByPage(language, pageable);
+		return categoryService.findByPage(language, pageable);
 	}
 
 	@Override
 	public Page<Category> findBySearch(String language, String searchTerm, int page, int size, String sortBy, String sortDirection) {
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
-		return service.findBySearch(language, searchTerm, pageable);
+		return categoryService.findBySearch(language, searchTerm, pageable);
 	}
 
 	@GetMapping("/notEmpty")
@@ -52,12 +50,12 @@ public class CategoryController implements IExtractRecipesController, IPageableL
 	                                     @RequestParam(defaultValue = "DESC") String sortDirection) {
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
 
-		return service.findByNotEmpty(language, pageable);
+		return categoryService.findByNotEmpty(language, pageable);
 	}
 
 	@GetMapping("/raw")
 	public List<Category> findByRaw(@RequestParam String language) {
 
-		return service.findByRaw(language);
+		return categoryService.findByRaw(language);
 	}
 }

@@ -1,12 +1,16 @@
 package de.flavormate.ad_configurations.error;
 
-import de.flavormate.ad_configurations.FlavorMateConfig;
+import de.flavormate.ad_configurations.flavormate.CommonConfig;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
+
+	private final CommonConfig commonConfig;
 
 	/**
 	 * Handles error requests by populating the model with necessary URLs.
@@ -16,8 +20,8 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
 	 */
 	@RequestMapping("/error")
 	public String handleError(Model model) {
-		model.addAttribute("frontendUrl", FlavorMateConfig.getFrontendUrl());
-		model.addAttribute("backendUrl", FlavorMateConfig.getBackendUrl());
+		model.addAttribute("frontendUrl", commonConfig.frontendUrl());
+		model.addAttribute("backendUrl", commonConfig.backendUrl());
 		return "error";
 	}
 }

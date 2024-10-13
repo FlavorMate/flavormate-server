@@ -6,17 +6,15 @@ import de.flavormate.ba_entities.highlight.model.Highlight;
 import de.flavormate.ba_entities.highlight.service.HighlightService;
 import de.flavormate.ba_entities.recipe.enums.RecipeDiet;
 import de.flavormate.utils.RequestUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v2/highlights")
 public class HighlightController implements IPageableController<Highlight> {
-	private final HighlightService service;
-
-	protected HighlightController(HighlightService service) {
-		this.service = service;
-	}
+	private final HighlightService highlightService;
 
 	@GetMapping("/list/{diet}")
 	public Page<Highlight> findAllByDiet(@RequestParam(defaultValue = "0") Integer page,
@@ -27,12 +25,12 @@ public class HighlightController implements IPageableController<Highlight> {
 
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
 
-		return service.findByPageAndDiet(pageable, filter);
+		return highlightService.findByPageAndDiet(pageable, filter);
 	}
 
 	@Override
 	public Page<Highlight> findByPage(int page, int size, String sortBy, String sortDirection) throws CustomException {
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
-		return service.findByPageAndDiet(pageable, RecipeDiet.Meat);
+		return highlightService.findByPageAndDiet(pageable, RecipeDiet.Meat);
 	}
 }

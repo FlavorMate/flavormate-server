@@ -12,6 +12,7 @@ import de.flavormate.ba_entities.tag.model.Tag;
 import de.flavormate.ba_entities.tag.service.TagService;
 import de.flavormate.ba_entities.tag.wrapper.TagDraft;
 import de.flavormate.utils.RequestUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,13 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v2/tags")
 public class TagController implements ICRUDController<Tag, TagDraft>, IExtractRecipesController, IPageableController<Tag>, ISearchController<Tag> {
-	private final TagService service;
-
-	protected TagController(TagService service) {
-		this.service = service;
-	}
+	private final TagService tagService;
 
 	@Override
 	public Page<Recipe> findRecipesFromParent(@PathVariable Long id,
@@ -38,7 +36,7 @@ public class TagController implements ICRUDController<Tag, TagDraft>, IExtractRe
 
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
 
-		return service.findRecipesFromParent(id, pageable);
+		return tagService.findRecipesFromParent(id, pageable);
 	}
 
 	@Transactional
@@ -46,38 +44,38 @@ public class TagController implements ICRUDController<Tag, TagDraft>, IExtractRe
 	public Page<Tag> findBySearch(String searchTerm, int page, int size, String sortBy, String sortDirection) {
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
 
-		return service.findBySearch(searchTerm, pageable);
+		return tagService.findBySearch(searchTerm, pageable);
 	}
 
 	@Override
 	public Tag create(TagDraft form) throws CustomException {
-		return service.create(form);
+		return tagService.create(form);
 	}
 
 	@Override
 	public Tag update(Long id, JsonNode form) throws CustomException {
-		return service.update(id, form);
+		return tagService.update(id, form);
 	}
 
 	@Override
 	public boolean deleteById(Long id) throws CustomException {
-		return service.deleteById(id);
+		return tagService.deleteById(id);
 	}
 
 	@Override
 	public Tag findById(Long id) throws CustomException {
-		return service.findById(id);
+		return tagService.findById(id);
 	}
 
 	@Override
 	public List<Tag> findAll() throws CustomException {
-		return service.findAll();
+		return tagService.findAll();
 	}
 
 
 	@Override
 	public Page<Tag> findByPage(int page, int size, String sortBy, String sortDirection) throws CustomException {
 		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
-		return service.findByPage(pageable);
+		return tagService.findByPage(pageable);
 	}
 }

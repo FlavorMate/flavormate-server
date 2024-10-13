@@ -14,7 +14,8 @@ import de.flavormate.ba_entities.categoryGroup.repository.CategoryGroupRepositor
 import de.flavormate.ba_entities.role.model.Role;
 import de.flavormate.ba_entities.role.repository.RoleRepository;
 import de.flavormate.utils.JSONUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -23,114 +24,97 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+@RequiredArgsConstructor
+@Slf4j
 @Service
-public class S01_InitDatabaseScript extends AScript {
+public class S01_InitDatabaseScript implements AScript {
+
+	private final RoleRepository roleRepository;
+	private final CategoryGroupRepository categoryGroupRepository;
+	private final CategoryRepository categoryRepository;
+	private final CategoryLocalizationRepository categoryLocalizationRepository;
+	private final CategoryGroupLocalizationRepository categoryGroupLocalizationRepository;
 
 	@Value("classpath:initialization/categories.json")
 	private Resource categoriesFile;
-
 	@Value("classpath*:initialization/l10n/categories/*.json")
 	private Resource[] categoryLocalizationsFiles;
-
 	@Value("classpath:initialization/roles.json")
 	private Resource rolesFile;
-
 	@Value("classpath:initialization/category_groups.json")
 	private Resource categoryGroupsFile;
-
 	@Value("classpath*:initialization/l10n/categoryGroups/*.json")
 	private Resource[] categoryGroupsLocalizationsFiles;
 
-	@Autowired
-	private RoleRepository roleRepository;
 
-	@Autowired
-	private CategoryGroupRepository categoryGroupRepository;
-
-	@Autowired
-	private CategoryRepository categoryRepository;
-
-	@Autowired
-	private CategoryLocalizationRepository categoryLocalizationRepository;
-
-	@Autowired
-	private CategoryGroupLocalizationRepository categoryGroupLocalizationRepository;
-
-	public S01_InitDatabaseScript() {
-		super("Initialize Database");
-	}
-
-	public void run() {
-		log("Starting database initialization");
+	public void run() throws Exception {
+		log.info("Starting database initialization");
 
 		initializeRoles();
-
 		initializeCategoryGroups();
 		initializeCategoryGroupLocalizations();
 		initializeCategories();
 		initializeCategoryLocalizations();
 
-		log("Finished database initialization");
+		log.info("Finished database initialization");
 	}
 
 
-	private Boolean initializeRoles() {
+	private void initializeRoles() throws Exception {
 		try {
 			if (roleRepository.count() > 0) {
-				log("Skipping roles initialization");
-				return true;
+				log.info("Skipping roles initialization");
+				return;
 			}
 
-			log("Reading roles from JSON file");
+			log.info("Reading roles from JSON file");
 			Role[] rolesArr = JSONUtils.mapper.readValue(rolesFile.getInputStream(), Role[].class);
 			List<Role> roles = Arrays.asList(rolesArr);
 
-			log("Found {} roles", roles.size());
+			log.info("Found {} roles", roles.size());
 
-			log("Saving roles into the database");
+			log.info("Saving roles into the database");
 			roleRepository.saveAll(roles);
 
-			log("Saved {} roles", roles.size());
-			return true;
+			log.info("Saved {} roles", roles.size());
 		} catch (Exception e) {
-			warning("Roles could not be initialized");
-			return false;
+			log.error("Roles could not be initialized");
+			throw e;
 		}
 	}
 
-	private Boolean initializeCategoryGroups() {
+	private void initializeCategoryGroups() throws Exception {
 		try {
 			if (categoryGroupRepository.count() > 0) {
-				log("Skipping category group initialization");
-				return true;
+				log.info("Skipping category group initialization");
+				return;
 			}
 
-			log("Reading category groups from JSON file");
+			log.info("Reading category groups from JSON file");
 			CategoryGroup[] categoryGroupsArr = JSONUtils.mapper
 					.readValue(categoryGroupsFile.getInputStream(), CategoryGroup[].class);
 			List<CategoryGroup> categoryGroups = Arrays.asList(categoryGroupsArr);
 
-			log("Found {} category groups", categoryGroups.size());
+			log.info("Found {} category groups", categoryGroups.size());
 
-			log("Saving category groups into the database");
+			log.info("Saving category groups into the database");
 			categoryGroupRepository.saveAll(categoryGroups);
 
-			log("Saved {} category groups", categoryGroups.size());
-			return true;
+			log.info("Saved {} category groups", categoryGroups.size());
 		} catch (Exception e) {
-			warning("Category groups could not be initialized");
-			return false;
+			log.error("Category groups could not be initialized");
+			throw e;
 		}
 	}
 
-	private Boolean initializeCategories() {
+	private void initializeCategories() throws Exception {
 		try {
 			if (categoryRepository.count() > 0) {
-				log("Skipping category initialization");
-				return true;
+				log.info("Skipping category initialization");
+				return;
 			}
 
-			log("Reading categories from JSON file");
+			log.info("Reading categories from JSON file");
 			var typeReference = new TypeReference<List<Map<String, Object>>>() {
 			};
 			var categoryList =
@@ -148,33 +132,33 @@ public class S01_InitDatabaseScript extends AScript {
 					.map(map -> JSONUtils.mapper.convertValue(map, Category.class)).toList();
 
 
-			log("Found {} categories", categories.size());
-			log("Saving categories into the database");
+			log.info("Found {} categories", categories.size());
+			log.info("Saving categories into the database");
 			categoryRepository.saveAll(categories);
 
-			log("Saved {} categories", categories.size());
-			return true;
+			log.info("Saved {} categories", categories.size());
+
 		} catch (Exception e) {
-			warning("Categories could not be initialized");
-			return false;
+			log.error("Categories could not be initialized");
+			throw e;
 		}
 	}
 
-	private Boolean initializeCategoryLocalizations() {
+	private void initializeCategoryLocalizations() throws Exception {
 		try {
 			if (categoryLocalizationRepository.count() > 0) {
-				log("Skipping category localization initialization");
-				return true;
+				log.info("Skipping category localization initialization");
+				return;
 			}
 
-			log("Reading category localizations from JSON file");
+			log.info("Reading category localizations from JSON file");
 			for (var categoryLocalizationFile : categoryLocalizationsFiles) {
 				var language = categoryLocalizationFile.getFilename().split("\\.")[0];
 				var typeReference = new TypeReference<Map<Long, String>>() {
 				};
 				var localizations = JSONUtils.mapper.readValue(categoryLocalizationFile.getInputStream(), typeReference);
 
-				log("Found category localizations for {}", language);
+				log.info("Found category localizations for {}", language);
 
 				for (var localization : localizations.entrySet()) {
 					var category = categoryRepository.findById(localization.getKey()).get();
@@ -182,30 +166,29 @@ public class S01_InitDatabaseScript extends AScript {
 					categoryLocalizationRepository.save(categoryLocalization);
 				}
 
-				log("Saved {} category localizations for {}", localizations.size(), language);
+				log.info("Saved {} category localizations for {}", localizations.size(), language);
 			}
-			return true;
 		} catch (Exception e) {
-			warning("Category localizations could not be initialized");
-			return false;
+			log.error("Category localizations could not be initialized");
+			throw e;
 		}
 	}
 
-	private Boolean initializeCategoryGroupLocalizations() {
+	private void initializeCategoryGroupLocalizations() throws Exception {
 		try {
 			if (categoryGroupLocalizationRepository.count() > 0) {
-				log("Skipping category group localization initialization");
-				return true;
+				log.info("Skipping category group localization initialization");
+				return;
 			}
 
-			log("Reading category group localizations from JSON file");
+			log.info("Reading category group localizations from JSON file");
 			for (var categoryGroupLocalizationFile : categoryGroupsLocalizationsFiles) {
 				var language = categoryGroupLocalizationFile.getFilename().split("\\.")[0];
 				var typeReference = new TypeReference<Map<Long, String>>() {
 				};
 				var localizations = JSONUtils.mapper.readValue(categoryGroupLocalizationFile.getInputStream(), typeReference);
 
-				log("Found category group localizations for {}", language);
+				log.info("Found category group localizations for {}", language);
 
 				for (var localization : localizations.entrySet()) {
 					var categoryGroup = categoryGroupRepository.findById(localization.getKey()).get();
@@ -213,12 +196,11 @@ public class S01_InitDatabaseScript extends AScript {
 					categoryGroupLocalizationRepository.save(categoryGroupLocalization);
 				}
 
-				log("Saved {} category group localizations for {}", localizations.size(), language);
+				log.info("Saved {} category group localizations for {}", localizations.size(), language);
 			}
-			return true;
 		} catch (Exception e) {
-			warning("Category group localizations could not be initialized");
-			return false;
+			log.error("Category group localizations could not be initialized");
+			throw e;
 		}
 	}
 }

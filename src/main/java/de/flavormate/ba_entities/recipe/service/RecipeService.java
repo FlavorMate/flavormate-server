@@ -8,6 +8,7 @@ import de.flavormate.aa_interfaces.services.ISearchDietService;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
 import de.flavormate.ab_exeptions.exceptions.ForbiddenException;
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
+import de.flavormate.ad_configurations.flavormate.PathsConfig;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.author.model.Author;
 import de.flavormate.ba_entities.author.repository.AuthorRepository;
@@ -33,14 +34,12 @@ import de.flavormate.ba_entities.unit.model.Unit;
 import de.flavormate.ba_entities.unit.repository.UnitRepository;
 import de.flavormate.utils.JSONUtils;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
 
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -52,6 +51,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RecipeService extends BaseService implements ICRUDService<Recipe, RecipeDraft>, IPageableDietService<Recipe>, ISearchDietService<Recipe> {
 
 	private final AuthorRepository authorRepository;
@@ -59,27 +59,11 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	private final CategoryRepository categoryRepository;
 	private final FileRepository fileRepository;
 	private final HighlightRepository highlightRepository;
-	private final RecipeRepository repository;
+	private final RecipeRepository recipeRepository;
 	private final StoryRepository storyRepository;
 	private final TagRepository tagRepository;
-	private final TemplateEngine templateEngine;
 	private final UnitRepository unitRepository;
-
-	@Value("${flavorMate.files}")
-	private URL ROOT;
-
-	protected RecipeService(RecipeRepository repository, AuthorRepository authorRepository, BookRepository bookRepository, CategoryRepository categoryRepository, FileRepository fileRepository, HighlightRepository highlightRepository, StoryRepository storyRepository, TagRepository tagRepository, TemplateEngine templateEngine, UnitRepository unitRepository) {
-		this.repository = repository;
-		this.authorRepository = authorRepository;
-		this.bookRepository = bookRepository;
-		this.categoryRepository = categoryRepository;
-		this.fileRepository = fileRepository;
-		this.highlightRepository = highlightRepository;
-		this.storyRepository = storyRepository;
-		this.tagRepository = tagRepository;
-		this.templateEngine = templateEngine;
-		this.unitRepository = unitRepository;
-	}
+	private final PathsConfig pathsConfig;
 
 
 	@Transactional
@@ -135,7 +119,7 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 				.rating(0.0).restTime(form.restTime()).serving(serving).tags(tags).url(form.url())
 				.build();
 
-		recipe = repository.save(recipe);
+		recipe = recipeRepository.save(recipe);
 
 		for (var category : categories) {
 			category.addOrRemoveRecipe(recipe);
@@ -312,7 +296,7 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 
 		for (var file : recipe.getFiles()) {
 			try {
-				var deleted = Files.deleteIfExists(Paths.get(ROOT.getPath(), file.getPath()));
+				var deleted = Files.deleteIfExists(Paths.get(pathsConfig.content().toExternalForm(), file.getPath()));
 
 				if (deleted) {
 					fileRepository.deleteById(id);
@@ -326,22 +310,22 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 
 		storyRepository.deleteAllByRecipeId(recipe.getId());
 
-		repository.deleteById(id);
+		recipeRepository.deleteById(id);
 		return true;
 	}
 
 	@Override
 	public Recipe findById(Long id) throws CustomException {
-		return repository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
+		return recipeRepository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
 	}
 
 	@Override
 	public List<Recipe> findAll() throws CustomException {
-		return repository.findAll();
+		return recipeRepository.findAll();
 	}
 
 	public Recipe findByIdL10n(Long id, String language) throws CustomException {
-		var recipe = repository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
+		var recipe = recipeRepository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
 		recipe.translate(language);
 		return recipe;
 	}
@@ -376,7 +360,7 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 
 		recipe.setAuthor(newOwner);
 
-		repository.save(recipe);
+		recipeRepository.save(recipe);
 
 		return true;
 	}
@@ -400,18 +384,18 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	}
 
 	public List<Recipe> findRandomByDietAndCourse(RecipeDiet diet, String course, int amount) throws CustomException {
-		return repository.findRandomRecipeByDiet(RecipeDiet.getFilterNames(diet), course, amount);
+		return recipeRepository.findRandomRecipeByDiet(RecipeDiet.getFilterNames(diet), course, amount);
 	}
 
 	@Override
 	public Page<Recipe> findBySearch(String searchTerm, RecipeDiet filter, Pageable pageable) {
-		return repository.findBySearch(RecipeDiet.getFilter(filter),
+		return recipeRepository.findBySearch(RecipeDiet.getFilter(filter),
 				searchTerm, pageable);
 	}
 
 
 	@Override
 	public Page<Recipe> findByPage(RecipeDiet diet, Pageable pageable) throws CustomException {
-		return repository.findByDiet(RecipeDiet.getFilterNames(diet), pageable);
+		return recipeRepository.findByDiet(RecipeDiet.getFilterNames(diet), pageable);
 	}
 }

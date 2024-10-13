@@ -17,6 +17,7 @@ import de.flavormate.ba_entities.book.wrapper.BookDraft;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
 import de.flavormate.utils.JSONUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,22 +25,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class BookService extends BaseService implements ICRUDService<Book, BookDraft>, IPageableService<Book>, ISearchService<Book> {
 
-	private final BookRepository repository;
-
 	private final AuthorRepository authorRepository;
-
-	private final RecipeRepository recipeRepository;
 	private final BookRepository bookRepository;
+	private final RecipeRepository recipeRepository;
 
-	protected BookService(BookRepository repository, AuthorRepository authorRepository, RecipeRepository recipeRepository, BookRepository bookRepository) {
-		this.repository = repository;
-		this.authorRepository = authorRepository;
-		this.recipeRepository = recipeRepository;
-		this.bookRepository = bookRepository;
-	}
 
 	@Override
 	public Book create(BookDraft object) throws CustomException {
@@ -48,7 +41,7 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 
 		var book = Book.builder().label(object.label()).owner(author).visible(false).build();
 
-		book = repository.save(book);
+		book = bookRepository.save(book);
 
 		author.getBooks().add(book);
 
@@ -76,7 +69,7 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 			book.setVisible(visible);
 		}
 
-		return repository.save(book);
+		return bookRepository.save(book);
 	}
 
 	@Override
@@ -101,19 +94,19 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 			recipeRepository.save(recipe);
 		}
 
-		repository.deleteById(id);
+		bookRepository.deleteById(id);
 
 		return true;
 	}
 
 	@Override
 	public Book findById(Long id) throws CustomException {
-		return repository.findById(id, getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Book.class));
+		return bookRepository.findById(id, getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Book.class));
 	}
 
 	@Override
 	public List<Book> findAll() throws CustomException {
-		return repository.findAll(getPrincipal().getUsername());
+		return bookRepository.findAll(getPrincipal().getUsername());
 	}
 
 	@Override
@@ -124,7 +117,7 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 		var ids = author.getBooks().stream().map(BaseEntity::getId).collect(Collectors.toList());
 		ids.addAll(author.getSubscribedBooks().stream().map(BaseEntity::getId).toList());
 
-		return repository.findByIds(ids, pageable);
+		return bookRepository.findByIds(ids, pageable);
 	}
 
 	public List<Book> findOwn() throws CustomException {
@@ -133,12 +126,12 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 
 		var ids = author.getBooks().stream().map(BaseEntity::getId).toList();
 
-		return repository.findByIds(ids);
+		return bookRepository.findByIds(ids);
 	}
 
 	@Override
 	public Page<Book> findBySearch(String searchTerm, Pageable pageable) {
-		return repository.findBySearch(searchTerm, getPrincipal().getUsername(), pageable);
+		return bookRepository.findBySearch(searchTerm, getPrincipal().getUsername(), pageable);
 	}
 
 	public Page<Recipe> findRecipesFromParent(Long id, Pageable pageable) throws CustomException {
@@ -165,7 +158,7 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 
 		recipeRepository.save(recipe);
 
-		return repository.save(book);
+		return bookRepository.save(book);
 
 	}
 
@@ -173,7 +166,7 @@ public class BookService extends BaseService implements ICRUDService<Book, BookD
 		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
 				.orElseThrow(() -> new NotFoundException(Author.class));
 
-		var book = repository.findById(id)
+		var book = bookRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException(Book.class));
 
 		var isPublic = !book.getOwner().getId().equals(author.getId()) && book.getVisible();

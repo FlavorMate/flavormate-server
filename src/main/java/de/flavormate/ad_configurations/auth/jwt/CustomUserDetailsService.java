@@ -4,7 +4,7 @@ import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
 import de.flavormate.ba_entities.role.model.Role;
 import eu.fraho.spring.securityJwt.base.dto.JwtUser;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,10 +19,11 @@ import java.util.List;
  * information from the database and maps it to a {@link UserDetails} object for authentication
  * purposes.
  */
+@RequiredArgsConstructor
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
-	@Autowired
-	private AccountRepository accountRepository;
+
+	private final AccountRepository accountRepository;
 
 	/**
 	 * Loads user information for the specified username from the database and returns a

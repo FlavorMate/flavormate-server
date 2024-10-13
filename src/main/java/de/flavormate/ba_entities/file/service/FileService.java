@@ -7,6 +7,7 @@ import de.flavormate.ab_exeptions.exceptions.ConflictException;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
 import de.flavormate.ab_exeptions.exceptions.UnauthorizedException;
+import de.flavormate.ad_configurations.flavormate.PathsConfig;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
 import de.flavormate.ba_entities.file.enums.FileCategory;
@@ -15,32 +16,25 @@ import de.flavormate.ba_entities.file.repository.FileRepository;
 import de.flavormate.ba_entities.file.wrapper.FileDraft;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class FileService extends BaseService implements ICRUDService<File, FileDraft> {
 
-	private final FileRepository repository;
 	private final AccountRepository accountRepository;
+	private final FileRepository fileRepository;
+	private final PathsConfig pathsConfig;
 	private final RecipeRepository recipeRepository;
 
-	@Value("${flavorMate.files}")
-	private URL ROOT;
-
-	protected FileService(FileRepository repository, AccountRepository accountRepository, RecipeRepository recipeRepository) {
-		this.repository = repository;
-		this.accountRepository = accountRepository;
-		this.recipeRepository = recipeRepository;
-	}
 
 	@Override
 	public File create(FileDraft body) throws CustomException {
@@ -48,11 +42,11 @@ public class FileService extends BaseService implements ICRUDService<File, FileD
 			var file = File.builder().category(body.category()).owner(body.owner())
 					.type(body.type()).build();
 
-			file = repository.save(file);
+			file = fileRepository.save(file);
 
 			var content = body.content().split(",")[1];
 
-			var path = Paths.get(ROOT.getPath(), file.getPath());
+			var path = Paths.get(pathsConfig.content().toExternalForm(), file.getPath());
 
 			Files.createDirectories(path.getParent());
 
@@ -72,7 +66,7 @@ public class FileService extends BaseService implements ICRUDService<File, FileD
 	public boolean deleteById(Long id) throws CustomException {
 		try {
 			var account = accountRepository.findByUsername(getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Account.class));
-			var file = repository.findById(id).orElseThrow(() -> new NotFoundException(File.class));
+			var file = fileRepository.findById(id).orElseThrow(() -> new NotFoundException(File.class));
 
 			var authorized = false;
 			if (account.hasRole("ROLE_ADMIN")) {
@@ -93,10 +87,10 @@ public class FileService extends BaseService implements ICRUDService<File, FileD
 			}
 
 
-			var deleted = Files.deleteIfExists(Paths.get(ROOT.getPath(), file.getPath()));
+			var deleted = Files.deleteIfExists(Paths.get(pathsConfig.content().toExternalForm(), file.getPath()));
 
 			if (deleted) {
-				repository.deleteById(id);
+				fileRepository.deleteById(id);
 			}
 
 			return deleted;
@@ -107,12 +101,12 @@ public class FileService extends BaseService implements ICRUDService<File, FileD
 
 	@Override
 	public File findById(Long id) throws CustomException {
-		return repository.findById(id).orElseThrow(() -> new NotFoundException(File.class));
+		return fileRepository.findById(id).orElseThrow(() -> new NotFoundException(File.class));
 	}
 
 	@Override
 	public List<File> findAll() throws CustomException {
-		return repository.findAll();
+		return fileRepository.findAll();
 	}
 
 

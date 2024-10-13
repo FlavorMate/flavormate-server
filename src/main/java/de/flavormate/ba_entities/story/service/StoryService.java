@@ -10,19 +10,17 @@ import de.flavormate.ab_exeptions.exceptions.NotFoundException;
 import de.flavormate.ba_entities.story.model.Story;
 import de.flavormate.ba_entities.story.repository.StoryRepository;
 import de.flavormate.ba_entities.story.wrapper.StoryDraft;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class StoryService extends BaseService implements ICRUDService<Story, StoryDraft>, IPageableService<Story>, ISearchService<Story> {
-	private final StoryRepository repository;
-
-	protected StoryService(StoryRepository repository) {
-		this.repository = repository;
-	}
+	private final StoryRepository storyRepository;
 
 	@Override
 	public Story update(Long id, JsonNode json) throws CustomException {
@@ -36,17 +34,17 @@ public class StoryService extends BaseService implements ICRUDService<Story, Sto
 
 	@Override
 	public Story findById(Long id) throws CustomException {
-		return repository.findById(id).orElseThrow(() -> new NotFoundException(Story.class));
+		return storyRepository.findById(id).orElseThrow(() -> new NotFoundException(Story.class));
 	}
 
 	@Override
 	public List<Story> findAll() throws CustomException {
-		return repository.findAll();
+		return storyRepository.findAll();
 	}
 
 	@Override
 	public Page<Story> findBySearch(String searchTerm, Pageable pageable) {
-		return repository.findBySearch(searchTerm, pageable);
+		return storyRepository.findBySearch(searchTerm, pageable);
 	}
 
 	@Override
@@ -56,6 +54,6 @@ public class StoryService extends BaseService implements ICRUDService<Story, Sto
 
 	@Override
 	public Page<Story> findByPage(Pageable pageable) throws CustomException {
-		return repository.findAll(pageable);
+		return storyRepository.findAll(pageable);
 	}
 }

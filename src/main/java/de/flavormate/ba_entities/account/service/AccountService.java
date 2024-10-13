@@ -14,34 +14,28 @@ import de.flavormate.ba_entities.account.wrapper.ForcePasswordForm;
 import de.flavormate.ba_entities.author.model.Author;
 import de.flavormate.ba_entities.author.repository.AuthorRepository;
 import de.flavormate.ba_entities.book.repository.BookRepository;
-import de.flavormate.ba_entities.email.service.EmailService;
 import de.flavormate.ba_entities.file.model.File;
 import de.flavormate.ba_entities.recipe.enums.RecipeDiet;
 import de.flavormate.ba_entities.role.repository.RoleRepository;
-import de.flavormate.ba_entities.token.repository.TokenRepository;
 import de.flavormate.utils.JSONUtils;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class AccountService extends BaseService implements ICRUDService<Account, AccountDraft> {
+
 	private final AccountRepository accountRepository;
 	private final AuthorRepository authorRepository;
 	private final BookRepository bookRepository;
 	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public AccountService(AccountRepository accountRepository, AuthorRepository authorRepository, BookRepository bookRepository, RoleRepository roleRepository, TokenRepository tokenRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
-		this.accountRepository = accountRepository;
-		this.authorRepository = authorRepository;
-		this.bookRepository = bookRepository;
-		this.roleRepository = roleRepository;
-		this.passwordEncoder = passwordEncoder;
-	}
 
 	@Override
 	public Account create(AccountDraft newAccount) throws CustomException {

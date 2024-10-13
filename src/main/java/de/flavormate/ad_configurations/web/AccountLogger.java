@@ -5,8 +5,9 @@ import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,16 +16,16 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.time.Instant;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class AccountLogger implements HandlerInterceptor {
 
-	@Autowired
-	private AccountRepository accountRepository;
+	private final AccountRepository accountRepository;
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-	                         Object handler) throws Exception {
+	public boolean preHandle(@Nullable HttpServletRequest request, @Nullable HttpServletResponse response,
+	                         @Nullable Object handler) {
 
 		if (!(getAuthentication().getPrincipal() instanceof UserDetails))
 			return true;

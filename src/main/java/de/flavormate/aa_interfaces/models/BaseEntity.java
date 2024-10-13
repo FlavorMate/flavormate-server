@@ -63,7 +63,7 @@ public abstract class BaseEntity {
 	/**
 	 * The optimistic locking version of the entity.
 	 */
-	@Version
+	@jakarta.persistence.Version
 	@Column(nullable = false)
 	@EqualsAndHashCode.Include
 	@Builder.Default

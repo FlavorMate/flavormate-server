@@ -1,7 +1,9 @@
 package de.flavormate.ac_scripts;
 
 import de.flavormate.aa_interfaces.scripts.AScript;
-import org.springframework.beans.factory.annotation.Value;
+import de.flavormate.ad_configurations.flavormate.PathsConfig;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -9,44 +11,38 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@RequiredArgsConstructor
+@Slf4j
 @Service
-public class S02_InitFilePathScript extends AScript {
+public class S02_InitFilePathScript implements AScript {
 
-	@Value("${flavorMate.files}")
-	private URL ROOT_FILES;
+	private final PathsConfig pathsConfig;
 
-	@Value("${flavorMate.files-backup}")
-	private URL ROOT_BACKUP;
-
-	public S02_InitFilePathScript() {
-		super("Initialize File Path");
-	}
 
 	@Override
-	public void run() {
-		log("Start file path initialization");
-		log("File path: {}", ROOT_FILES.toString());
+	public void run() throws Exception {
+		log.info("Start path initialization");
 
+		createPath(pathsConfig.backup());
+		createPath(pathsConfig.content());
+		createPath(pathsConfig.logs());
+
+		log.info("Finished path initialization");
+	}
+
+
+	private void createPath(URL path) throws Exception {
 		try {
-			Path root = Paths.get(ROOT_FILES.getPath());
+			Path root = Paths.get(path.getPath());
 			if (!Files.exists(root)) {
 				Files.createDirectories(root);
-				log("Path {} created", ROOT_FILES.toExternalForm());
+				log.info("Path created: {}", path.getPath());
+			} else {
+				log.info("Path exists already: {}", path.getPath());
 			}
-			log("File path already exists");
 		} catch (Exception e) {
-			warning("Could not initialize file path!");
-		}
-
-		try {
-			Path root = Paths.get(ROOT_BACKUP.getPath());
-			if (!Files.exists(root)) {
-				Files.createDirectories(root);
-				log("Path {} created", ROOT_BACKUP.toExternalForm());
-			}
-			log("Backup path already exists");
-		} catch (Exception e) {
-			warning("Could not initialize backup path!");
+			log.error("Could not initialize path: {}", path.getPath());
+			throw e;
 		}
 	}
 }

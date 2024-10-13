@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v2/self-service/registration")
 public class SelfServiceRegistrationController {
 
-	private final SelfServiceRegistrationService service;
+	private final SelfServiceRegistrationService selfServiceRegistrationService;
 
 	/**
 	 * Creates a new account based on the provided account draft.
@@ -34,6 +34,6 @@ public class SelfServiceRegistrationController {
 	 */
 	@PostMapping("/")
 	public boolean create(@RequestBody AccountDraft form) throws CustomException {
-		return service.create(form);
+		return selfServiceRegistrationService.create(form);
 	}
 }

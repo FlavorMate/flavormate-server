@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -42,6 +43,6 @@ public class Token extends BaseEntity {
 	}
 
 	public boolean isValid() {
-		return createdOn.isBefore(createdOn.plus(validFor));
+		return Instant.now().isBefore(createdOn.plus(validFor));
 	}
 }

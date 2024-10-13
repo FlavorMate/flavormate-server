@@ -1,7 +1,7 @@
 package de.flavormate.ba_entities.selfService.service;
 
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
-import de.flavormate.ad_configurations.FlavorMateConfig;
+import de.flavormate.ad_configurations.flavormate.CommonConfig;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
 import de.flavormate.ba_entities.account.wrapper.ForcePasswordForm;
@@ -30,6 +30,7 @@ public class SelfServiceRecoveryService {
 	private final TemplateEngine templateEngine;
 	private final TokenRepository tokenRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final CommonConfig commonConfig;
 
 
 	public Boolean resetPassword(String mail) throws NotFoundException, MessagingException {
@@ -42,7 +43,7 @@ public class SelfServiceRecoveryService {
 				Map.ofEntries(new AbstractMap.SimpleEntry<>("username", account.getUsername()),
 						new AbstractMap.SimpleEntry<>("name", account.getDisplayName()),
 						new AbstractMap.SimpleEntry<>("token", token.getToken()),
-						new AbstractMap.SimpleEntry<>("backendUrl", FlavorMateConfig.getBackendUrl())
+						new AbstractMap.SimpleEntry<>("backendUrl", commonConfig.backendUrl())
 
 				);
 
@@ -54,7 +55,7 @@ public class SelfServiceRecoveryService {
 	public String resetPasswordConfirm(String tokenId, ForcePasswordForm form) {
 		var context = new Context();
 
-		context.setVariable("backendUrl", FlavorMateConfig.getBackendUrl());
+		context.setVariable("backendUrl", commonConfig.backendUrl());
 
 		try {
 			Token token = tokenRepository.findByToken(tokenId)
@@ -81,7 +82,7 @@ public class SelfServiceRecoveryService {
 
 		context.setVariable("token", token);
 
-		context.setVariable("backendUrl", FlavorMateConfig.getBackendUrl());
+		context.setVariable("backendUrl", commonConfig.backendUrl());
 
 		return templateEngine.process("recovery/password-recovery.html", context);
 	}
@@ -89,7 +90,7 @@ public class SelfServiceRecoveryService {
 	public String successPage() {
 		var context = new Context();
 
-		context.setVariable("backendUrl", FlavorMateConfig.getBackendUrl());
+		context.setVariable("backendUrl", commonConfig.backendUrl());
 
 		return templateEngine.process("recovery/password-recovery-success.html", context);
 

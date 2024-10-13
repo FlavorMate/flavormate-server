@@ -1,16 +1,16 @@
 package de.flavormate.ad_configurations.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@RequiredArgsConstructor
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-	@Autowired
-	private AccountLogger accountLogger;
+	private final AccountLogger accountLogger;
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
