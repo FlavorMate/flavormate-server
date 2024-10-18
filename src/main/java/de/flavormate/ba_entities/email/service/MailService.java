@@ -1,7 +1,7 @@
 package de.flavormate.ba_entities.email.service;
 
 import de.flavormate.ad_configurations.flavormate.MailConfig;
-import de.flavormate.ba_entities.email.model.EMail;
+import de.flavormate.ba_entities.email.model.Mail;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,14 @@ import java.nio.charset.StandardCharsets;
 @ConditionalOnProperty(prefix = "flavormate.features.recovery", value = "enabled", havingValue = "true")
 @Service
 @RequiredArgsConstructor
-public class EmailService {
+public class MailService {
 
 	private final JavaMailSender mailSender;
 	private final SpringTemplateEngine templateEngine;
 
 	private final MailConfig mailConfig;
 
-	public void sendMail(EMail email) throws MessagingException {
+	public void sendMail(Mail email) throws MessagingException {
 
 		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message,

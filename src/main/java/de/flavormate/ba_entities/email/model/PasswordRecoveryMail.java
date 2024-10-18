@@ -5,11 +5,11 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
-public class PasswordRecoveryEMail extends EMail {
+public class PasswordRecoveryMail extends Mail {
 	final private static String SUBJECT = "Zurücksetzen deines Passworts";
 	final private static String TEMPLATE = "password-recover.html";
 
-	public PasswordRecoveryEMail(String to, Map<String, Object> properties) {
+	public PasswordRecoveryMail(String to, Map<String, Object> properties) {
 		super(to, SUBJECT, TEMPLATE, properties);
 	}
 

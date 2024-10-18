@@ -31,7 +31,6 @@ public class CustomJavaMailSender {
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.auth", mailConfig.auth());
 		props.put("mail.smtp.starttls.enable", mailConfig.starttls());
-		props.put("mail.debug", "true");
 
 		return mailSender;
 	}

@@ -5,8 +5,8 @@ import de.flavormate.ad_configurations.flavormate.CommonConfig;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
 import de.flavormate.ba_entities.account.wrapper.ForcePasswordForm;
-import de.flavormate.ba_entities.email.model.PasswordRecoveryEMail;
-import de.flavormate.ba_entities.email.service.EmailService;
+import de.flavormate.ba_entities.email.model.PasswordRecoveryMail;
+import de.flavormate.ba_entities.email.service.MailService;
 import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.repository.TokenRepository;
 import jakarta.mail.MessagingException;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class SelfServiceRecoveryService {
 
 	private final AccountRepository accountRepository;
-	private final EmailService emailService;
+	private final MailService mailService;
 	private final TemplateEngine templateEngine;
 	private final TokenRepository tokenRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -47,7 +47,7 @@ public class SelfServiceRecoveryService {
 
 				);
 
-		emailService.sendMail(new PasswordRecoveryEMail(account.getMail(), map));
+		mailService.sendMail(new PasswordRecoveryMail(account.getMail(), map));
 
 		return true;
 	}

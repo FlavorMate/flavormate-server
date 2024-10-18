@@ -7,7 +7,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Getter
-public abstract class EMail {
+public abstract class Mail {
 	private final String to;
 	private final String subject;
 	private final String template;
