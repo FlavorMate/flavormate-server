@@ -9,8 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.nio.charset.StandardCharsets;
 
@@ -20,22 +18,21 @@ import java.nio.charset.StandardCharsets;
 public class MailService {
 
 	private final JavaMailSender mailSender;
-	private final SpringTemplateEngine templateEngine;
-
 	private final MailConfig mailConfig;
 
-	public void sendMail(Mail email) throws MessagingException {
-
+	public void sendMail(Mail mail, String html) throws MessagingException {
 		MimeMessage message = mailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message,
-				MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
-		Context context = new Context();
-		context.setVariables(email.getProperties());
+
+		MimeMessageHelper helper = new MimeMessageHelper(
+				message,
+				MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+				StandardCharsets.UTF_8.name()
+		);
 		helper.setFrom(mailConfig.from());
-		helper.setTo(email.getTo());
-		helper.setSubject(email.getSubject());
-		String html = templateEngine.process(email.getTemplate(), context);
+		helper.setTo(mail.getTo());
+		helper.setSubject(mail.getSubject());
 		helper.setText(html, true);
+
 		mailSender.send(message);
 	}
 }

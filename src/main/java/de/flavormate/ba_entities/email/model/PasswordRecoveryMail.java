@@ -1,16 +1,13 @@
 package de.flavormate.ba_entities.email.model;
 
 import lombok.Getter;
-
-import java.util.Map;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 @Getter
 public class PasswordRecoveryMail extends Mail {
-	final private static String SUBJECT = "Zurücksetzen deines Passworts";
-	final private static String TEMPLATE = "password-recover.html";
 
-	public PasswordRecoveryMail(String to, Map<String, Object> properties) {
-		super(to, SUBJECT, TEMPLATE, properties);
+	public PasswordRecoveryMail(String to, MessageSource messageSource) {
+		super(to, messageSource.getMessage("html-password_recovery_mail-subject", null, LocaleContextHolder.getLocale()));
 	}
-
 }

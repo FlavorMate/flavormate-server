@@ -7,11 +7,14 @@ import de.flavormate.ad_configurations.flavormate.CommonConfig;
 import de.flavormate.ba_entities.bring.model.RecipeSchema;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
+import de.flavormate.bb_thymeleaf.Fragments;
+import de.flavormate.bb_thymeleaf.MainPage;
 import de.flavormate.utils.JSONUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,17 +30,13 @@ public class BringService {
 
 		var recipe = recipeRepository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
 
-		Context context = new Context();
+		RecipeSchema json = RecipeSchema.fromRecipe(recipe, serving);
 
-		RecipeSchema json = RecipeSchema.fromRecipe(recipe, serving, commonConfig.backendUrl().toString());
-
-		context.setVariable("backendUrl", commonConfig.backendUrl());
-
-		context.setVariable("json",
-				JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
-
-
-		return templateEngine.process("bring.html", context);
+		Map<String, Object> data = Map.ofEntries(
+				Map.entry("json", JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json))
+		);
+		
+		return new MainPage(templateEngine, commonConfig).process(Fragments.BRING, data);
 	}
 
 

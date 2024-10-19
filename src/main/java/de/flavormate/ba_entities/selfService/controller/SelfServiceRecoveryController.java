@@ -30,11 +30,6 @@ public class SelfServiceRecoveryController {
 		return selfServiceRecoveryService.resetPasswordPage(token);
 	}
 
-	@GetMapping("/password/reset/success")
-	public String successPage() {
-		return selfServiceRecoveryService.successPage();
-	}
-
 	@PostMapping(path = "/password/reset/{token}",
 			consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
 	public String resetPasswordConfirm(@PathVariable String token,

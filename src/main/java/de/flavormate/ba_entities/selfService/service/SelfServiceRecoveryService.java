@@ -9,15 +9,16 @@ import de.flavormate.ba_entities.email.model.PasswordRecoveryMail;
 import de.flavormate.ba_entities.email.service.MailService;
 import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.repository.TokenRepository;
+import de.flavormate.bb_thymeleaf.Fragments;
+import de.flavormate.bb_thymeleaf.MainPage;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
-import java.util.AbstractMap;
 import java.util.Map;
 
 @ConditionalOnProperty(prefix = "flavormate.features.recovery", value = "enabled", havingValue = "true")
@@ -31,6 +32,7 @@ public class SelfServiceRecoveryService {
 	private final TokenRepository tokenRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final CommonConfig commonConfig;
+	private final MessageSource messageSource;
 
 
 	public Boolean resetPassword(String mail) throws NotFoundException, MessagingException {
@@ -39,24 +41,23 @@ public class SelfServiceRecoveryService {
 
 		Token token = tokenRepository.save(Token.PasswordToken(account));
 
-		Map<String, Object> map =
-				Map.ofEntries(new AbstractMap.SimpleEntry<>("username", account.getUsername()),
-						new AbstractMap.SimpleEntry<>("name", account.getDisplayName()),
-						new AbstractMap.SimpleEntry<>("token", token.getToken()),
-						new AbstractMap.SimpleEntry<>("backendUrl", commonConfig.backendUrl())
+		Map<String, Object> data = Map.ofEntries(
+				Map.entry("username", account.getUsername()),
+				Map.entry("name", account.getDisplayName()),
+				Map.entry("token", token.getToken())
+		);
 
-				);
+		var html = new MainPage(templateEngine, commonConfig).process(Fragments.RECOVERY_PASSWORD_MAIL, data);
 
-		mailService.sendMail(new PasswordRecoveryMail(account.getMail(), map));
+		var passwordMail = new PasswordRecoveryMail(account.getMail(), messageSource);
+
+		mailService.sendMail(passwordMail, html);
 
 		return true;
 	}
 
 	public String resetPasswordConfirm(String tokenId, ForcePasswordForm form) {
-		var context = new Context();
-
-		context.setVariable("backendUrl", commonConfig.backendUrl());
-
+		var site = new MainPage(templateEngine, commonConfig);
 		try {
 			Token token = tokenRepository.findByToken(tokenId)
 					.orElseThrow(() -> new NotFoundException(Token.class));
@@ -70,29 +71,18 @@ public class SelfServiceRecoveryService {
 
 			tokenRepository.deleteById(token.getId());
 
-			return templateEngine.process("recovery/password-recovery-success.html", context);
+			return site.process(Fragments.RECOVERY_PASSWORD_OK, null);
 		} catch (Exception e) {
-			return templateEngine.process("recovery/password-recovery-failed.html", context);
+			return site.process(Fragments.RECOVERY_PASSWORD_FAILED, null);
 		}
 	}
 
 
 	public String resetPasswordPage(String token) {
-		var context = new Context();
+		Map<String, Object> data = Map.ofEntries(
+				Map.entry("token", token)
+		);
 
-		context.setVariable("token", token);
-
-		context.setVariable("backendUrl", commonConfig.backendUrl());
-
-		return templateEngine.process("recovery/password-recovery.html", context);
-	}
-
-	public String successPage() {
-		var context = new Context();
-
-		context.setVariable("backendUrl", commonConfig.backendUrl());
-
-		return templateEngine.process("recovery/password-recovery-success.html", context);
-
+		return new MainPage(templateEngine, commonConfig).process(Fragments.RECOVERY_PASSWORD_FORM, data);
 	}
 }

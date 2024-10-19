@@ -13,6 +13,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Optional;
+
 @Entity
 @Table(name = "ingredients")
 @Data
@@ -50,7 +52,7 @@ public class Ingredient extends BaseEntity {
 	@Override
 	public String toString() {
 		return String.format("%s %s %s", NumberUtils.isPositive(NumberUtils.isDoubleInt(amount)),
-				unit.getLabel(), label);
+				Optional.ofNullable(unit).map(Unit::getLabel).orElse(""), label);
 	}
 
 }

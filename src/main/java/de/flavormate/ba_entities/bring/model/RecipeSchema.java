@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -54,11 +55,13 @@ public class RecipeSchema {
 
 	private final String url;
 
-	public static RecipeSchema fromRecipe(Recipe recipe, Integer serving, String backendBaseUrl) {
+	public static RecipeSchema fromRecipe(Recipe recipe, Integer serving) {
 
 		var name = recipe.getLabel();
 
-		var images = List.of(recipe.getCoverUrl());
+		var images = new ArrayList<String>();
+		if (recipe.getCoverUrl() != null)
+			images.add(recipe.getCoverUrl());
 
 		var author = new AuthorSchema(recipe.getAuthor().getAccount().getDisplayName());
 
