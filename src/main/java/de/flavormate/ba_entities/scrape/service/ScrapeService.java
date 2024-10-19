@@ -170,7 +170,7 @@ public class ScrapeService {
 			var labelParts = List.of(ingredientParts).subList(startIndex, ingredientParts.length);
 			label = String.join(" ", labelParts);
 
-			ingredients.add(new IngredientDraft(amount, unit, label));
+			ingredients.add(new IngredientDraft(amount, unit, label, null));
 		}
 
 		return List.of(new IngredientGroupDraft("", ingredients));

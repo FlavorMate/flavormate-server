@@ -1,6 +1,7 @@
 package de.flavormate.ba_entities.nutrition.model;
 
 import de.flavormate.aa_interfaces.models.BaseEntity;
+import de.flavormate.ba_entities.nutrition.wrapper.NutritionDraft;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -29,4 +30,19 @@ public class Nutrition extends BaseEntity {
 	private double proteins;
 	private double salt;
 	private double sodium;
+
+	public static Nutrition fromNutritionDraft(NutritionDraft draft) {
+		return Nutrition.builder()
+				.openFoodFactsId(draft.openFoodFactsId())
+				.carbohydrates(draft.carbohydrates())
+				.energyKcal(draft.energyKcal())
+				.fat(draft.fat())
+				.saturatedFat(draft.saturatedFat())
+				.sugars(draft.sugars())
+				.fiber(draft.fiber())
+				.proteins(draft.proteins())
+				.salt(draft.salt())
+				.sodium(draft.sodium())
+				.build();
+	}
 }

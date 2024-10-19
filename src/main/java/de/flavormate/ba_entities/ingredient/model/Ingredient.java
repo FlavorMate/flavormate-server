@@ -56,6 +56,7 @@ public class Ingredient extends BaseEntity {
 
 	@Override
 	public String toString() {
+		// TODO: handle unit v2
 		return String.format("%s %s %s", NumberUtils.isPositive(NumberUtils.isDoubleInt(amount)),
 				Optional.ofNullable(unit).map(Unit::getLabel).orElse(""), label);
 	}

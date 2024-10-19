@@ -83,6 +83,7 @@ public class RecipeSchema {
 
 		var recipeCategory = recipe.getCourse().toString();
 
+		// TODO: handle unit v2
 		var recipeIngredients = recipe.getIngredientGroups().stream()
 				.map(iG -> iG.getIngredients().stream().map(i -> {
 					i.setAmount(i.getAmount() * (serving / recipe.getServing().getAmount()));

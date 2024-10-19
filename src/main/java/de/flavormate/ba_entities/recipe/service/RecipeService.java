@@ -21,6 +21,8 @@ import de.flavormate.ba_entities.ingredient.model.Ingredient;
 import de.flavormate.ba_entities.ingredientGroup.model.IngredientGroup;
 import de.flavormate.ba_entities.instruction.model.Instruction;
 import de.flavormate.ba_entities.instructionGroup.model.InstructionGroup;
+import de.flavormate.ba_entities.nutrition.model.Nutrition;
+import de.flavormate.ba_entities.nutrition.repository.NutritionRepository;
 import de.flavormate.ba_entities.recipe.enums.RecipeDiet;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
@@ -61,6 +63,7 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	private final HighlightRepository highlightRepository;
 	private final RecipeRepository recipeRepository;
 	private final StoryRepository storyRepository;
+	private final NutritionRepository nutritionRepository;
 	private final TagRepository tagRepository;
 	private final UnitRepository unitRepository;
 	private final PathsConfig pathsConfig;
@@ -87,8 +90,11 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 						unit = unitRepository.save(i.unit());
 					}
 				}
+
+				var nutrition = Nutrition.fromNutritionDraft(i.nutrition());
+
 				return (Ingredient) Ingredient.builder()
-						.amount(i.amount()).label(i.label()).unit(unit).build();
+						.amount(i.amount()).label(i.label()).unit(unit).nutrition(nutrition).build();
 			}).toList();
 			return (IngredientGroup) IngredientGroup.builder().ingredients(ingredients)
 					.label(iG.label()).build();
@@ -202,8 +208,10 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 								}
 							}
 
+							var nutrition = Nutrition.fromNutritionDraft(i.nutrition());
+
 							return (Ingredient) Ingredient.builder()
-									.amount(i.amount()).label(i.label()).unit(unit).build();
+									.amount(i.amount()).label(i.label()).unit(unit).nutrition(nutrition).build();
 						})
 						.toList();
 				return (IngredientGroup) IngredientGroup.builder().ingredients(ingredients)
