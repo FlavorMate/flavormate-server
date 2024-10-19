@@ -2,6 +2,7 @@ package de.flavormate.ba_entities.ingredient.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.flavormate.aa_interfaces.models.BaseEntity;
+import de.flavormate.ba_entities.nutrition.model.Nutrition;
 import de.flavormate.ba_entities.unit.model.LocalizedUnit;
 import de.flavormate.ba_entities.unit.model.Unit;
 import de.flavormate.utils.NumberUtils;
@@ -31,6 +32,10 @@ public class Ingredient extends BaseEntity {
 	@ManyToOne(cascade = {CascadeType.PERSIST})
 	@JoinColumn(name = "unit_id", referencedColumnName = "id")
 	private Unit unit;
+
+	@ManyToOne(cascade = {CascadeType.PERSIST})
+	@JoinColumn(name = "nutrition_id", referencedColumnName = "id")
+	private Nutrition nutrition;
 
 	@ManyToOne
 	@JoinColumn(name = "unit_localized", referencedColumnName = "id")
