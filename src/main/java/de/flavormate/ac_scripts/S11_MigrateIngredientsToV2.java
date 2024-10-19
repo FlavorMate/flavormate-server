@@ -46,7 +46,7 @@ public class S11_MigrateIngredientsToV2 implements AScript {
 	 */
 	@Override
 	public void run() throws Exception {
-		if (!commonConfig.version().sameMajor(2)) return;
+		if (!commonConfig.getVersion().sameMajor(2)) return;
 
 
 		if (ingredientRepository.countBySchema(1) == 0) {
@@ -71,7 +71,7 @@ public class S11_MigrateIngredientsToV2 implements AScript {
 					} else {
 
 						// get the localized units that match the preferred language
-						var possibleUnitsLocalized = possibleUnits.stream().filter(u -> u.getLanguage().equals(commonConfig.preferredLanguage())).toList();
+						var possibleUnitsLocalized = possibleUnits.stream().filter(u -> u.getLanguage().equals(commonConfig.getPreferredLanguage())).toList();
 
 						// if there are multiple units, try to find the one that matches the label
 						if (possibleUnitsLocalized.size() > 1) {

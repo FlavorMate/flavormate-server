@@ -16,6 +16,6 @@ public class FeaturesService {
 
 
 	public FeatureResponse getFeaturesConfig() {
-		return new FeatureResponse(commonConfig.version().toString(), featuresConfig.getFeatures());
+		return new FeatureResponse(commonConfig.getVersion().toString(), featuresConfig.getFeatures());
 	}
 }

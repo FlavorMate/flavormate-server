@@ -31,7 +31,6 @@ public class S99_CleanScript implements AScript {
 
 	private final MiscConfig miscConfig;
 
-
 	private final FileRepository fileRepository;
 
 	private final HighlightRepository highlightRepository;

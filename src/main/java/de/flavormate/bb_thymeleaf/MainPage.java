@@ -15,8 +15,8 @@ public class MainPage {
 		this.context = new Context(LocaleContextHolder.getLocale());
 		this.templateEngine = templateEngine;
 
-		context.setVariable("frontendUrl", commonConfig.frontendUrl());
-		context.setVariable("backendUrl", commonConfig.backendUrl());
+		context.setVariable("frontendUrl", commonConfig.getFrontendUrl());
+		context.setVariable("backendUrl", commonConfig.getBackendUrl());
 	}
 
 	public String process(Fragments fragment, Map<String, Object> args) {
