@@ -94,7 +94,7 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 				var nutrition = Nutrition.fromNutritionDraft(i.nutrition());
 
 				return (Ingredient) Ingredient.builder()
-						.amount(i.amount()).label(i.label()).unit(unit).nutrition(nutrition).build();
+						.amount(i.amount()).label(i.label()).unit(unit).unitLocalized(i.unitLocalized()).nutrition(nutrition).build();
 			}).toList();
 			return (IngredientGroup) IngredientGroup.builder().ingredients(ingredients)
 					.label(iG.label()).build();
@@ -211,7 +211,7 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 							var nutrition = Nutrition.fromNutritionDraft(i.nutrition());
 
 							return (Ingredient) Ingredient.builder()
-									.amount(i.amount()).label(i.label()).unit(unit).nutrition(nutrition).build();
+									.amount(i.amount()).label(i.label()).unit(unit).unitLocalized(i.unitLocalized()).nutrition(nutrition).build();
 						})
 						.toList();
 				return (IngredientGroup) IngredientGroup.builder().ingredients(ingredients)

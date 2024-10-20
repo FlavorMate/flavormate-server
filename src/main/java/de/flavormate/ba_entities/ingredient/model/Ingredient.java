@@ -3,8 +3,8 @@ package de.flavormate.ba_entities.ingredient.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.flavormate.aa_interfaces.models.BaseEntity;
 import de.flavormate.ba_entities.nutrition.model.Nutrition;
-import de.flavormate.ba_entities.unit.model.LocalizedUnit;
 import de.flavormate.ba_entities.unit.model.Unit;
+import de.flavormate.ba_entities.unit.model.UnitLocalized;
 import de.flavormate.utils.NumberUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -41,7 +41,7 @@ public class Ingredient extends BaseEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "unit_localized", referencedColumnName = "id")
-	private LocalizedUnit unitLocalized;
+	private UnitLocalized unitLocalized;
 
 	@NotNull
 	@Column(nullable = false, columnDefinition = "TEXT")

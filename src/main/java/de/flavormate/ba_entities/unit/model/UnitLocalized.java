@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
-public class LocalizedUnit extends ManualBaseEntity {
+public class UnitLocalized extends ManualBaseEntity {
 
 	@NotNull
 	@ManyToOne
