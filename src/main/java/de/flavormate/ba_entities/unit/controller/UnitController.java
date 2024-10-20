@@ -3,9 +3,8 @@ package de.flavormate.ba_entities.unit.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.flavormate.aa_interfaces.controllers.ICRUDController;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
-import de.flavormate.ba_entities.unit.model.Unit;
+import de.flavormate.ba_entities.unit.model.UnitLocalized;
 import de.flavormate.ba_entities.unit.service.UnitService;
-import de.flavormate.ba_entities.unit.wrapper.UnitDraft;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,16 +14,16 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v2/units")
-public class UnitController implements ICRUDController<Unit, UnitDraft> {
+public class UnitController implements ICRUDController<UnitLocalized, Object> {
 	private final UnitService unitService;
 
 	@Override
-	public Unit create(UnitDraft form) throws CustomException {
+	public UnitLocalized create(Object form) throws CustomException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Unit update(Long id, JsonNode form) throws CustomException {
+	public UnitLocalized update(Long id, JsonNode form) throws CustomException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -34,12 +33,12 @@ public class UnitController implements ICRUDController<Unit, UnitDraft> {
 	}
 
 	@Override
-	public Unit findById(Long id) throws CustomException {
+	public UnitLocalized findById(Long id) throws CustomException {
 		return unitService.findById(id);
 	}
 
 	@Override
-	public List<Unit> findAll() throws CustomException {
+	public List<UnitLocalized> findAll() throws CustomException {
 		return unitService.findAll();
 	}
 }

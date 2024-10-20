@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface LocalizedUnitRepository extends JpaRepository<UnitLocalized, Long> {
+public interface UnitLocalizedRepository extends JpaRepository<UnitLocalized, Long> {
 	@Query("SELECT lu FROM UnitLocalized lu JOIN lu.unitRef u WHERE u.id in :ids AND lu.language = :language")
 	List<UnitLocalized> findByIdsAndLanguage(@Param("ids") List<Long> ids, @Param("language") String language);
 

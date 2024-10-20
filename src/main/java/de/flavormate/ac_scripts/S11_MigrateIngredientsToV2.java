@@ -8,7 +8,7 @@ import de.flavormate.ba_entities.ingredient.model.Ingredient;
 import de.flavormate.ba_entities.ingredient.repository.IngredientRepository;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
 import de.flavormate.ba_entities.unit.model.Unit;
-import de.flavormate.ba_entities.unit.repository.LocalizedUnitRepository;
+import de.flavormate.ba_entities.unit.repository.UnitLocalizedRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class S11_MigrateIngredientsToV2 implements AScript {
 
 	private final IngredientRepository ingredientRepository;
 
-	private final LocalizedUnitRepository localizedUnitRepository;
+	private final UnitLocalizedRepository unitLocalizedRepository;
 
 	private final RecipeRepository recipeRepository;
 
@@ -63,7 +63,7 @@ public class S11_MigrateIngredientsToV2 implements AScript {
 
 				// If unit is set, try to find the new localized unit
 				if (label != null) {
-					var possibleUnits = localizedUnitRepository.findByLabel(label);
+					var possibleUnits = unitLocalizedRepository.findByLabel(label);
 					if (possibleUnits.isEmpty()) {
 						var recipe = recipeRepository.findByIngredient(ingredient.getId());
 						csv.addRow(List.of("error", recipe.getLabel(), recipe.getId().toString(), ingredient.getId().toString(), label));
