@@ -146,11 +146,11 @@ VALUES
 
 -- 36. Level Tablespoon
 (36, 'en', 'level tablespoon', NULL, 'level tablespoons', NULL),
-(36, 'de', 'Esslöffel (gestrichen)', NULL, NULL, NULL),
+(36, 'de', 'Esslöffel (gestrichen)', 'EL (gestrichen)', NULL, NULL),
 
 -- 37. Heaped Tablespoon
 (37, 'en', 'heaped tablespoon', NULL, 'heaped tablespoons', NULL),
-(37, 'de', 'Esslöffel (gehäuft)', NULL, NULL, NULL),
+(37, 'de', 'Esslöffel (gehäuft)', 'EL (gehäuft)', NULL, NULL),
 
 -- 38. Some
 (38, 'en', 'some', NULL, NULL, NULL),
@@ -158,7 +158,7 @@ VALUES
 
 -- 39. Possibly
 (39, 'en', 'possibly', NULL, NULL, NULL),
-(39, 'de', 'eventuell', NULL, NULL, NULL),
+(39, 'de', 'eventuell', 'evtl.', NULL, NULL),
 
 -- 40. Extra
 (40, 'en', 'extra', NULL, NULL, NULL),
@@ -268,7 +268,7 @@ VALUES
 
 -- 65. As Desired
 (65, 'en', 'as desired', NULL, NULL, NULL),
-(65, 'de', 'nach Belieben', NULL, NULL, NULL),
+(65, 'de', 'nach Belieben', 'n.B.', NULL, NULL),
 
 -- 66. Pair
 (66, 'en', 'pair', NULL, 'pairs', NULL),
@@ -336,11 +336,11 @@ VALUES
 
 -- 82. Heaped Teaspoon
 (82, 'en', 'heaped teaspoon', NULL, 'heaped teaspoons', NULL),
-(82, 'de', 'Teelöffel (gehäuft)', NULL, NULL, NULL),
+(82, 'de', 'Teelöffel (gehäuft)', 'TL (gehäuft)', NULL, NULL),
 
 -- 83. Level Teaspoon
 (83, 'en', 'level teaspoon', NULL, 'level teaspoons', NULL),
-(83, 'de', 'Teelöffel (gestrichen)', NULL, NULL, NULL),
+(83, 'de', 'Teelöffel (gestrichen)', 'TL (gestrichen', NULL, NULL),
 
 -- 84. Pot
 (84, 'en', 'pot', NULL, 'pots', NULL),
