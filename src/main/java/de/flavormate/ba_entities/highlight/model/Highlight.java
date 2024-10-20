@@ -33,9 +33,8 @@ public class Highlight extends BaseEntity {
 	@Builder.Default
 	private LocalDate date = LocalDate.now();
 
-	// TODO: enable
-	// @NotNull
-	// @Column(nullable = false)
+	@NotNull
+	@Column(nullable = false)
 	@Builder.Default
 	@Enumerated(EnumType.STRING)
 	private RecipeDiet diet = RecipeDiet.Meat;

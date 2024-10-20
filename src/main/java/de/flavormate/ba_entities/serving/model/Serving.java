@@ -32,7 +32,7 @@ public class Serving extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return NumberUtils.isDoubleInt(amount) + " " + label;
+		return NumberUtils.beautify(amount) + " " + label;
 	}
 
 	public String toString(Integer requestedAmount) {

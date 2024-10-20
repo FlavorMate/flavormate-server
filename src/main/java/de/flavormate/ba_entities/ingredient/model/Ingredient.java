@@ -13,8 +13,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "ingredients")
@@ -56,9 +58,16 @@ public class Ingredient extends BaseEntity {
 
 	@Override
 	public String toString() {
-		// TODO: handle unit v2
-		return String.format("%s %s %s", NumberUtils.isPositive(NumberUtils.isDoubleInt(amount)),
-				Optional.ofNullable(unit).map(Unit::getLabel).orElse(""), label);
+		String amountLabel = NumberUtils.beautify(amount);
+		String unitLabel = null;
+
+		if (unit != null) {
+			unitLabel = unit.getLabel();
+		} else if (unitLocalized != null) {
+			unitLabel = unitLocalized.getLabel(amount);
+		}
+
+		return Stream.of(amountLabel, unitLabel, label).filter(StringUtils::isNotEmpty).collect(Collectors.joining(" "));
 	}
 
 }
