@@ -75,14 +75,24 @@ VALUES
 (7, 3, 0.00423),    -- 1 milliliter = 0.00423 cup
 (7, 8, 0.001),      -- 1 milliliter = 0.001 liter
 (7, 30, 0.1),       -- 1 milliliter = 0.1 centiliter
+(7, 9, 0.01),       -- 1 milliliter = 0.01 deciliter
 
 -- Centiliter to other units
 (30, 7, 10),        -- 1 centiliter = 10 milliliters
 (30, 8, 0.01),      -- 1 centiliter = 0.01 liter
+(30, 9, 0.1),       -- 1 centiliter = 0.1 deciliter
 (30, 1, 2.02884),   -- 1 centiliter = 2.02884 teaspoons
 (30, 2, 0.67628),   -- 1 centiliter = 0.67628 tablespoons
 (30, 3, 0.04227),   -- 1 centiliter = 0.04227 cups
 (30, 10, 0.33814),  -- 1 centiliter = 0.33814 fluid ounces
+
+-- Deciliter to other units
+(9, 7, 10),         -- 1 deciliter = 100 milliliters
+(9, 8, 0.01),       -- 1 deciliter = 0.1 liter
+(9, 1, 2.02884),    -- 1 deciliter = 20.2884 teaspoons
+(9, 2, 0.67628),    -- 1 deciliter = 6.7628 tablespoons
+(9, 3, 0.04227),    -- 1 deciliter = 0.4227 cups
+(9, 10, 0.33814),   -- 1 deciliter = 3.3814 fluid ounces
 
 -- Liter to other units
 (8, 3, 4.22675),    -- 1 liter = 4.22675 cups
@@ -91,6 +101,7 @@ VALUES
 (8, 6, 0.26417),    -- 1 liter = 0.26417 gallons
 (8, 7, 1000),       -- 1 liter = 1000 milliliters
 (8, 30, 100),       -- 1 liter = 100 centiliters
+(8, 9, 10),         -- 1 liter = 10 deziliters
 
 -- Ounce to other units
 (11, 12, 0.0625),   -- 1 ounce = 0.0625 pound
@@ -106,14 +117,17 @@ VALUES
 (13, 11, 0.03527),  -- 1 gram = 0.03527 ounces
 (13, 12, 0.0022),   -- 1 gram = 0.0022 pounds
 (13, 14, 0.001),    -- 1 gram = 0.001 kilograms
+(13, 15, 0.001),    -- 1 gram = 1000 milligram
 
 -- Kilogram to other units
 (14, 11, 35.274),   -- 1 kilogram = 35.274 ounces
 (14, 12, 2.20462),  -- 1 kilogram = 2.20462 pounds
 (14, 13, 1000),     -- 1 kilogram = 1000 grams
+(14, 15, 1000000),  -- 1 kilogram = 1000000 milligrams
 
--- Milligram to gram
+-- Milligram to other units
 (15, 13, 0.001),    -- 1 milligram = 0.001 grams
+(15, 14, 0.000001), -- 1 milligram = 0.000001 kilograms
 
 -- Centimeter to other units
 (16, 17, 0.01),     -- 1 centimeter = 0.01 meters
