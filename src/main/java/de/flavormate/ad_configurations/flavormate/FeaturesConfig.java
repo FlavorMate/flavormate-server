@@ -9,7 +9,7 @@ import java.util.List;
 
 @ConfigurationProperties(prefix = "flavormate.features")
 public record FeaturesConfig(Feature registration, Feature importExport, Feature recovery, Feature shareRecipes,
-                             Feature story, Feature bring) {
+                             Feature story, Feature bring, Feature openFoodFacts) {
 
 
 	public List<String> getFeatures() {
@@ -37,6 +37,10 @@ public record FeaturesConfig(Feature registration, Feature importExport, Feature
 
 		if (bring.enabled()) {
 			enabled.add("bring");
+		}
+
+		if (openFoodFacts.enabled()) {
+			enabled.add("open-food-facts");
 		}
 
 		return enabled;
