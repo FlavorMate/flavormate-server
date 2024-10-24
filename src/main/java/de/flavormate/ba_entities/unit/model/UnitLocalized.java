@@ -38,8 +38,8 @@ public class UnitLocalized extends ManualBaseEntity {
 
 	@JsonIgnore
 	@Transient
-	public String getLabel(double amount) {
-		if (amount != 1.0) {
+	public String getLabel(Double amount) {
+		if (amount != null) {
 			if (!StringUtils.isBlank(labelPlAbrv)) {
 				return labelPlAbrv;
 			} else if (!StringUtils.isBlank(labelPl)) {

@@ -27,8 +27,6 @@ import java.util.stream.Stream;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class Ingredient extends BaseEntity {
 
-	@NotNull
-	@Column(nullable = false)
 	private Double amount;
 
 	@ManyToOne(cascade = {CascadeType.PERSIST})
@@ -58,7 +56,13 @@ public class Ingredient extends BaseEntity {
 
 	@Override
 	public String toString() {
-		String amountLabel = NumberUtils.beautify(amount);
+		String amountLabel = null;
+
+		if (amount != null) {
+			amountLabel = NumberUtils.beautify(amount);
+		}
+
+
 		String unitLabel = null;
 
 		if (unit != null) {

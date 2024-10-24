@@ -32,6 +32,8 @@ public class Nutrition extends BaseEntity {
 	private double sodium;
 
 	public static Nutrition fromNutritionDraft(NutritionDraft draft) {
+		if (draft == null) return null;
+		
 		return Nutrition.builder()
 				.openFoodFactsId(draft.openFoodFactsId())
 				.carbohydrates(draft.carbohydrates())
