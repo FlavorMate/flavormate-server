@@ -154,10 +154,10 @@
             </format>
             <format>
               <includes>
-                <include>**/*.html</include>
-                <include>**/*.json</include>
-                <include>**/*.css</include>
-                <include>**/*.yaml</include>
+                <include>src/**/*.html</include>
+                <include>src/**/*.json</include>
+                <include>src/**/*.css</include>
+                <include>example/**/*.yaml</include>
               </includes>
               <prettier>
                 <prettierVersion>3.2.5</prettierVersion>
@@ -175,11 +175,16 @@
             <importOrder />
             <removeUnusedImports />
             <formatAnnotations />
-            through git history (see "license" section below) --&gt;
             <licenseHeader>
               <content>/* Licensed under AGPLv3 $YEAR */</content>
             </licenseHeader>
           </java>
+          <markdown>
+            <includes>
+              <include>README.md</include>
+            </includes>
+            <flexmark />
+          </markdown>
           <pom>
             <includes>
               <include>pom.xml</include>
