@@ -23,6 +23,8 @@ import de.flavormate.ba_entities.instruction.model.Instruction;
 import de.flavormate.ba_entities.instructionGroup.model.InstructionGroup;
 import de.flavormate.ba_entities.nutrition.model.Nutrition;
 import de.flavormate.ba_entities.nutrition.repository.NutritionRepository;
+import de.flavormate.ba_entities.nutrition.wrapper.NutritionDraft;
+import de.flavormate.ba_entities.openFoodFacts.service.OpenFoodFactsService;
 import de.flavormate.ba_entities.recipe.enums.RecipeDiet;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
@@ -38,6 +40,7 @@ import de.flavormate.utils.JSONUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,6 +49,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -64,6 +68,7 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	private final RecipeRepository recipeRepository;
 	private final StoryRepository storyRepository;
 	private final NutritionRepository nutritionRepository;
+	private final Optional<OpenFoodFactsService> openFoodFactsService;
 	private final TagRepository tagRepository;
 	private final UnitRepository unitRepository;
 	private final PathsConfig pathsConfig;
@@ -91,7 +96,14 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 					}
 				}
 
-				var nutrition = Nutrition.fromNutritionDraft(i.nutrition());
+				Nutrition nutrition = null;
+				if (openFoodFactsService.isPresent() && StringUtils.isNotBlank(Optional.ofNullable(i.nutrition()).map(NutritionDraft::openFoodFactsId).orElse(null))) {
+					var draft = openFoodFactsService.get().fetchProduct(i.nutrition().openFoodFactsId());
+					nutrition = Nutrition.fromNutritionDraft(draft);
+				} else {
+					nutrition = Nutrition.fromNutritionDraft(i.nutrition());
+				}
+
 
 				return (Ingredient) Ingredient.builder()
 						.amount(i.amount()).label(i.label()).unit(unit).unitLocalized(i.unitLocalized()).nutrition(nutrition).build();
@@ -208,7 +220,13 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 								}
 							}
 
-							var nutrition = Nutrition.fromNutritionDraft(i.nutrition());
+							Nutrition nutrition = null;
+							if (openFoodFactsService.isPresent() && StringUtils.isNotBlank(Optional.ofNullable(i.nutrition()).map(NutritionDraft::openFoodFactsId).orElse(null))) {
+								var draft = openFoodFactsService.get().fetchProduct(i.nutrition().openFoodFactsId());
+								nutrition = Nutrition.fromNutritionDraft(draft);
+							} else {
+								nutrition = Nutrition.fromNutritionDraft(i.nutrition());
+							}
 
 							return (Ingredient) Ingredient.builder()
 									.amount(i.amount()).label(i.label()).unit(unit).unitLocalized(i.unitLocalized()).nutrition(nutrition).build();
