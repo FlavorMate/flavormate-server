@@ -27,7 +27,6 @@ import de.flavormate.ba_entities.instruction.wrapper.InstructionDraft;
 import de.flavormate.ba_entities.instructionGroup.model.InstructionGroup;
 import de.flavormate.ba_entities.instructionGroup.wrapper.InstructionGroupDraft;
 import de.flavormate.ba_entities.nutrition.model.Nutrition;
-import de.flavormate.ba_entities.nutrition.repository.NutritionRepository;
 import de.flavormate.ba_entities.nutrition.wrapper.NutritionDraft;
 import de.flavormate.ba_entities.openFoodFacts.service.OpenFoodFactsService;
 import de.flavormate.ba_entities.recipe.enums.RecipeDiet;
@@ -74,7 +73,6 @@ public class RecipeService extends BaseService
   private final HighlightRepository highlightRepository;
   private final RecipeRepository recipeRepository;
   private final StoryRepository storyRepository;
-  private final NutritionRepository nutritionRepository;
   private final Optional<OpenFoodFactsService> openFoodFactsService;
   private final TagRepository tagRepository;
   private final UnitRepository unitRepository;
@@ -384,8 +382,7 @@ public class RecipeService extends BaseService
         .collect(Collectors.toList());
   }
 
-  public List<Recipe> findRandomByDietAndCourse(RecipeDiet diet, String course, int amount)
-      throws CustomException {
+  public List<Recipe> findRandomByDietAndCourse(RecipeDiet diet, String course, int amount) {
     return recipeRepository.findRandomRecipeByDiet(RecipeDiet.getFilterNames(diet), course, amount);
   }
 
@@ -414,7 +411,7 @@ public class RecipeService extends BaseService
       }
     }
 
-    Nutrition nutrition = null;
+    Nutrition nutrition;
     if (openFoodFactsService.isPresent()
         && StringUtils.isNotBlank(
             Optional.ofNullable(i.nutrition()).map(NutritionDraft::openFoodFactsId).orElse(null))) {
