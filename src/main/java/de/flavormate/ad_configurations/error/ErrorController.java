@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ad_configurations.error;
 
 import de.flavormate.ad_configurations.flavormate.CommonConfig;
@@ -12,12 +13,11 @@ import org.thymeleaf.TemplateEngine;
 @RequiredArgsConstructor
 public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
 
-	private final TemplateEngine templateEngine;
-	private final CommonConfig commonConfig;
+  private final TemplateEngine templateEngine;
+  private final CommonConfig commonConfig;
 
-
-	@RequestMapping("/error")
-	public String handleError() {
-		return new MainPage(templateEngine, commonConfig).process(Fragments.ERROR, null);
-	}
+  @RequestMapping("/error")
+  public String handleError() {
+    return new MainPage(templateEngine, commonConfig).process(Fragments.ERROR, null);
+  }
 }

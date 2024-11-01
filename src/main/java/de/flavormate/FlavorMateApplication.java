@@ -1,4 +1,7 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate;
+
+import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
 
 import de.flavormate.aa_interfaces.converters.StringToVersionConverter;
 import de.flavormate.ad_configurations.flavormate.*;
@@ -10,24 +13,26 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
-
 @SpringBootApplication
 @EnableScheduling
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
-@EnableConfigurationProperties({AdminUserConfig.class, CommonConfig.class, FeaturesConfig.class, MailConfig.class, MiscConfig.class, PathsConfig.class})
-
+@EnableConfigurationProperties({
+  AdminUserConfig.class,
+  CommonConfig.class,
+  FeaturesConfig.class,
+  MailConfig.class,
+  MiscConfig.class,
+  PathsConfig.class
+})
 public class FlavorMateApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(FlavorMateApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(FlavorMateApplication.class, args);
+  }
 
-	@Bean
-	@ConfigurationPropertiesBinding
-	public StringToVersionConverter stringToVersionConverter() {
-		return new StringToVersionConverter();
-	}
+  @Bean
+  @ConfigurationPropertiesBinding
+  public StringToVersionConverter stringToVersionConverter() {
+    return new StringToVersionConverter();
+  }
 }
-
-

@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.categoryGroup.model;
 
 import de.flavormate.aa_interfaces.models.Localization;
@@ -18,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 public class CategoryGroupLocalization extends Localization {
 
-	@ManyToOne
-	@MapsId("foreignId")
-	private CategoryGroup categoryGroup;
+  @ManyToOne
+  @MapsId("foreignId")
+  private CategoryGroup categoryGroup;
 }

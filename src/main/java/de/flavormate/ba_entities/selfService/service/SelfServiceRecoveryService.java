@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.selfService.service;
 
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
@@ -12,6 +13,7 @@ import de.flavormate.ba_entities.token.repository.TokenRepository;
 import de.flavormate.bb_thymeleaf.Fragments;
 import de.flavormate.bb_thymeleaf.MainPage;
 import jakarta.mail.MessagingException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.MessageSource;
@@ -19,70 +21,73 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 
-import java.util.Map;
-
-@ConditionalOnProperty(prefix = "flavormate.features.recovery", value = "enabled", havingValue = "true")
+@ConditionalOnProperty(
+    prefix = "flavormate.features.recovery",
+    value = "enabled",
+    havingValue = "true")
 @RequiredArgsConstructor
 @Service
 public class SelfServiceRecoveryService {
 
-	private final AccountRepository accountRepository;
-	private final MailService mailService;
-	private final TemplateEngine templateEngine;
-	private final TokenRepository tokenRepository;
-	private final PasswordEncoder passwordEncoder;
-	private final CommonConfig commonConfig;
-	private final MessageSource messageSource;
+  private final AccountRepository accountRepository;
+  private final MailService mailService;
+  private final TemplateEngine templateEngine;
+  private final TokenRepository tokenRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final CommonConfig commonConfig;
+  private final MessageSource messageSource;
 
+  public Boolean resetPassword(String mail) throws NotFoundException, MessagingException {
+    var account =
+        accountRepository.findByMail(mail).orElseThrow(() -> new NotFoundException(Account.class));
 
-	public Boolean resetPassword(String mail) throws NotFoundException, MessagingException {
-		var account = accountRepository.findByMail(mail)
-				.orElseThrow(() -> new NotFoundException(Account.class));
+    Token token = tokenRepository.save(Token.PasswordToken(account));
 
-		Token token = tokenRepository.save(Token.PasswordToken(account));
+    Map<String, Object> data =
+        Map.ofEntries(
+            Map.entry("username", account.getUsername()),
+            Map.entry("name", account.getDisplayName()),
+            Map.entry("token", token.getToken()));
 
-		Map<String, Object> data = Map.ofEntries(
-				Map.entry("username", account.getUsername()),
-				Map.entry("name", account.getDisplayName()),
-				Map.entry("token", token.getToken())
-		);
+    var html =
+        new MainPage(templateEngine, commonConfig).process(Fragments.RECOVERY_PASSWORD_MAIL, data);
 
-		var html = new MainPage(templateEngine, commonConfig).process(Fragments.RECOVERY_PASSWORD_MAIL, data);
+    var passwordMail = new PasswordRecoveryMail(account.getMail(), messageSource);
 
-		var passwordMail = new PasswordRecoveryMail(account.getMail(), messageSource);
+    mailService.sendMail(passwordMail, html);
 
-		mailService.sendMail(passwordMail, html);
+    return true;
+  }
 
-		return true;
-	}
+  public String resetPasswordConfirm(String tokenId, ForcePasswordForm form) {
+    var site = new MainPage(templateEngine, commonConfig);
+    try {
+      Token token =
+          tokenRepository
+              .findByToken(tokenId)
+              .orElseThrow(() -> new NotFoundException(Token.class));
 
-	public String resetPasswordConfirm(String tokenId, ForcePasswordForm form) {
-		var site = new MainPage(templateEngine, commonConfig);
-		try {
-			Token token = tokenRepository.findByToken(tokenId)
-					.orElseThrow(() -> new NotFoundException(Token.class));
+      Account account =
+          accountRepository
+              .findById(token.getOwner().getId())
+              .orElseThrow(() -> new NotFoundException(Account.class));
 
-			Account account = accountRepository.findById(token.getOwner().getId())
-					.orElseThrow(() -> new NotFoundException(Account.class));
+      account.setPassword(passwordEncoder.encode(form.password()));
 
-			account.setPassword(passwordEncoder.encode(form.password()));
+      accountRepository.save(account);
 
-			accountRepository.save(account);
+      tokenRepository.deleteById(token.getId());
 
-			tokenRepository.deleteById(token.getId());
+      return site.process(Fragments.RECOVERY_PASSWORD_OK, null);
+    } catch (Exception e) {
+      return site.process(Fragments.RECOVERY_PASSWORD_FAILED, null);
+    }
+  }
 
-			return site.process(Fragments.RECOVERY_PASSWORD_OK, null);
-		} catch (Exception e) {
-			return site.process(Fragments.RECOVERY_PASSWORD_FAILED, null);
-		}
-	}
+  public String resetPasswordPage(String token) {
+    Map<String, Object> data = Map.ofEntries(Map.entry("token", token));
 
-
-	public String resetPasswordPage(String token) {
-		Map<String, Object> data = Map.ofEntries(
-				Map.entry("token", token)
-		);
-
-		return new MainPage(templateEngine, commonConfig).process(Fragments.RECOVERY_PASSWORD_FORM, data);
-	}
+    return new MainPage(templateEngine, commonConfig)
+        .process(Fragments.RECOVERY_PASSWORD_FORM, data);
+  }
 }

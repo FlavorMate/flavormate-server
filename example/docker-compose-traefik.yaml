@@ -39,7 +39,7 @@ services:
     networks:
       - flavormate
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 30s
       timeout: 30s
       retries: 5

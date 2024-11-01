@@ -1,17 +1,17 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.bring.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.tag.model.Tag;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Getter
 @Setter
@@ -19,88 +19,110 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecipeSchema {
 
-	@JsonProperty("@context")
-	private final String context = "https://schema.org/";
+  @JsonProperty("@context")
+  private final String context = "https://schema.org/";
 
-	@JsonProperty("@type")
-	private final String type = "Recipe";
+  @JsonProperty("@type")
+  private final String type = "Recipe";
 
-	private final String name;
+  private final String name;
 
-	private final List<String> image;
+  private final List<String> image;
 
-	private final AuthorSchema author;
+  private final AuthorSchema author;
 
-	private final String datePublished;
+  private final String datePublished;
 
-	private final String description;
+  private final String description;
 
-	private final String prepTime;
+  private final String prepTime;
 
-	private final String cookTime;
+  private final String cookTime;
 
-	private final String totalTime;
+  private final String totalTime;
 
-	private final String keywords;
+  private final String keywords;
 
-	private final String recipeYield;
+  private final String recipeYield;
 
-	private final String recipeCategory;
+  private final String recipeCategory;
 
-	@JsonProperty("recipeIngredient")
-	private final List<String> recipeIngredients;
+  @JsonProperty("recipeIngredient")
+  private final List<String> recipeIngredients;
 
-	@JsonProperty("recipeInstructions")
-	private final List<InstructionSchema> recipeInstructions;
+  @JsonProperty("recipeInstructions")
+  private final List<InstructionSchema> recipeInstructions;
 
-	private final String url;
+  private final String url;
 
-	public static RecipeSchema fromRecipe(Recipe recipe, Integer serving) {
+  public static RecipeSchema fromRecipe(Recipe recipe, Integer serving) {
 
-		var name = recipe.getLabel();
+    var name = recipe.getLabel();
 
-		var images = new ArrayList<String>();
-		if (recipe.getCoverUrl() != null)
-			images.add(recipe.getCoverUrl());
+    var images = new ArrayList<String>();
+    if (recipe.getCoverUrl() != null) images.add(recipe.getCoverUrl());
 
-		var author = new AuthorSchema(recipe.getAuthor().getAccount().getDisplayName());
+    var author = new AuthorSchema(recipe.getAuthor().getAccount().getDisplayName());
 
-		var datePublished = recipe.getCreatedOn().toString();
+    var datePublished = recipe.getCreatedOn().toString();
 
-		var description = recipe.getDescription();
+    var description = recipe.getDescription();
 
-		var prepTime = recipe.getPrepTime().toString();
+    var prepTime = recipe.getPrepTime().toString();
 
-		var cookTime = recipe.getCookTime().plus(recipe.getRestTime()).toString();
+    var cookTime = recipe.getCookTime().plus(recipe.getRestTime()).toString();
 
-		var totalTime = recipe.getCookTime().plus(recipe.getRestTime()).plus(recipe.getPrepTime())
-				.toString();
+    var totalTime =
+        recipe.getCookTime().plus(recipe.getRestTime()).plus(recipe.getPrepTime()).toString();
 
-		var keywords =
-				StringUtils.join(recipe.getTags().stream().map(Tag::getLabel).toList(), ", ");
+    var keywords = StringUtils.join(recipe.getTags().stream().map(Tag::getLabel).toList(), ", ");
 
-		var recipeYield = recipe.getServing().toString(serving);
+    var recipeYield = recipe.getServing().toString(serving);
 
-		var recipeCategory = recipe.getCourse().toString();
+    var recipeCategory = recipe.getCourse().toString();
 
-		// TODO: handle unit v2
-		var recipeIngredients = recipe.getIngredientGroups().stream()
-				.map(iG -> iG.getIngredients().stream().map(i -> {
-					i.setAmount(i.getAmount() * (serving / recipe.getServing().getAmount()));
-					return i.toString();
-				}).toList()).flatMap(Collection::stream).toList();
+    // TODO: handle unit v2
+    var recipeIngredients =
+        recipe.getIngredientGroups().stream()
+            .map(
+                iG ->
+                    iG.getIngredients().stream()
+                        .map(
+                            i -> {
+                              i.setAmount(
+                                  i.getAmount() * (serving / recipe.getServing().getAmount()));
+                              return i.toString();
+                            })
+                        .toList())
+            .flatMap(Collection::stream)
+            .toList();
 
-		var recipeInstructions = recipe.getInstructionGroups().stream()
-				.map(iG -> iG.getInstructions().stream()
-						.map(i -> new InstructionSchema(i.getLabel())).toList())
-				.flatMap(Collection::stream).toList();
+    var recipeInstructions =
+        recipe.getInstructionGroups().stream()
+            .map(
+                iG ->
+                    iG.getInstructions().stream()
+                        .map(i -> new InstructionSchema(i.getLabel()))
+                        .toList())
+            .flatMap(Collection::stream)
+            .toList();
 
-		var url = recipe.getUrl();
+    var url = recipe.getUrl();
 
-		return new RecipeSchema(name, images, author, datePublished, description, prepTime,
-				cookTime, totalTime, keywords, recipeYield, recipeCategory, recipeIngredients,
-				recipeInstructions, url);
-	}
+    return new RecipeSchema(
+        name,
+        images,
+        author,
+        datePublished,
+        description,
+        prepTime,
+        cookTime,
+        totalTime,
+        keywords,
+        recipeYield,
+        recipeCategory,
+        recipeIngredients,
+        recipeInstructions,
+        url);
+  }
 }
-
-

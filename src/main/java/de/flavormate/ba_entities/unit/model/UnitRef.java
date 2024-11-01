@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.unit.model;
 
 import de.flavormate.aa_interfaces.models.ManualBaseEntity;
@@ -18,6 +19,5 @@ import lombok.experimental.SuperBuilder;
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 public class UnitRef extends ManualBaseEntity {
 
-	@NotNull
-	private String description;
+  @NotNull private String description;
 }

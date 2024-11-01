@@ -1,5 +1,5 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.role.model;
-
 
 import de.flavormate.aa_interfaces.models.ManualBaseEntity;
 import jakarta.persistence.Column;
@@ -17,8 +17,6 @@ import lombok.*;
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 public class Role extends ManualBaseEntity {
 
-	@NotNull
-	@Column(nullable = false)
-	private String label;
-
+  @NotNull @Column(nullable = false)
+  private String label;
 }

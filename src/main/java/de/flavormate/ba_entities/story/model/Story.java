@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.story.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,18 +21,15 @@ import org.hibernate.annotations.OnDeleteAction;
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 public class Story extends BaseEntity {
 
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "recipe_id", referencedColumnName = "id", nullable = false)
-	@JsonIgnoreProperties({"author", "books", "categories", "tags"})
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	private Recipe recipe;
+  @NotNull @ManyToOne
+  @JoinColumn(name = "recipe_id", referencedColumnName = "id", nullable = false)
+  @JsonIgnoreProperties({"author", "books", "categories", "tags"})
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Recipe recipe;
 
-	@NotNull
-	@Column(columnDefinition = "TEXT")
-	private String content;
+  @NotNull @Column(columnDefinition = "TEXT")
+  private String content;
 
-	@NotNull
-	@Column(columnDefinition = "TEXT")
-	private String label;
+  @NotNull @Column(columnDefinition = "TEXT")
+  private String label;
 }

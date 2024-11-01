@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.author.service;
 
 import de.flavormate.aa_interfaces.services.IExtractRecipesService;
@@ -13,13 +14,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class AuthorService implements IExtractRecipesService, ISearchService<Author> {
-	private final AuthorRepository authorRepository;
+  private final AuthorRepository authorRepository;
 
-	public Page<Recipe> findRecipesFromParent(Long id, Pageable pageable) {
-		return authorRepository.findRecipesFromParent(id, pageable);
-	}
+  public Page<Recipe> findRecipesFromParent(Long id, Pageable pageable) {
+    return authorRepository.findRecipesFromParent(id, pageable);
+  }
 
-	public Page<Author> findBySearch(String searchTerm, Pageable pageable) {
-		return authorRepository.findBySearch(searchTerm, pageable);
-	}
+  public Page<Author> findBySearch(String searchTerm, Pageable pageable) {
+    return authorRepository.findBySearch(searchTerm, pageable);
+  }
 }

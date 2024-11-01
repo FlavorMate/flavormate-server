@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.unit.model;
 
 import jakarta.persistence.EmbeddedId;
@@ -13,9 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class UnitConversion {
-	@EmbeddedId
-	private UnitConversionId id;
+  @EmbeddedId private UnitConversionId id;
 
-	private double factor;
-
+  private double factor;
 }

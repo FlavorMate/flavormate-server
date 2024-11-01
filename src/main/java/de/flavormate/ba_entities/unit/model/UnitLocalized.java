@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.unit.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,38 +19,35 @@ import org.apache.commons.lang3.StringUtils;
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 public class UnitLocalized extends ManualBaseEntity {
 
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "unit_ref", referencedColumnName = "id", nullable = false)
-	private UnitRef unitRef;
+  @NotNull @ManyToOne
+  @JoinColumn(name = "unit_ref", referencedColumnName = "id", nullable = false)
+  private UnitRef unitRef;
 
-	@NotNull
-	@Column(nullable = false)
-	private String language;
+  @NotNull @Column(nullable = false)
+  private String language;
 
-	@NotNull
-	@Column(nullable = false)
-	private String labelSg;
-	private String labelSgAbrv;
+  @NotNull @Column(nullable = false)
+  private String labelSg;
 
+  private String labelSgAbrv;
 
-	private String labelPl;
-	private String labelPlAbrv;
+  private String labelPl;
+  private String labelPlAbrv;
 
-	@JsonIgnore
-	@Transient
-	public String getLabel(Double amount) {
-		if (amount != null) {
-			if (!StringUtils.isBlank(labelPlAbrv)) {
-				return labelPlAbrv;
-			} else if (!StringUtils.isBlank(labelPl)) {
-				return labelPl;
-			}
-		}
-		if (!StringUtils.isBlank(labelSgAbrv)) {
-			return labelSgAbrv;
-		} else {
-			return labelSg;
-		}
-	}
+  @JsonIgnore
+  @Transient
+  public String getLabel(Double amount) {
+    if (amount != null) {
+      if (!StringUtils.isBlank(labelPlAbrv)) {
+        return labelPlAbrv;
+      } else if (!StringUtils.isBlank(labelPl)) {
+        return labelPl;
+      }
+    }
+    if (!StringUtils.isBlank(labelSgAbrv)) {
+      return labelSgAbrv;
+    } else {
+      return labelSg;
+    }
+  }
 }

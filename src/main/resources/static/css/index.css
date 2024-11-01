@@ -1,147 +1,146 @@
-
 :root {
-    --primary: #8BC34A;
+  --primary: #8bc34a;
 
-    --bg-secondary-light: #f2f4f6;
-    --bg-secondary-dark: #28292a;
+  --bg-secondary-light: #f2f4f6;
+  --bg-secondary-dark: #28292a;
 
-    --bg-primary-light: white;
-    --bg-primary-dark: black;
+  --bg-primary-light: white;
+  --bg-primary-dark: black;
 
-    --font-primary-light: black;
-    --font-primary-dark: white;
+  --font-primary-light: black;
+  --font-primary-dark: white;
 }
 
 body {
-    margin: 0;
-    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-    line-height: 1.5;
+  margin: 0;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  line-height: 1.5;
 }
 
 @media (prefers-color-scheme: light) {
-    header,
-    footer {
-        background-color: var(--bg-secondary-light);
-    }
+  header,
+  footer {
+    background-color: var(--bg-secondary-light);
+  }
 
-    main {
-        background-color: var(--bg-primary-light);
-    }
+  main {
+    background-color: var(--bg-primary-light);
+  }
 
-    body,
-    .text-primary {
-        color: var(--font-primary-light);
-    }
+  body,
+  .text-primary {
+    color: var(--font-primary-light);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
-    header,
-    footer {
-        background-color: var(--bg-secondary-dark);
-    }
+  header,
+  footer {
+    background-color: var(--bg-secondary-dark);
+  }
 
-    main {
-        background-color: var(--bg-primary-dark);
-    }
+  main {
+    background-color: var(--bg-primary-dark);
+  }
 
-    body,
-    .text-primary {
-        color: var(--font-primary-dark);
-    }
+  body,
+  .text-primary {
+    color: var(--font-primary-dark);
+  }
 }
 
 header,
 footer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  gap: 8px;
 }
 
 footer {
-    font-size: smaller;
+  font-size: smaller;
 }
 
 main {
-    padding: 16px;
+  padding: 16px;
 }
 
 .h2 {
-    font-size: 1.5em;
-    font-weight: bold;
+  font-size: 1.5em;
+  font-weight: bold;
 }
 
 .h3 {
-    font-size: 1.3em;
+  font-size: 1.3em;
 }
 
 .h4 {
-    font-size: 1.25em;
+  font-size: 1.25em;
 }
 
 .content {
-    color: #74787e;
-    max-width: 450px;
-    display: flex;
-    flex-direction: column;
+  color: #74787e;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
 }
 
 .btn {
-    cursor: pointer;
-    width: 100%;
-    background-color: var(--primary);
-    border: none;
-    border-radius: 8px;
-    padding: 16px;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    color: white;
-    text-decoration: none;
-    text-align: center;
-    display: inline-block;
+  cursor: pointer;
+  width: 100%;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
 }
 
 p {
-    margin-top: 8px;
-    margin-bottom: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .link {
-    color: var(--primary);
-    text-decoration: none;
+  color: var(--primary);
+  text-decoration: none;
 }
 
 main {
-    height: calc(100dvh - 80px - 52px - 32px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  height: calc(100dvh - 80px - 52px - 32px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .password-requirements {
-    align-self: center;
-    margin-right: 16px;
+  align-self: center;
+  margin-right: 16px;
 }
 
 .toggle-password-label {
-    display: inline-block;
-    margin-top: 4px;
+  display: inline-block;
+  margin-top: 4px;
 }
 
 li {
-    padding-left: 16px;
-    list-style-type: "❌";
+  padding-left: 16px;
+  list-style-type: "❌";
 }
 
 .center-content {
-    align-self: center;
-    width: 250px;
+  align-self: center;
+  width: 250px;
 }
 
 .input {
-    width: 100%;
-    border: solid 1px #ccc;
-    height: 24px;
-    border-radius: 8px;
+  width: 100%;
+  border: solid 1px #ccc;
+  height: 24px;
+  border-radius: 8px;
 }

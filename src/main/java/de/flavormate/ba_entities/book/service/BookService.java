@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.book.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,183 +18,201 @@ import de.flavormate.ba_entities.book.wrapper.BookDraft;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
 import de.flavormate.utils.JSONUtils;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RequiredArgsConstructor
 @Service
-public class BookService extends BaseService implements ICRUDService<Book, BookDraft>, IPageableService<Book>, ISearchService<Book> {
+public class BookService extends BaseService
+    implements ICRUDService<Book, BookDraft>, IPageableService<Book>, ISearchService<Book> {
 
-	private final AuthorRepository authorRepository;
-	private final BookRepository bookRepository;
-	private final RecipeRepository recipeRepository;
+  private final AuthorRepository authorRepository;
+  private final BookRepository bookRepository;
+  private final RecipeRepository recipeRepository;
 
+  @Override
+  public Book create(BookDraft object) throws CustomException {
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
 
-	@Override
-	public Book create(BookDraft object) throws CustomException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
-				.orElseThrow(() -> new NotFoundException(Author.class));
+    var book = Book.builder().label(object.label()).owner(author).visible(false).build();
 
-		var book = Book.builder().label(object.label()).owner(author).visible(false).build();
+    book = bookRepository.save(book);
 
-		book = bookRepository.save(book);
+    author.getBooks().add(book);
 
-		author.getBooks().add(book);
+    authorRepository.save(author);
 
-		authorRepository.save(author);
+    return book;
+  }
 
-		return book;
-	}
+  @Override
+  public Book update(Long id, JsonNode json) throws CustomException {
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
+    var book = this.findById(id);
 
-	@Override
-	public Book update(Long id, JsonNode json) throws CustomException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Author.class));
-		var book = this.findById(id);
+    if (!book.getOwner().getId().equals(author.getId())) {
+      throw new ForbiddenException(Book.class);
+    }
 
-		if (!book.getOwner().getId().equals(author.getId())) {
-			throw new ForbiddenException(Book.class);
-		}
+    if (json.has("label")) {
+      var label = JSONUtils.parseObject(json.get("label"), String.class);
+      book.setLabel(label);
+    }
 
-		if (json.has("label")) {
-			var label = JSONUtils.parseObject(json.get("label"), String.class);
-			book.setLabel(label);
-		}
+    if (json.has("visible")) {
+      var visible = JSONUtils.parseObject(json.get("visible"), Boolean.class);
+      book.setVisible(visible);
+    }
 
-		if (json.has("visible")) {
-			var visible = JSONUtils.parseObject(json.get("visible"), Boolean.class);
-			book.setVisible(visible);
-		}
+    return bookRepository.save(book);
+  }
 
-		return bookRepository.save(book);
-	}
+  @Override
+  public boolean deleteById(Long id) throws CustomException {
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
+    var book = findById(id);
 
-	@Override
-	public boolean deleteById(Long id) throws CustomException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Author.class));
-		var book = findById(id);
+    if (!book.getOwner().getId().equals(author.getId())) {
+      throw new ForbiddenException(Book.class);
+    }
 
-		if (!book.getOwner().getId().equals(author.getId())) {
-			throw new ForbiddenException(Book.class);
-		}
+    var authors = authorRepository.findAllByBookIds(List.of((id)));
 
-		var authors = authorRepository.findAllByBookIds(List.of((id)));
+    for (var a : authors) {
+      a.getBooks().removeIf(b -> b.getId().equals(id));
+      authorRepository.save(a);
+    }
 
-		for (var a : authors) {
-			a.getBooks().removeIf(b -> b.getId().equals(id));
-			authorRepository.save(a);
-		}
+    for (var recipe : book.getRecipes()) {
+      recipe.toggleBook(book);
+      recipeRepository.save(recipe);
+    }
 
+    bookRepository.deleteById(id);
 
-		for (var recipe : book.getRecipes()) {
-			recipe.toggleBook(book);
-			recipeRepository.save(recipe);
-		}
+    return true;
+  }
 
-		bookRepository.deleteById(id);
+  @Override
+  public Book findById(Long id) throws CustomException {
+    return bookRepository
+        .findById(id, getPrincipal().getUsername())
+        .orElseThrow(() -> new NotFoundException(Book.class));
+  }
 
-		return true;
-	}
+  @Override
+  public List<Book> findAll() throws CustomException {
+    return bookRepository.findAll(getPrincipal().getUsername());
+  }
 
-	@Override
-	public Book findById(Long id) throws CustomException {
-		return bookRepository.findById(id, getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Book.class));
-	}
+  @Override
+  public Page<Book> findByPage(Pageable pageable) throws CustomException {
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
 
-	@Override
-	public List<Book> findAll() throws CustomException {
-		return bookRepository.findAll(getPrincipal().getUsername());
-	}
+    var ids = author.getBooks().stream().map(BaseEntity::getId).collect(Collectors.toList());
+    ids.addAll(author.getSubscribedBooks().stream().map(BaseEntity::getId).toList());
 
-	@Override
-	public Page<Book> findByPage(Pageable pageable) throws CustomException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
-				.orElseThrow(() -> new NotFoundException(Author.class));
+    return bookRepository.findByIds(ids, pageable);
+  }
 
-		var ids = author.getBooks().stream().map(BaseEntity::getId).collect(Collectors.toList());
-		ids.addAll(author.getSubscribedBooks().stream().map(BaseEntity::getId).toList());
+  public List<Book> findOwn() throws CustomException {
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
 
-		return bookRepository.findByIds(ids, pageable);
-	}
+    var ids = author.getBooks().stream().map(BaseEntity::getId).toList();
 
-	public List<Book> findOwn() throws CustomException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
-				.orElseThrow(() -> new NotFoundException(Author.class));
+    return bookRepository.findByIds(ids);
+  }
 
-		var ids = author.getBooks().stream().map(BaseEntity::getId).toList();
+  @Override
+  public Page<Book> findBySearch(String searchTerm, Pageable pageable) {
+    return bookRepository.findBySearch(searchTerm, getPrincipal().getUsername(), pageable);
+  }
 
-		return bookRepository.findByIds(ids);
-	}
+  public Page<Recipe> findRecipesFromParent(Long id, Pageable pageable) throws CustomException {
+    if (findById(id).getVisible()) return recipeRepository.findByBook(id, pageable);
+    else return recipeRepository.findByBookPrivate(id, getPrincipal().getUsername(), pageable);
+  }
 
-	@Override
-	public Page<Book> findBySearch(String searchTerm, Pageable pageable) {
-		return bookRepository.findBySearch(searchTerm, getPrincipal().getUsername(), pageable);
-	}
+  public Book toggleRecipe(Long bookId, Long recipeId) throws CustomException {
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
+    var book = findById(bookId);
 
-	public Page<Recipe> findRecipesFromParent(Long id, Pageable pageable) throws CustomException {
-		if (findById(id).getVisible())
-			return recipeRepository.findByBook(id, pageable);
-		else
-			return recipeRepository.findByBookPrivate(id, getPrincipal().getUsername(), pageable);
-	}
+    if (!book.getOwner().getId().equals(author.getId())) {
+      throw new ForbiddenException(Book.class);
+    }
 
-	public Book toggleRecipe(Long bookId, Long recipeId) throws CustomException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Author.class));
-		var book = findById(bookId);
+    var recipe =
+        recipeRepository.findById(recipeId).orElseThrow(() -> new NotFoundException(Recipe.class));
 
-		if (!book.getOwner().getId().equals(author.getId())) {
-			throw new ForbiddenException(Book.class);
-		}
+    book.toggleRecipe(recipe);
 
-		var recipe = recipeRepository.findById(recipeId)
-				.orElseThrow(() -> new NotFoundException(Recipe.class));
+    recipe.toggleBook(book);
 
-		book.toggleRecipe(recipe);
+    recipeRepository.save(recipe);
 
-		recipe.toggleBook(book);
+    return bookRepository.save(book);
+  }
 
-		recipeRepository.save(recipe);
+  public Boolean toggleSubscription(Long id) throws NotFoundException, ForbiddenException {
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
 
-		return bookRepository.save(book);
+    var book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException(Book.class));
 
-	}
+    var isPublic = !book.getOwner().getId().equals(author.getId()) && book.getVisible();
 
-	public Boolean toggleSubscription(Long id) throws NotFoundException, ForbiddenException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
-				.orElseThrow(() -> new NotFoundException(Author.class));
+    if (!isPublic) {
+      throw new ForbiddenException(Book.class);
+    }
 
-		var book = bookRepository.findById(id)
-				.orElseThrow(() -> new NotFoundException(Book.class));
+    var authorIsPresent = book.getSubscriber().removeIf(a -> a.getId().equals(author.getId()));
 
-		var isPublic = !book.getOwner().getId().equals(author.getId()) && book.getVisible();
+    if (!authorIsPresent) {
+      book.getSubscriber().add(author);
+    }
 
-		if (!isPublic) {
-			throw new ForbiddenException(Book.class);
-		}
+    bookRepository.save(book);
 
-		var authorIsPresent =
-				book.getSubscriber().removeIf(a -> a.getId().equals(author.getId()));
+    return true;
+  }
 
-		if (!authorIsPresent) {
-			book.getSubscriber().add(author);
-		}
+  public Boolean subscribed(Long id) throws NotFoundException {
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
 
-		bookRepository.save(book);
-
-		return true;
-	}
-
-	public Boolean subscribed(Long id) throws NotFoundException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
-				.orElseThrow(() -> new NotFoundException(Author.class));
-
-		return author.getSubscribedBooks().stream().anyMatch(book -> book.getId().equals(id)
-				&& !book.getOwner().getAccount().getUsername().equals(getPrincipal().getUsername()));
-	}
-
-
+    return author.getSubscribedBooks().stream()
+        .anyMatch(
+            book ->
+                book.getId().equals(id)
+                    && !book.getOwner()
+                        .getAccount()
+                        .getUsername()
+                        .equals(getPrincipal().getUsername()));
+  }
 }

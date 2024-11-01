@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.highlight.controller;
 
 import de.flavormate.aa_interfaces.controllers.IPageableController;
@@ -14,23 +15,26 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/v2/highlights")
 public class HighlightController implements IPageableController<Highlight> {
-	private final HighlightService highlightService;
+  private final HighlightService highlightService;
 
-	@GetMapping("/list/{diet}")
-	public Page<Highlight> findAllByDiet(@RequestParam(defaultValue = "0") Integer page,
-	                                     @RequestParam(defaultValue = "6") Integer size,
-	                                     @RequestParam(defaultValue = "id") String sortBy,
-	                                     @RequestParam(defaultValue = "DESC") String sortDirection,
-	                                     @PathVariable("diet") RecipeDiet filter) throws CustomException {
+  @GetMapping("/list/{diet}")
+  public Page<Highlight> findAllByDiet(
+      @RequestParam(defaultValue = "0") Integer page,
+      @RequestParam(defaultValue = "6") Integer size,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "DESC") String sortDirection,
+      @PathVariable("diet") RecipeDiet filter)
+      throws CustomException {
 
-		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
+    var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
 
-		return highlightService.findByPageAndDiet(pageable, filter);
-	}
+    return highlightService.findByPageAndDiet(pageable, filter);
+  }
 
-	@Override
-	public Page<Highlight> findByPage(int page, int size, String sortBy, String sortDirection) throws CustomException {
-		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
-		return highlightService.findByPageAndDiet(pageable, RecipeDiet.Meat);
-	}
+  @Override
+  public Page<Highlight> findByPage(int page, int size, String sortBy, String sortDirection)
+      throws CustomException {
+    var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
+    return highlightService.findByPageAndDiet(pageable, RecipeDiet.Meat);
+  }
 }

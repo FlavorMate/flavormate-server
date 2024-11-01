@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.nutrition.model;
 
 import de.flavormate.aa_interfaces.models.BaseEntity;
@@ -18,33 +19,33 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class Nutrition extends BaseEntity {
-	private String openFoodFactsId;
+  private String openFoodFactsId;
 
-	// Nutritional values per 100g
-	private double carbohydrates;
-	private double energyKcal;
-	private double fat;
-	private double saturatedFat;
-	private double sugars;
-	private double fiber;
-	private double proteins;
-	private double salt;
-	private double sodium;
+  // Nutritional values per 100g
+  private double carbohydrates;
+  private double energyKcal;
+  private double fat;
+  private double saturatedFat;
+  private double sugars;
+  private double fiber;
+  private double proteins;
+  private double salt;
+  private double sodium;
 
-	public static Nutrition fromNutritionDraft(NutritionDraft draft) {
-		if (draft == null) return null;
-		
-		return Nutrition.builder()
-				.openFoodFactsId(draft.openFoodFactsId())
-				.carbohydrates(draft.carbohydrates())
-				.energyKcal(draft.energyKcal())
-				.fat(draft.fat())
-				.saturatedFat(draft.saturatedFat())
-				.sugars(draft.sugars())
-				.fiber(draft.fiber())
-				.proteins(draft.proteins())
-				.salt(draft.salt())
-				.sodium(draft.sodium())
-				.build();
-	}
+  public static Nutrition fromNutritionDraft(NutritionDraft draft) {
+    if (draft == null) return null;
+
+    return Nutrition.builder()
+        .openFoodFactsId(draft.openFoodFactsId())
+        .carbohydrates(draft.carbohydrates())
+        .energyKcal(draft.energyKcal())
+        .fat(draft.fat())
+        .saturatedFat(draft.saturatedFat())
+        .sugars(draft.sugars())
+        .fiber(draft.fiber())
+        .proteins(draft.proteins())
+        .salt(draft.salt())
+        .sodium(draft.sodium())
+        .build();
+  }
 }

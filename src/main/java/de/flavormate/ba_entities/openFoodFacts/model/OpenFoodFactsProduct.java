@@ -1,4 +1,4 @@
-/* Licensed unter AGPLv3 2024 */
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.openFoodFacts.model;
 
 /**

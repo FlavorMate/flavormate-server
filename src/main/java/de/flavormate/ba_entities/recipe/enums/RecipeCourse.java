@@ -1,7 +1,13 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.recipe.enums;
 
 public enum RecipeCourse {
-	Appetizer, MainDish, Dessert, SideDish, Bakery, Drink
+  Appetizer,
+  MainDish,
+  Dessert,
+  SideDish,
+  Bakery,
+  Drink
 }
 
 // @formatter:off

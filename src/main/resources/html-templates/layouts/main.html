@@ -1,35 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html th:lang="${#locale}">
-<head>
-    <meta charset="UTF-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <link rel="icon" th:href="|${backendUrl}/icons/icon.png|" type="image/png"/>
-    <link rel="stylesheet" th:href="|${backendUrl}/css/index.css|"/>
-    <title>FlavorMate</title>
-</head>
-
-<body>
-<header>
-    <img
-            alt="FlavorMate Logo"
-            style="width: 48px; height: 48px"
-            th:src="|${backendUrl}/icons/icon.png|"
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link
+      rel="icon"
+      th:href="|${backendUrl}/icons/icon.png|"
+      type="image/png"
     />
-    <div class="h2">FlavorMate</div>
-</header>
-<main>
-    <section th:replace="~{${content}}"></section>
-</main>
-<footer>
-    &copy; 2024
-    <a
-            class="link"
-            href="https://flavormate.de"
-            target="_blank"
-    >
-        FlavorMate
-    </a>
-</footer>
-</body>
-</html>
+    <link rel="stylesheet" th:href="|${backendUrl}/css/index.css|" />
+    <title>FlavorMate</title>
+  </head>
 
+  <body>
+    <header>
+      <img
+        alt="FlavorMate Logo"
+        style="width: 48px; height: 48px"
+        th:src="|${backendUrl}/icons/icon.png|"
+      />
+      <div class="h2">FlavorMate</div>
+    </header>
+    <main>
+      <section th:replace="~{${content}}"></section>
+    </main>
+    <footer>
+      &copy; 2024
+      <a class="link" href="https://flavormate.de" target="_blank">
+        FlavorMate
+      </a>
+    </footer>
+  </body>
+</html>

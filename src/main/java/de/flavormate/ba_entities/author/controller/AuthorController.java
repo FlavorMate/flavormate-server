@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.author.controller;
 
 import de.flavormate.aa_interfaces.controllers.IExtractRecipesController;
@@ -16,21 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v2/authors")
 public class AuthorController implements IExtractRecipesController, ISearchController<Author> {
 
-	private final AuthorService authorService;
+  private final AuthorService authorService;
 
-	public Page<Recipe> findRecipesFromParent(Long id, int page, int size, String sortBy, String sortDirection) {
-		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
+  public Page<Recipe> findRecipesFromParent(
+      Long id, int page, int size, String sortBy, String sortDirection) {
+    var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
 
-		return authorService.findRecipesFromParent(id, pageable);
-	}
+    return authorService.findRecipesFromParent(id, pageable);
+  }
 
+  public Page<Author> findBySearch(
+      String searchTerm, int page, int size, String sortBy, String sortDirection) {
+    var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
 
-	public Page<Author> findBySearch(String searchTerm, int page, int size, String sortBy, String sortDirection) {
-		var pageable = RequestUtils.convertPageable(page, size, sortBy, sortDirection);
-
-		return authorService.findBySearch(searchTerm, pageable);
-
-	}
-
-
+    return authorService.findBySearch(searchTerm, pageable);
+  }
 }

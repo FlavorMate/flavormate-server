@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.aa_interfaces.models;
 
 import jakarta.persistence.EmbeddedId;
@@ -15,13 +16,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 public abstract class Localization {
-	@EmbeddedId
-	@EqualsAndHashCode.Include
-	@ToString.Include
-	private LocalizationId id;
+  @EmbeddedId @EqualsAndHashCode.Include @ToString.Include private LocalizationId id;
 
-	@EqualsAndHashCode.Include
-	@ToString.Include
-	private String value;
-
+  @EqualsAndHashCode.Include @ToString.Include private String value;
 }

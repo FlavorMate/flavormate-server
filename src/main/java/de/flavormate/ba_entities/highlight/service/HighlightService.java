@@ -1,3 +1,4 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.highlight.service;
 
 import de.flavormate.aa_interfaces.services.BaseService;
@@ -12,10 +13,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class HighlightService extends BaseService {
-	private final HighlightRepository highlightRepository;
+  private final HighlightRepository highlightRepository;
 
-
-	public Page<Highlight> findByPageAndDiet(Pageable pageable, RecipeDiet filter) {
-		return highlightRepository.findAllByDiet(filter, pageable);
-	}
+  public Page<Highlight> findByPageAndDiet(Pageable pageable, RecipeDiet filter) {
+    return highlightRepository.findAllByDiet(filter, pageable);
+  }
 }

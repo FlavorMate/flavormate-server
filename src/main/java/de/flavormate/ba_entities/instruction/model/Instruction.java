@@ -1,5 +1,5 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.instruction.model;
-
 
 import de.flavormate.aa_interfaces.models.BaseEntity;
 import jakarta.persistence.Column;
@@ -19,8 +19,6 @@ import lombok.experimental.SuperBuilder;
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 public class Instruction extends BaseEntity {
 
-	@NotNull
-	@Column(nullable = false, columnDefinition = "TEXT")
-	private String label;
-
+  @NotNull @Column(nullable = false, columnDefinition = "TEXT")
+  private String label;
 }
