@@ -60,6 +60,7 @@ public class S11_MigrateIngredientsToV2 implements AScript {
 
         // If unit is set, try to find the new localized unit
         if (label != null) {
+
           var possibleUnits = unitLocalizedRepository.findByLabel(label);
           if (possibleUnits.isEmpty()) {
             var recipe = recipeRepository.findByIngredient(ingredient.getId());
@@ -72,7 +73,6 @@ public class S11_MigrateIngredientsToV2 implements AScript {
                     label));
             continue;
           } else {
-
             // get the localized units that match the preferred language
             var possibleUnitsLocalized =
                 possibleUnits.stream()
@@ -127,7 +127,7 @@ public class S11_MigrateIngredientsToV2 implements AScript {
               }
             } else {
               // if there is only one unit, use it
-              ingredient.setUnitLocalized(possibleUnits.getFirst());
+              ingredient.setUnitLocalized(possibleUnitsLocalized.getFirst());
             }
 
             ingredient.setUnit(null);
