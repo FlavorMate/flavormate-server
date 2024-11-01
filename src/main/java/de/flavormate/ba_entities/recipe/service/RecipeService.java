@@ -18,9 +18,13 @@ import de.flavormate.ba_entities.category.repository.CategoryRepository;
 import de.flavormate.ba_entities.file.repository.FileRepository;
 import de.flavormate.ba_entities.highlight.repository.HighlightRepository;
 import de.flavormate.ba_entities.ingredient.model.Ingredient;
+import de.flavormate.ba_entities.ingredient.wrapper.IngredientDraft;
 import de.flavormate.ba_entities.ingredientGroup.model.IngredientGroup;
+import de.flavormate.ba_entities.ingredientGroup.wrapper.IngredientGroupDraft;
 import de.flavormate.ba_entities.instruction.model.Instruction;
+import de.flavormate.ba_entities.instruction.wrapper.InstructionDraft;
 import de.flavormate.ba_entities.instructionGroup.model.InstructionGroup;
+import de.flavormate.ba_entities.instructionGroup.wrapper.InstructionGroupDraft;
 import de.flavormate.ba_entities.nutrition.model.Nutrition;
 import de.flavormate.ba_entities.nutrition.repository.NutritionRepository;
 import de.flavormate.ba_entities.nutrition.wrapper.NutritionDraft;
@@ -58,7 +62,9 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RecipeService extends BaseService implements ICRUDService<Recipe, RecipeDraft>, IPageableDietService<Recipe>, ISearchDietService<Recipe> {
+public class RecipeService extends BaseService
+	implements ICRUDService<Recipe, RecipeDraft>, IPageableDietService<Recipe>,
+	ISearchDietService<Recipe> {
 
 	private final AuthorRepository authorRepository;
 	private final BookRepository bookRepository;
@@ -73,69 +79,37 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	private final UnitRepository unitRepository;
 	private final PathsConfig pathsConfig;
 
-
 	@Transactional
 	@Override
 	public Recipe create(RecipeDraft form) throws CustomException {
 
 		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
-				.orElseThrow(() -> new NotFoundException(Account.class));
+			.orElseThrow(() -> new NotFoundException(Account.class));
 
 		var categories =
-				form.categories().stream().map(c -> categoryRepository.findById(c).orElse(null))
-						.filter(Objects::nonNull).toList();
+			form.categories().stream().map(c -> categoryRepository.findById(c).orElse(null))
+				.filter(Objects::nonNull).toList();
 
-		var ingredientGroups = form.ingredientGroups().stream().map(iG -> {
-			var ingredients = iG.ingredients().stream().map(i -> {
-				Unit unit = null;
-				if (i.unit() != null) {
-					unit = unitRepository.findByLabel(i.unit().getLabel()).orElse(null);
-					if (unit == null) {
-						i.unit().setId(null);
-						unit = unitRepository.save(i.unit());
-					}
-				}
+		var ingredientGroups =
+			form.ingredientGroups().stream().map(this::parseIngredientGroup).toList();
 
-				Nutrition nutrition = null;
-				if (openFoodFactsService.isPresent() && StringUtils.isNotBlank(Optional.ofNullable(i.nutrition()).map(NutritionDraft::openFoodFactsId).orElse(null))) {
-					var draft = openFoodFactsService.get().fetchProduct(i.nutrition().openFoodFactsId());
-					nutrition = Nutrition.fromNutritionDraft(draft);
-				} else {
-					nutrition = Nutrition.fromNutritionDraft(i.nutrition());
-				}
+		var instructionGroups =
+			form.instructionGroups().stream().map(this::parseInstructionGroup).toList();
 
+		var serving =
+			Serving.builder().amount(form.serving().amount()).label(form.serving().label()).build();
 
-				return (Ingredient) Ingredient.builder()
-						.amount(i.amount()).label(i.label()).unit(unit).unitLocalized(i.unitLocalized()).nutrition(nutrition).build();
-			}).toList();
-			return (IngredientGroup) IngredientGroup.builder().ingredients(ingredients)
-					.label(iG.label()).build();
-		}).toList();
+		var tags = form.tags().stream().map(
+				tag -> tagRepository.findByLabel(tag.label().toLowerCase()).orElseGet(
+					() -> tagRepository.save(Tag.builder().label(tag.label().toLowerCase()).build())))
+			.toList();
 
-		var instructionGroups = form.instructionGroups().stream().map(iG -> {
-			var instructions = iG.instructions().stream()
-					.map(i -> (Instruction) Instruction.builder().label(i.label()).build())
-					.toList();
-
-			return (InstructionGroup) InstructionGroup.builder().instructions(instructions)
-					.label(iG.label()).build();
-		}).toList();
-
-		var serving = Serving.builder().amount(form.serving().amount())
-				.label(form.serving().label()).build();
-
-		var tags = form.tags().stream()
-				.map(tag -> tagRepository.findByLabel(tag.label().toLowerCase())
-						.orElseGet(() -> tagRepository
-								.save(Tag.builder().label(tag.label().toLowerCase()).build())))
-				.toList();
-
-		var recipe = Recipe.builder().author(author).categories(categories)
-				.cookTime(form.cookTime()).course(form.course()).description(form.description())
-				.diet(form.diet()).ingredientGroups(ingredientGroups)
-				.instructionGroups(instructionGroups).label(form.label()).prepTime(form.prepTime())
-				.rating(0.0).restTime(form.restTime()).serving(serving).tags(tags).url(form.url())
-				.build();
+		var recipe =
+			Recipe.builder().author(author).categories(categories).cookTime(form.cookTime())
+				.course(form.course()).description(form.description()).diet(form.diet())
+				.ingredientGroups(ingredientGroups).instructionGroups(instructionGroups)
+				.label(form.label()).prepTime(form.prepTime()).rating(0.0).restTime(form.restTime())
+				.serving(serving).tags(tags).url(form.url()).build();
 
 		recipe = recipeRepository.save(recipe);
 
@@ -150,11 +124,11 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 		return recipe;
 	}
 
-
 	@Transactional
 	@Override
 	public Recipe update(Long id, JsonNode json) throws CustomException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Account.class));
+		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
+			.orElseThrow(() -> new NotFoundException(Account.class));
 
 		var recipe = this.findById(id);
 
@@ -168,25 +142,25 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 			var categories = categoryRepository.findAllById(data.categories());
 
 			var categoriesR =
-					filterMissingItems(recipe.getCategories(), categories, Category::getId);
+				filterMissingItems(recipe.getCategories(), categories, Category::getId);
 
 			var categoriesA =
-					filterMissingItems(categories, recipe.getCategories(), Category::getId);
+				filterMissingItems(categories, recipe.getCategories(), Category::getId);
 
 			Stream.concat(categoriesR.stream(), categoriesA.stream())
-					.forEach(category -> category.addOrRemoveRecipe(recipe));
+				.forEach(category -> category.addOrRemoveRecipe(recipe));
 		}
 
 		if (data.tags() != null) {
 			var tags = tagRepository.findAllByLabelIn(
-					data.tags().stream().map(t -> t.label().toLowerCase()).toList());
+				data.tags().stream().map(t -> t.label().toLowerCase()).toList());
 
 			var tagsR = filterMissingItems(recipe.getTags(), tags, Tag::getId);
 
 			var tagsA = filterMissingItems(tags, recipe.getTags(), Tag::getId);
 
 			Stream.concat(tagsR.stream(), tagsA.stream())
-					.forEach(tag -> tag.addOrRemoveRecipe(recipe));
+				.forEach(tag -> tag.addOrRemoveRecipe(recipe));
 		}
 
 		if (data.cookTime() != null) {
@@ -208,33 +182,8 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 		if (data.ingredientGroups() != null) {
 			recipe.getIngredientGroups().clear();
 
-			var ingredientGroups = data.ingredientGroups().stream().map(iG -> {
-				var ingredients = iG
-						.ingredients().stream().map(i -> {
-							Unit unit = null;
-							if (i.unit() != null) {
-								unit = unitRepository.findByLabel(i.unit().getLabel()).orElse(null);
-								if (unit == null) {
-									i.unit().setId(null);
-									unit = unitRepository.save(i.unit());
-								}
-							}
-
-							Nutrition nutrition = null;
-							if (openFoodFactsService.isPresent() && StringUtils.isNotBlank(Optional.ofNullable(i.nutrition()).map(NutritionDraft::openFoodFactsId).orElse(null))) {
-								var draft = openFoodFactsService.get().fetchProduct(i.nutrition().openFoodFactsId());
-								nutrition = Nutrition.fromNutritionDraft(draft);
-							} else {
-								nutrition = Nutrition.fromNutritionDraft(i.nutrition());
-							}
-
-							return (Ingredient) Ingredient.builder()
-									.amount(i.amount()).label(i.label()).unit(unit).unitLocalized(i.unitLocalized()).nutrition(nutrition).build();
-						})
-						.toList();
-				return (IngredientGroup) IngredientGroup.builder().ingredients(ingredients)
-						.label(iG.label()).build();
-			}).toList();
+			var ingredientGroups =
+				data.ingredientGroups().stream().map(this::parseIngredientGroup).toList();
 
 			recipe.getIngredientGroups().addAll(ingredientGroups);
 		}
@@ -242,14 +191,8 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 		if (data.instructionGroups() != null) {
 			recipe.getInstructionGroups().clear();
 
-			var instructionGroups = data.instructionGroups().stream().map(iG -> {
-				var instructions = iG.instructions().stream()
-						.map(i -> (Instruction) Instruction.builder().label(i.label()).build())
-						.toList();
-
-				return (InstructionGroup) InstructionGroup.builder().instructions(instructions)
-						.label(iG.label()).build();
-			}).toList();
+			var instructionGroups =
+				data.instructionGroups().stream().map(this::parseInstructionGroup).toList();
 
 			recipe.getInstructionGroups().addAll(instructionGroups);
 		}
@@ -267,8 +210,9 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 		}
 
 		if (data.serving() != null) {
-			var serving = Serving.builder().amount(data.serving().amount())
-					.label(data.serving().label()).build();
+			var serving =
+				Serving.builder().amount(data.serving().amount()).label(data.serving().label())
+					.build();
 
 			recipe.setServing(serving);
 		}
@@ -284,7 +228,6 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 		return recipe;
 	}
 
-
 	/**
 	 * Deletes a recipe identified by its unique ID and performs necessary clean-up actions.
 	 * <p>
@@ -294,11 +237,13 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	 * @param id The unique identifier of the recipe to delete.
 	 * @return `true` if the recipe was successfully deleted; otherwise, an exception may be thrown.
 	 * @throws CustomException If there is an error during the deletion process, such as if the
-	 *                         recipe or related entities are not found, or if there are issues during cleanup.
+	 *                         recipe or related entities are not found, or if there are issues
+	 *                         during cleanup.
 	 */
 	@Override
 	public boolean deleteById(Long id) throws CustomException {
-		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername()).orElseThrow(() -> new NotFoundException(Account.class));
+		var author = authorRepository.findByAccountUsername(getPrincipal().getUsername())
+			.orElseThrow(() -> new NotFoundException(Account.class));
 		var recipe = this.findById(id);
 
 		if (!author.getId().equals(recipe.getAuthor().getId())) {
@@ -322,7 +267,8 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 
 		for (var file : recipe.getFiles()) {
 			try {
-				var deleted = Files.deleteIfExists(Paths.get(pathsConfig.content().toExternalForm(), file.getPath()));
+				var deleted = Files.deleteIfExists(
+					Paths.get(pathsConfig.content().toExternalForm(), file.getPath()));
 
 				if (deleted) {
 					fileRepository.deleteById(id);
@@ -351,7 +297,8 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	}
 
 	public Recipe findByIdL10n(Long id, String language) throws CustomException {
-		var recipe = recipeRepository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
+		var recipe =
+			recipeRepository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
 		recipe.translate(language);
 		return recipe;
 	}
@@ -367,22 +314,22 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	 * @param form A JSON object containing the new owner information, with the "owner" field
 	 *             specifying the new owner's username.
 	 * @return The updated Recipe object with the new owner and author information.
-	 * @throws CustomException If there is an error during the owner change process, such as if the recipe
-	 *                         or authors are not found.
+	 * @throws CustomException If there is an error during the owner change process, such as if the
+	 *                         recipe or authors are not found.
 	 */
 	public Boolean changeOwner(Long id, ChangeOwnerForm form) throws CustomException {
 		var currentUser = authorRepository.findByAccountUsername(getPrincipal().getUsername())
-				.orElseThrow(() -> new NotFoundException(Author.class));
+			.orElseThrow(() -> new NotFoundException(Author.class));
 
 		var recipe = this.findById(id);
 
-		if (!(currentUser.getAccount().hasRole("ROLE_ADMIN")
-				|| recipe.getAuthor().getId().equals(currentUser.getId()))) {
+		if (!(currentUser.getAccount().hasRole("ROLE_ADMIN") || recipe.getAuthor().getId()
+			.equals(currentUser.getId()))) {
 			throw new ForbiddenException(Author.class);
 		}
 
 		var newOwner = authorRepository.findById(form.owner())
-				.orElseThrow(() -> new NotFoundException(Author.class));
+			.orElseThrow(() -> new NotFoundException(Author.class));
 
 		recipe.setAuthor(newOwner);
 
@@ -390,7 +337,6 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 
 		return true;
 	}
-
 
 	/**
 	 * Filters items that are missing in the source list compared to the target list.
@@ -402,26 +348,64 @@ public class RecipeService extends BaseService implements ICRUDService<Recipe, R
 	 * @return A list of items from the source list that are missing in the target list.
 	 */
 	private <T> List<T> filterMissingItems(List<T> source, List<T> target,
-	                                       Function<T, Object> idExtractor) {
+		Function<T, Object> idExtractor) {
 		Set<Object> targetIds = target.stream().map(idExtractor).collect(Collectors.toSet());
 
 		return source.stream().filter(item -> !targetIds.contains(idExtractor.apply(item)))
-				.collect(Collectors.toList());
+			.collect(Collectors.toList());
 	}
 
-	public List<Recipe> findRandomByDietAndCourse(RecipeDiet diet, String course, int amount) throws CustomException {
-		return recipeRepository.findRandomRecipeByDiet(RecipeDiet.getFilterNames(diet), course, amount);
+	public List<Recipe> findRandomByDietAndCourse(RecipeDiet diet, String course, int amount)
+		throws CustomException {
+		return recipeRepository.findRandomRecipeByDiet(RecipeDiet.getFilterNames(diet), course,
+			amount);
 	}
 
 	@Override
 	public Page<Recipe> findBySearch(String searchTerm, RecipeDiet filter, Pageable pageable) {
-		return recipeRepository.findBySearch(RecipeDiet.getFilter(filter),
-				searchTerm, pageable);
+		return recipeRepository.findBySearch(RecipeDiet.getFilter(filter), searchTerm, pageable);
 	}
-
 
 	@Override
 	public Page<Recipe> findByPage(RecipeDiet diet, Pageable pageable) throws CustomException {
 		return recipeRepository.findByDiet(RecipeDiet.getFilterNames(diet), pageable);
+	}
+
+	private IngredientGroup parseIngredientGroup(IngredientGroupDraft iG) {
+		var ingredients = iG.ingredients().stream().map(this::parseIngredient).toList();
+		return IngredientGroup.builder().ingredients(ingredients).label(iG.label()).build();
+	}
+
+	private Ingredient parseIngredient(IngredientDraft i) {
+		Unit unit = null;
+		if (i.unit() != null) {
+			unit = unitRepository.findByLabel(i.unit().getLabel()).orElse(null);
+			if (unit == null) {
+				i.unit().setId(null);
+				unit = unitRepository.save(i.unit());
+			}
+		}
+
+		Nutrition nutrition = null;
+		if (openFoodFactsService.isPresent() && StringUtils.isNotBlank(
+			Optional.ofNullable(i.nutrition()).map(NutritionDraft::openFoodFactsId).orElse(null))) {
+			var draft = openFoodFactsService.get().fetchProduct(i.nutrition().openFoodFactsId());
+			nutrition = Nutrition.fromNutritionDraft(draft);
+		} else {
+			nutrition = Nutrition.fromNutritionDraft(i.nutrition());
+		}
+
+		return Ingredient.builder().amount(i.amount()).label(i.label()).unit(unit)
+			.unitLocalized(i.unitLocalized()).nutrition(nutrition).build();
+	}
+
+	private InstructionGroup parseInstructionGroup(InstructionGroupDraft iG) {
+		var instructions = iG.instructions().stream().map(this::parseInstruction).toList();
+
+		return InstructionGroup.builder().instructions(instructions).label(iG.label()).build();
+	}
+
+	private Instruction parseInstruction(InstructionDraft i) {
+		return Instruction.builder().label(i.label()).build();
 	}
 }
