@@ -1,5 +1,6 @@
 package de.flavormate.ad_configurations.flavormate;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,5 +17,5 @@ public record MailConfig(
 		@NotEmpty String username,
 		@NotEmpty String password,
 		@NotNull boolean starttls,
-		@NotEmpty String from) {
+		@NotEmpty @Email String from) {
 }

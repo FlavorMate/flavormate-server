@@ -28,7 +28,7 @@ public class MailService {
 				MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
 				StandardCharsets.UTF_8.name()
 		);
-		helper.setFrom(mailConfig.from());
+		helper.setFrom("FlavorMate <" + mailConfig.from() + ">");
 		helper.setTo(mail.getTo());
 		helper.setSubject(mail.getSubject());
 		helper.setText(html, true);
