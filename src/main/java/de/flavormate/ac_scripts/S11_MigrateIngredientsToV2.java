@@ -9,6 +9,7 @@ import de.flavormate.ba_entities.ingredient.model.Ingredient;
 import de.flavormate.ba_entities.ingredient.repository.IngredientRepository;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
 import de.flavormate.ba_entities.unit.model.Unit;
+import de.flavormate.ba_entities.unit.model.UnitLocalized;
 import de.flavormate.ba_entities.unit.repository.UnitLocalizedRepository;
 import java.nio.file.Paths;
 import java.util.List;
@@ -25,7 +26,7 @@ public class S11_MigrateIngredientsToV2 implements AScript {
   private final CSVLog csv =
       new CSVLog(
           "Migration_Unit_to_V2",
-          List.of("status", "recipe_label", "recipe_id", "ingredient_id", "unit_label"));
+          List.of("status", "desc", "recipe_label", "recipe_id", "ingredient_id", "unit_label"));
 
   private final PathsConfig pathsConfig;
 
@@ -62,76 +63,83 @@ public class S11_MigrateIngredientsToV2 implements AScript {
         if (label != null) {
 
           var possibleUnits = unitLocalizedRepository.findByLabel(label);
+
+          // no units were found - error
           if (possibleUnits.isEmpty()) {
             var recipe = recipeRepository.findByIngredient(ingredient.getId());
             csv.addRow(
                 List.of(
                     "error",
+                    "no possible units found",
                     recipe.getLabel(),
                     recipe.getId().toString(),
                     ingredient.getId().toString(),
                     label));
             continue;
-          } else {
-            // get the localized units that match the preferred language
-            var possibleUnitsLocalized =
-                possibleUnits.stream()
-                    .filter(u -> u.getLanguage().equals(commonConfig.getPreferredLanguage()))
-                    .toList();
-
-            // if there are units, try to find the one that matches the label
-            if (!possibleUnitsLocalized.isEmpty()) {
-              // if the amount is 1, try to find the singular unit
-              if (ingredient.getAmount() == 1) {
-                var possibleUnitLocalized =
-                    possibleUnitsLocalized.stream()
-                        .filter(u -> u.getLabelSg().equals(label))
-                        .findFirst();
-                // if the singular unit is found, use it
-                if (possibleUnitLocalized.isPresent()) {
-                  ingredient.setUnitLocalized(possibleUnitLocalized.get());
-                } else {
-                  // if the singular unit is not found, use the first unit
-                  var recipe = recipeRepository.findByIngredient(ingredient.getId());
-                  csv.addRow(
-                      List.of(
-                          "warning",
-                          recipe.getLabel(),
-                          recipe.getId().toString(),
-                          ingredient.getId().toString(),
-                          possibleUnitsLocalized.getFirst().getLabelSg()));
-                  ingredient.setUnitLocalized(possibleUnitsLocalized.getFirst());
-                }
-              } else {
-                // if the amount is not 1, try to find the plural unit
-                var possibleUnitLocalized =
-                    possibleUnitsLocalized.stream()
-                        .filter(u -> u.getLabelPl().equals(label))
-                        .findFirst();
-
-                // if the plural unit is found, use it
-                if (possibleUnitLocalized.isPresent()) {
-                  ingredient.setUnitLocalized(possibleUnitLocalized.get());
-                } else {
-                  // if the plural unit is not found, use the first unit
-                  var recipe = recipeRepository.findByIngredient(ingredient.getId());
-                  csv.addRow(
-                      List.of(
-                          "warning",
-                          recipe.getLabel(),
-                          recipe.getId().toString(),
-                          ingredient.getId().toString(),
-                          possibleUnitsLocalized.getFirst().getLabelPl()));
-                  ingredient.setUnitLocalized(possibleUnitsLocalized.getFirst());
-                }
-              }
-            } else {
-              // if there are no matching units, use it
-              ingredient.setUnitLocalized(possibleUnits.getFirst());
-            }
-
-            ingredient.setUnit(null);
           }
+
+          // get the localized units that match the preferred language
+          var possibleUnitsLocalized =
+              possibleUnits.stream()
+                  .filter(u -> u.getLanguage().equals(commonConfig.getPreferredLanguage()))
+                  .toList();
+
+          if (possibleUnitsLocalized.isEmpty()) {
+            var recipe = recipeRepository.findByIngredient(ingredient.getId());
+            csv.addRow(
+                List.of(
+                    "warning",
+                    "unit may not be correct",
+                    recipe.getLabel(),
+                    recipe.getId().toString(),
+                    ingredient.getId().toString(),
+                    label));
+
+            ingredient.setUnitLocalized(possibleUnits.getFirst());
+            ingredient.setUnit(null);
+            continue;
+          }
+
+          if (possibleUnitsLocalized.size() == 1) {
+            ingredient.setUnitLocalized(possibleUnitsLocalized.getFirst());
+            ingredient.setUnit(null);
+            continue;
+          }
+
+          Optional<UnitLocalized> possibleUnitLocalized;
+
+          // multiple possible units are available
+          // if the amount is 1, try to find the singular unit
+          if (ingredient.getAmount() == 1) {
+            possibleUnitLocalized =
+                possibleUnitsLocalized.stream()
+                    .filter(u -> u.getLabelSg().equals(label))
+                    .findFirst();
+          } else {
+            // if the amount is not 1, try to find the plural unit
+            possibleUnitLocalized =
+                possibleUnitsLocalized.stream()
+                    .filter(u -> Optional.ofNullable(u.getLabelPl()).orElse("").equals(label))
+                    .findFirst();
+          }
+
+          if (possibleUnitLocalized.isPresent()) {
+            ingredient.setUnitLocalized(possibleUnitLocalized.get());
+          } else {
+            var recipe = recipeRepository.findByIngredient(ingredient.getId());
+            csv.addRow(
+                List.of(
+                    "warning",
+                    "unit may not be correct",
+                    recipe.getLabel(),
+                    recipe.getId().toString(),
+                    ingredient.getId().toString(),
+                    possibleUnitsLocalized.getFirst().getLabelSg()));
+
+            ingredient.setUnitLocalized(possibleUnitsLocalized.getFirst());
+          }
+
+          ingredient.setUnit(null);
         }
 
         // Updating schema to 2
