@@ -106,12 +106,13 @@ You must have these dependencies installed:
 
 ### Mail
 
-|      Key      | Required |   Description    |        Example        | Default |
-|---------------|----------|------------------|-----------------------|---------|
-| MAIL_FROM     | No       | Mail From header | `noreply@example.de`  |         |
-| MAIL_HOST     | No       | Mail host        | `smtp.example.com`    |         |
-| MAIL_PORT     | No       | Mail port        | `465`                 |         |
-| MAIL_USERNAME | No       | Mail user        | `noreply@example.com` |         |
-| MAIL_PASSWORD | No       | Mail password    | `Passw0rd!`           |         |
-| MAIL_STARTTLS | No       | Use StartTLS?    | `true`                |         |
+|      Key      | Required |       Description       |        Example        | Default |
+|---------------|----------|-------------------------|-----------------------|---------|
+| MAIL_FROM     | No       | Mail From header        | `noreply@example.de`  |         |
+| MAIL_HOST     | No       | Mail host               | `smtp.example.com`    |         |
+| MAIL_PORT     | No       | Mail port               | `465`                 | `587`   |
+| MAIL_USERNAME | No       | Mail user               | `noreply@example.com` |         |
+| MAIL_PASSWORD | No       | Mail password           | `Passw0rd!`           |         |
+| MAIL_STARTTLS | No       | Use StartTLS?           | `true`                | `true`  |
+| MAIL_AUTH     | No       | Does the mail use auth? | `true`                | `true`  |
 
