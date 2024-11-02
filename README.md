@@ -8,14 +8,15 @@ This is the Project for the FlavorMate backend, which is written in Java with Sp
 
 The following properties have been changed:
 
-|        old property        |       new property        | required |             note             |
-|----------------------------|---------------------------|----------|------------------------------|
-| -                          | `FLAVORMATE_LANGUAGE`     | x        | Either `de` or `en`          |
-| `FLAVORMATE_DATA_PATH`     | `FLAVORMATE_PATH_CONTENT` |          |                              |
-| `FLAVORMATE_FRONTEND_URL`  |                           |          | no longer required           |
-| `MAIL_FROM`                |                           |          | should only contain the mail |
-| `FLAVORMATE_FEATURE_STORY` |                           |          | default is now `false`       |
-| `FLAVORMATE_FEATURE_BRING` |                           |          | default is now `false`       |
+|        old property        |       new property        | required |                                                        note                                                         |
+|----------------------------|---------------------------|----------|---------------------------------------------------------------------------------------------------------------------|
+| -                          | `FLAVORMATE_LANGUAGE`     | x        | Either `de` or `en`                                                                                                 |
+| `FLAVORMATE_DATA_PATH`     | `FLAVORMATE_PATH_CONTENT` |          |                                                                                                                     |
+| `FLAVORMATE_FRONTEND_URL`  |                           |          | no longer required                                                                                                  |
+| `MAIL_FROM`                |                           |          | should only contain the mail                                                                                        |
+| `FLAVORMATE_FEATURE_STORY` |                           |          | default is now `false`                                                                                              |
+| `FLAVORMATE_FEATURE_BRING` |                           |          | default is now `false`                                                                                              |
+| `FLAVORMATE_JWT_TOKEN`     |                           |          | default is now `file:${user.home}/.flavormate/secret.key`, please change to `file:/opt/app/secret.key` if necessary |
 
 ### Migrate image to V2
 
