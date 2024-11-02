@@ -79,8 +79,8 @@ public class S11_MigrateIngredientsToV2 implements AScript {
                     .filter(u -> u.getLanguage().equals(commonConfig.getPreferredLanguage()))
                     .toList();
 
-            // if there are multiple units, try to find the one that matches the label
-            if (possibleUnitsLocalized.size() > 1) {
+            // if there are units, try to find the one that matches the label
+            if (!possibleUnitsLocalized.isEmpty()) {
               // if the amount is 1, try to find the singular unit
               if (ingredient.getAmount() == 1) {
                 var possibleUnitLocalized =
@@ -126,8 +126,8 @@ public class S11_MigrateIngredientsToV2 implements AScript {
                 }
               }
             } else {
-              // if there is only one unit, use it
-              ingredient.setUnitLocalized(possibleUnitsLocalized.getFirst());
+              // if there are no matching units, use it
+              ingredient.setUnitLocalized(possibleUnits.getFirst());
             }
 
             ingredient.setUnit(null);
