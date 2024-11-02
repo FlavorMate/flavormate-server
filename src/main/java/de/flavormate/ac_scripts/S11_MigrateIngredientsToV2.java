@@ -113,13 +113,20 @@ public class S11_MigrateIngredientsToV2 implements AScript {
           if (ingredient.getAmount() == 1) {
             possibleUnitLocalized =
                 possibleUnitsLocalized.stream()
-                    .filter(u -> u.getLabelSg().equals(label))
+                    .filter(
+                        u ->
+                            u.getLabelSg().equals(label)
+                                || Optional.ofNullable(u.getLabelSgAbrv()).orElse("").equals(label))
                     .findFirst();
           } else {
             // if the amount is not 1, try to find the plural unit
             possibleUnitLocalized =
                 possibleUnitsLocalized.stream()
-                    .filter(u -> Optional.ofNullable(u.getLabelPl()).orElse("").equals(label))
+                    .filter(
+                        u ->
+                            Optional.ofNullable(u.getLabelPl()).orElse("").equals(label)
+                                || Optional.ofNullable(u.getLabelPlAbrv()).orElse("").equals(label)
+                                || Optional.ofNullable(u.getLabelSgAbrv()).orElse("").equals(label))
                     .findFirst();
           }
 
