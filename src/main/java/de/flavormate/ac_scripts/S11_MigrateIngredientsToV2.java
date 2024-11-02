@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -60,7 +61,7 @@ public class S11_MigrateIngredientsToV2 implements AScript {
             Optional.of(ingredient).map(Ingredient::getUnit).map(Unit::getLabel).orElse(null);
 
         // If unit is set, try to find the new localized unit
-        if (label != null) {
+        if (StringUtils.isNotBlank(label)) {
 
           var possibleUnits = unitLocalizedRepository.findByLabel(label);
 
@@ -96,60 +97,62 @@ public class S11_MigrateIngredientsToV2 implements AScript {
                     label));
 
             ingredient.setUnitLocalized(possibleUnits.getFirst());
-            ingredient.setUnit(null);
-            continue;
-          }
 
-          if (possibleUnitsLocalized.size() == 1) {
+          } else if (possibleUnitsLocalized.size() == 1) {
             ingredient.setUnitLocalized(possibleUnitsLocalized.getFirst());
-            ingredient.setUnit(null);
-            continue;
-          }
 
-          Optional<UnitLocalized> possibleUnitLocalized;
-
-          // multiple possible units are available
-          // if the amount is 1, try to find the singular unit
-          if (ingredient.getAmount() == 1) {
-            possibleUnitLocalized =
-                possibleUnitsLocalized.stream()
-                    .filter(
-                        u ->
-                            u.getLabelSg().equals(label)
-                                || Optional.ofNullable(u.getLabelSgAbrv()).orElse("").equals(label))
-                    .findFirst();
           } else {
-            // if the amount is not 1, try to find the plural unit
-            possibleUnitLocalized =
-                possibleUnitsLocalized.stream()
-                    .filter(
-                        u ->
-                            Optional.ofNullable(u.getLabelPl()).orElse("").equals(label)
-                                || Optional.ofNullable(u.getLabelPlAbrv()).orElse("").equals(label)
-                                || Optional.ofNullable(u.getLabelSgAbrv()).orElse("").equals(label))
-                    .findFirst();
+
+            Optional<UnitLocalized> possibleUnitLocalized;
+
+            // multiple possible units are available
+            // if the amount is 1, try to find the singular unit
+            if (ingredient.getAmount() == 1) {
+              possibleUnitLocalized =
+                  possibleUnitsLocalized.stream()
+                      .filter(
+                          u ->
+                              u.getLabelSg().equals(label)
+                                  || Optional.ofNullable(u.getLabelSgAbrv())
+                                      .orElse("")
+                                      .equals(label))
+                      .findFirst();
+            } else {
+              // if the amount is not 1, try to find the plural unit
+              possibleUnitLocalized =
+                  possibleUnitsLocalized.stream()
+                      .filter(
+                          u ->
+                              Optional.ofNullable(u.getLabelPl()).orElse("").equals(label)
+                                  || Optional.ofNullable(u.getLabelPlAbrv())
+                                      .orElse("")
+                                      .equals(label)
+                                  || Optional.ofNullable(u.getLabelSgAbrv())
+                                      .orElse("")
+                                      .equals(label))
+                      .findFirst();
+            }
+
+            if (possibleUnitLocalized.isPresent()) {
+              ingredient.setUnitLocalized(possibleUnitLocalized.get());
+            } else {
+              var recipe = recipeRepository.findByIngredient(ingredient.getId());
+              csv.addRow(
+                  List.of(
+                      "warning",
+                      "unit may not be correct",
+                      recipe.getLabel(),
+                      recipe.getId().toString(),
+                      ingredient.getId().toString(),
+                      possibleUnitsLocalized.getFirst().getLabelSg()));
+
+              ingredient.setUnitLocalized(possibleUnitsLocalized.getFirst());
+            }
           }
-
-          if (possibleUnitLocalized.isPresent()) {
-            ingredient.setUnitLocalized(possibleUnitLocalized.get());
-          } else {
-            var recipe = recipeRepository.findByIngredient(ingredient.getId());
-            csv.addRow(
-                List.of(
-                    "warning",
-                    "unit may not be correct",
-                    recipe.getLabel(),
-                    recipe.getId().toString(),
-                    ingredient.getId().toString(),
-                    possibleUnitsLocalized.getFirst().getLabelSg()));
-
-            ingredient.setUnitLocalized(possibleUnitsLocalized.getFirst());
-          }
-
-          ingredient.setUnit(null);
         }
 
         // Updating schema to 2
+        ingredient.setUnit(null);
         ingredient.setSchema(2);
         successCounter++;
         ingredientRepository.save(ingredient);
