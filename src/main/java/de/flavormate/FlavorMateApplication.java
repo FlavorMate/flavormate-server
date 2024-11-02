@@ -20,7 +20,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
   AdminUserConfig.class,
   CommonConfig.class,
   FeaturesConfig.class,
-  MailConfig.class,
   MiscConfig.class,
   PathsConfig.class
 })

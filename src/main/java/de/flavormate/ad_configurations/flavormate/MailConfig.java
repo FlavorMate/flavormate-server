@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
@@ -14,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
     value = "enabled",
     havingValue = "true")
 @ConfigurationProperties(prefix = "flavormate.mail")
+@EnableConfigurationProperties(MailConfig.class)
 public record MailConfig(
     @NotEmpty String host,
     @NotNull int port,
