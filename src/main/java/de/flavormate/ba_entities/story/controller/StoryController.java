@@ -41,17 +41,17 @@ public class StoryController
 
   @Override
   public Story create(StoryDraft form) throws CustomException {
-    throw new UnsupportedOperationException();
+    return storyService.create(form);
   }
 
   @Override
   public Story update(Long id, JsonNode form) throws CustomException {
-    throw new UnsupportedOperationException();
+    return storyService.update(id, form);
   }
 
   @Override
   public boolean deleteById(Long id) throws CustomException {
-    throw new UnsupportedOperationException();
+    return storyService.deleteById(id);
   }
 
   @Override

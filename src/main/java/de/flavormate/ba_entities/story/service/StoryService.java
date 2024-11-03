@@ -8,11 +8,16 @@ import de.flavormate.aa_interfaces.services.IPageableService;
 import de.flavormate.aa_interfaces.services.ISearchService;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
+import de.flavormate.ba_entities.author.repository.AuthorRepository;
+import de.flavormate.ba_entities.author.service.AuthorService;
+import de.flavormate.ba_entities.recipe.model.Recipe;
+import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
 import de.flavormate.ba_entities.story.model.Story;
 import de.flavormate.ba_entities.story.repository.StoryRepository;
 import de.flavormate.ba_entities.story.wrapper.StoryDraft;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,15 +27,37 @@ import org.springframework.stereotype.Service;
 public class StoryService extends BaseService
     implements ICRUDService<Story, StoryDraft>, IPageableService<Story>, ISearchService<Story> {
   private final StoryRepository storyRepository;
+  private final RecipeRepository recipeRepository;
+  private final AuthorRepository authorRepository;
 
   @Override
   public Story update(Long id, JsonNode json) throws CustomException {
-    throw new UnsupportedOperationException();
+    var story = this.findById(id);
+
+    if (StringUtils.isNotBlank(json.get("label").asText())) {
+      story.setLabel(json.get("label").asText());
+    }
+
+    if (StringUtils.isNotBlank(json.get("content").asText())) {
+      story.setContent(json.get("content").asText());
+    }
+
+    if (json.has("recipe")) {
+      var recipe =
+          recipeRepository
+              .findById(json.get("recipe").get("id").asLong())
+              .orElseThrow(() -> new NotFoundException(Recipe.class));
+
+      story.setRecipe(recipe);
+    }
+
+    return storyRepository.save(story);
   }
 
   @Override
   public boolean deleteById(Long id) throws CustomException {
-    throw new UnsupportedOperationException();
+    storyRepository.deleteById(id);
+    return true;
   }
 
   @Override
@@ -50,7 +77,26 @@ public class StoryService extends BaseService
 
   @Override
   public Story create(StoryDraft object) throws CustomException {
-    throw new UnsupportedOperationException();
+
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(AuthorService.class));
+
+    var recipe =
+        recipeRepository
+            .findById(object.recipe().getId())
+            .orElseThrow(() -> new NotFoundException(Recipe.class));
+
+    Story story =
+        Story.builder()
+            .author(author)
+            .label(object.label())
+            .content(object.content())
+            .recipe(recipe)
+            .build();
+
+    return storyRepository.save(story);
   }
 
   @Override

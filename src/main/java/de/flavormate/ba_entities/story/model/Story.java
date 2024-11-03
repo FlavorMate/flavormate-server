@@ -2,7 +2,9 @@
 package de.flavormate.ba_entities.story.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import de.flavormate.aa_interfaces.models.BaseEntity;
+import de.flavormate.ba_entities.author.model.Author;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -32,4 +34,10 @@ public class Story extends BaseEntity {
 
   @NotNull @Column(columnDefinition = "TEXT")
   private String label;
+
+  @NotNull @ManyToOne
+  @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
+  @NotNull @OnDelete(action = OnDeleteAction.CASCADE)
+  @JsonIncludeProperties({"id", "account"})
+  private Author author;
 }

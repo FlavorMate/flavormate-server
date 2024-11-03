@@ -7,6 +7,7 @@ import de.flavormate.aa_interfaces.models.BaseEntity;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.book.model.Book;
 import de.flavormate.ba_entities.recipe.model.Recipe;
+import de.flavormate.ba_entities.story.model.Story;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -47,6 +48,11 @@ public class Author extends BaseEntity {
   @JsonIgnoreProperties({"author"})
   @OneToMany(mappedBy = "author")
   private List<Recipe> recipes = new ArrayList<>();
+
+  @NotNull @Builder.Default
+  @JsonIgnoreProperties({"author"})
+  @OneToMany(mappedBy = "author")
+  private List<Story> stories = new ArrayList<>();
 
   public void addOrRemoveRecipe(Recipe recipe) {
     if (!recipes.removeIf(r -> r.getId().equals(recipe.getId()))) {
