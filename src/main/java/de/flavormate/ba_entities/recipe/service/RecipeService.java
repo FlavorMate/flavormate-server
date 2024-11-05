@@ -268,7 +268,8 @@ public class RecipeService extends BaseService
             .orElseThrow(() -> new NotFoundException(Account.class));
     var recipe = this.findById(id);
 
-    if (!author.getId().equals(recipe.getAuthor().getId())) {
+    if (!(author.getAccount().hasRole("ROLE_ADMIN")
+        || recipe.getAuthor().getId().equals(author.getId()))) {
       throw new ForbiddenException(Account.class);
     }
 
