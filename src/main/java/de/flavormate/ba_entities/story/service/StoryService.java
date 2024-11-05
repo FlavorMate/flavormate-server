@@ -7,7 +7,9 @@ import de.flavormate.aa_interfaces.services.ICRUDService;
 import de.flavormate.aa_interfaces.services.IPageableService;
 import de.flavormate.aa_interfaces.services.ISearchService;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
+import de.flavormate.ab_exeptions.exceptions.ForbiddenException;
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
+import de.flavormate.ba_entities.author.model.Author;
 import de.flavormate.ba_entities.author.repository.AuthorRepository;
 import de.flavormate.ba_entities.author.service.AuthorService;
 import de.flavormate.ba_entities.recipe.model.Recipe;
@@ -34,6 +36,16 @@ public class StoryService extends BaseService
   public Story update(Long id, JsonNode json) throws CustomException {
     var story = this.findById(id);
 
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
+
+    if (!(author.getAccount().hasRole("ROLE_ADMIN")
+        || story.getAuthor().getId().equals(author.getId()))) {
+      throw new ForbiddenException(Author.class);
+    }
+
     if (StringUtils.isNotBlank(json.get("label").asText())) {
       story.setLabel(json.get("label").asText());
     }
@@ -56,7 +68,19 @@ public class StoryService extends BaseService
 
   @Override
   public boolean deleteById(Long id) throws CustomException {
-    storyRepository.deleteById(id);
+    var story = this.findById(id);
+
+    var author =
+        authorRepository
+            .findByAccountUsername(getPrincipal().getUsername())
+            .orElseThrow(() -> new NotFoundException(Author.class));
+
+    if (!(author.getAccount().hasRole("ROLE_ADMIN")
+        || story.getAuthor().getId().equals(author.getId()))) {
+      throw new ForbiddenException(Author.class);
+    }
+
+    storyRepository.delete(story);
     return true;
   }
 
