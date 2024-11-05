@@ -49,5 +49,4 @@ database.sql
 
 .vscode/
 
-.DS_Store
 drone_options.env

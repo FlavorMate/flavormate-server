@@ -1,52 +1,46 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ac_scripts;
 
 import de.flavormate.aa_interfaces.scripts.AScript;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
+import de.flavormate.ad_configurations.flavormate.PathsConfig;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
+@Slf4j
 @Service
-public class S02_InitFilePathScript extends AScript {
+public class S02_InitFilePathScript implements AScript {
 
-	@Value("${flavorMate.files}")
-	private URL ROOT_FILES;
+  private final PathsConfig pathsConfig;
 
-	@Value("${flavorMate.files-backup}")
-	private URL ROOT_BACKUP;
+  @Override
+  public void run() throws Exception {
+    log.info("Start path initialization");
 
-	public S02_InitFilePathScript() {
-		super("Initialize File Path");
-	}
+    createPath(pathsConfig.backup());
+    createPath(pathsConfig.content());
+    createPath(pathsConfig.logs());
 
-	@Override
-	public void run() {
-		log("Start file path initialization");
-		log("File path: {}", ROOT_FILES.toString());
+    log.info("Finished path initialization");
+  }
 
-		try {
-			Path root = Paths.get(ROOT_FILES.getPath());
-			if (!Files.exists(root)) {
-				Files.createDirectories(root);
-				log("Path {} created", ROOT_FILES.toExternalForm());
-			}
-			log("File path already exists");
-		} catch (Exception e) {
-			warning("Could not initialize file path!");
-		}
-
-		try {
-			Path root = Paths.get(ROOT_BACKUP.getPath());
-			if (!Files.exists(root)) {
-				Files.createDirectories(root);
-				log("Path {} created", ROOT_BACKUP.toExternalForm());
-			}
-			log("Backup path already exists");
-		} catch (Exception e) {
-			warning("Could not initialize backup path!");
-		}
-	}
+  private void createPath(URL path) throws Exception {
+    try {
+      Path root = Paths.get(path.getPath());
+      if (!Files.exists(root)) {
+        Files.createDirectories(root);
+        log.info("Path created: {}", path.getPath());
+      } else {
+        log.info("Path exists already: {}", path.getPath());
+      }
+    } catch (Exception e) {
+      log.error("Could not initialize path: {}", path.getPath());
+      throw e;
+    }
+  }
 }

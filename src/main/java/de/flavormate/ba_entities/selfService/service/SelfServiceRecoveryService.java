@@ -1,97 +1,93 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.selfService.service;
 
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
-import de.flavormate.ad_configurations.FlavorMateConfig;
+import de.flavormate.ad_configurations.flavormate.CommonConfig;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
 import de.flavormate.ba_entities.account.wrapper.ForcePasswordForm;
-import de.flavormate.ba_entities.email.model.PasswordRecoveryEMail;
-import de.flavormate.ba_entities.email.service.EmailService;
+import de.flavormate.ba_entities.email.model.PasswordRecoveryMail;
+import de.flavormate.ba_entities.email.service.MailService;
 import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.repository.TokenRepository;
+import de.flavormate.bb_thymeleaf.Fragments;
+import de.flavormate.bb_thymeleaf.MainPage;
 import jakarta.mail.MessagingException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
-import java.util.AbstractMap;
-import java.util.Map;
-
-@ConditionalOnProperty(prefix = "flavormate.features.recovery", value = "enabled", havingValue = "true")
+@ConditionalOnProperty(
+    prefix = "flavormate.features.recovery",
+    value = "enabled",
+    havingValue = "true")
 @RequiredArgsConstructor
 @Service
 public class SelfServiceRecoveryService {
 
-	private final AccountRepository accountRepository;
-	private final EmailService emailService;
-	private final TemplateEngine templateEngine;
-	private final TokenRepository tokenRepository;
-	private final PasswordEncoder passwordEncoder;
+  private final AccountRepository accountRepository;
+  private final MailService mailService;
+  private final TemplateEngine templateEngine;
+  private final TokenRepository tokenRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final CommonConfig commonConfig;
+  private final MessageSource messageSource;
 
+  public Boolean resetPassword(String mail) throws NotFoundException, MessagingException {
+    var account =
+        accountRepository.findByMail(mail).orElseThrow(() -> new NotFoundException(Account.class));
 
-	public Boolean resetPassword(String mail) throws NotFoundException, MessagingException {
-		var account = accountRepository.findByMail(mail)
-				.orElseThrow(() -> new NotFoundException(Account.class));
+    Token token = tokenRepository.save(Token.PasswordToken(account));
 
-		Token token = tokenRepository.save(Token.PasswordToken(account));
+    Map<String, Object> data =
+        Map.ofEntries(
+            Map.entry("username", account.getUsername()),
+            Map.entry("name", account.getDisplayName()),
+            Map.entry("token", token.getToken()));
 
-		Map<String, Object> map =
-				Map.ofEntries(new AbstractMap.SimpleEntry<>("username", account.getUsername()),
-						new AbstractMap.SimpleEntry<>("name", account.getDisplayName()),
-						new AbstractMap.SimpleEntry<>("token", token.getToken()),
-						new AbstractMap.SimpleEntry<>("backendUrl", FlavorMateConfig.getBackendUrl())
+    var html =
+        new MainPage(templateEngine, commonConfig).process(Fragments.RECOVERY_PASSWORD_MAIL, data);
 
-				);
+    var passwordMail = new PasswordRecoveryMail(account.getMail(), messageSource);
 
-		emailService.sendMail(new PasswordRecoveryEMail(account.getMail(), map));
+    mailService.sendMail(passwordMail, html);
 
-		return true;
-	}
+    return true;
+  }
 
-	public String resetPasswordConfirm(String tokenId, ForcePasswordForm form) {
-		var context = new Context();
+  public String resetPasswordConfirm(String tokenId, ForcePasswordForm form) {
+    var site = new MainPage(templateEngine, commonConfig);
+    try {
+      Token token =
+          tokenRepository
+              .findByToken(tokenId)
+              .orElseThrow(() -> new NotFoundException(Token.class));
 
-		context.setVariable("backendUrl", FlavorMateConfig.getBackendUrl());
+      Account account =
+          accountRepository
+              .findById(token.getOwner().getId())
+              .orElseThrow(() -> new NotFoundException(Account.class));
 
-		try {
-			Token token = tokenRepository.findByToken(tokenId)
-					.orElseThrow(() -> new NotFoundException(Token.class));
+      account.setPassword(passwordEncoder.encode(form.password()));
 
-			Account account = accountRepository.findById(token.getOwner().getId())
-					.orElseThrow(() -> new NotFoundException(Account.class));
+      accountRepository.save(account);
 
-			account.setPassword(passwordEncoder.encode(form.password()));
+      tokenRepository.deleteById(token.getId());
 
-			accountRepository.save(account);
+      return site.process(Fragments.RECOVERY_PASSWORD_OK, null);
+    } catch (Exception e) {
+      return site.process(Fragments.RECOVERY_PASSWORD_FAILED, null);
+    }
+  }
 
-			tokenRepository.deleteById(token.getId());
+  public String resetPasswordPage(String token) {
+    Map<String, Object> data = Map.ofEntries(Map.entry("token", token));
 
-			return templateEngine.process("recovery/password-recovery-success.html", context);
-		} catch (Exception e) {
-			return templateEngine.process("recovery/password-recovery-failed.html", context);
-		}
-	}
-
-
-	public String resetPasswordPage(String token) {
-		var context = new Context();
-
-		context.setVariable("token", token);
-
-		context.setVariable("backendUrl", FlavorMateConfig.getBackendUrl());
-
-		return templateEngine.process("recovery/password-recovery.html", context);
-	}
-
-	public String successPage() {
-		var context = new Context();
-
-		context.setVariable("backendUrl", FlavorMateConfig.getBackendUrl());
-
-		return templateEngine.process("recovery/password-recovery-success.html", context);
-
-	}
+    return new MainPage(templateEngine, commonConfig)
+        .process(Fragments.RECOVERY_PASSWORD_FORM, data);
+  }
 }

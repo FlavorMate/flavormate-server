@@ -1,5 +1,5 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.serving.model;
-
 
 import de.flavormate.aa_interfaces.models.BaseEntity;
 import de.flavormate.utils.NumberUtils;
@@ -22,21 +22,18 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class Serving extends BaseEntity {
 
-	@NotNull
-	@Column(nullable = false)
-	private Double amount;
+  @NotNull @Column(nullable = false)
+  private Double amount;
 
-	@NotNull
-	@Column(nullable = false)
-	private String label;
+  @NotNull @Column(nullable = false)
+  private String label;
 
-	@Override
-	public String toString() {
-		return NumberUtils.isDoubleInt(amount) + " " + label;
-	}
+  @Override
+  public String toString() {
+    return NumberUtils.beautify(amount) + " " + label;
+  }
 
-	public String toString(Integer requestedAmount) {
-		return requestedAmount + " " + label;
-	}
-
+  public String toString(Integer requestedAmount) {
+    return requestedAmount + " " + label;
+  }
 }

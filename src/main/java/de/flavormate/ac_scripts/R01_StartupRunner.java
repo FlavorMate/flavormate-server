@@ -1,59 +1,47 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ac_scripts;
 
 import de.flavormate.aa_interfaces.scripts.AScript;
-import de.flavormate.ad_configurations.FlavorMateConfig;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
+@Slf4j
 @Service
-public class R01_StartupRunner extends AScript {
-	@Autowired
-	Environment env;
+public class R01_StartupRunner implements AScript {
 
-	@Autowired
-	private FlavorMateConfig flavorMateConfig;
+  // Startup Services
+  private final S01_InitDatabaseScript s01_initDB;
+  private final S02_InitFilePathScript s02_initFilePath;
+  private final S03_InitAdminAccount s03_initAdminAccount;
 
-	// Startup Services
-	@Autowired
-	private S01_InitDatabaseScript s01_initDB;
+  // Migrations
+  private final S11_MigrateIngredientsToV2 s11_migrate_ingredients_to_V2;
 
-	@Autowired
-	private S02_InitFilePathScript s02_initFilePath;
+  // Runtime Services
+  private final S21_HighlightGeneratorScript s21_highlightGenerator;
 
-	@Autowired
-	private S03_InitAdminAccount s03_initAdminAccount;
+  // Cleaning Services
+  private final S99_CleanScript s99_clean;
 
-	// Runtime Services
-	@Autowired
-	private S21_HighlightGeneratorScript s21_highlightGenerator;
+  @EventListener(ContextRefreshedEvent.class)
+  @Override
+  public void run() throws Exception {
+    log.info("Running startup scripts");
 
-	// Cleaning Services
-	@Autowired
-	private S99_CleanScript s99_clean;
+    s01_initDB.run();
+    s02_initFilePath.run();
+    s03_initAdminAccount.run();
 
-	public R01_StartupRunner() {
-		super("Startup Runner");
-	}
+    s11_migrate_ingredients_to_V2.run();
 
-	@EventListener(ContextRefreshedEvent.class)
-	@Override
-	public void run() {
-		log("Running startup scripts");
-		flavorMateConfig.init();
+    s21_highlightGenerator.run();
 
-		s01_initDB.run();
-		s02_initFilePath.run();
-		s03_initAdminAccount.run();
+    s99_clean.run();
 
-		s21_highlightGenerator.run();
-
-		s99_clean.run();
-
-		log("Ran all startup scripts");
-	}
-
-
+    log.info("Ran all startup scripts");
+  }
 }

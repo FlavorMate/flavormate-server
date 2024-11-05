@@ -1,7 +1,7 @@
 services:
   backend:
     container_name: flavormate_backend
-    image: ghcr.io/flavormate/flavormate-server:1
+    image: ghcr.io/flavormate/flavormate-server:2
     env_file: ".env"
     volumes:
       - ./data/backend/secret.key:/opt/app/secret.key
@@ -39,7 +39,7 @@ services:
     networks:
       - flavormate
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 30s
       timeout: 30s
       retries: 5

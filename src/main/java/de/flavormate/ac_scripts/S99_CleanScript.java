@@ -1,211 +1,192 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ac_scripts;
 
 import de.flavormate.aa_interfaces.scripts.AScript;
+import de.flavormate.ad_configurations.flavormate.MiscConfig;
+import de.flavormate.ad_configurations.flavormate.PathsConfig;
 import de.flavormate.ba_entities.file.repository.FileRepository;
-import de.flavormate.ba_entities.file.service.FileService;
 import de.flavormate.ba_entities.highlight.repository.HighlightRepository;
+import de.flavormate.ba_entities.ingredient.repository.IngredientRepository;
 import de.flavormate.ba_entities.tag.repository.TagRepository;
 import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.repository.TokenRepository;
 import de.flavormate.ba_entities.unit.repository.UnitRepository;
 import jakarta.transaction.Transactional;
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.function.Predicate;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
+@Slf4j
 @Service
 @Transactional
-public class S99_CleanScript extends AScript {
+public class S99_CleanScript implements AScript {
 
-	@Value("${flavorMate.files}")
-	URI filePath;
-	@Value("${flavorMate.files-backup}")
-	URI backupPath;
+  private final PathsConfig pathsConfig;
 
-	@Value("${flavorMate.highlight.days}")
-	private int HIGHLIGHT_DAYS;
-	@Autowired
-	private FileRepository fileRepository;
-	@Autowired
-	private FileService fileService;
-	@Autowired
-	private HighlightRepository highlightRepository;
-	@Autowired
-	private TagRepository tagRepository;
-	@Autowired
-	private UnitRepository unitRepository;
-	@Autowired
-	private TokenRepository tokenRepository;
+  private final MiscConfig miscConfig;
 
-	public S99_CleanScript() {
-		super("Clean Service");
-	}
+  private final FileRepository fileRepository;
 
-	public void run() {
-		log("Starting database cleaning");
+  private final HighlightRepository highlightRepository;
 
-		cleanFiles();
-		cleanBackupFiles();
-		cleanHighlights();
-		cleanTags();
-		cleanUnits();
-		cleanTokens();
+  private final IngredientRepository ingredientRepository;
 
-		log("Finished database cleaning");
-	}
+  private final TagRepository tagRepository;
 
-	private Boolean cleanFiles() {
-		if (fileRepository.count() == 0) {
-			log("Skipping file cleaning");
-			return true;
-		}
+  private final UnitRepository unitRepository;
 
-		try {
-			var files = fileRepository.findAll();
+  private final TokenRepository tokenRepository;
 
-			for (var file : files) {
-				var path = Paths.get(filePath.getPath(), file.getPath());
-				if (!Files.exists(path)) {
-					log("File {} not found, deleting...", file.getPath());
-					fileRepository.deleteById(file.getId());
-				}
-			}
+  public void run() throws Exception {
+    log.info("Starting database cleaning");
 
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    cleanContentFiles();
+    cleanBackupFiles();
+    cleanHighlights();
+    cleanIngredients();
+    cleanTags();
+    cleanUnits();
+    cleanTokens();
 
-	private Boolean cleanBackupFiles() {
+    log.info("Finished database cleaning");
+  }
 
-		if (fileRepository.count() == 0) {
-			log("Skipping file cleaning");
-			return true;
-		}
+  private void cleanIngredients() {
+    if (ingredientRepository.count() == 0) {
+      log.info("Skipping ingredient cleaning");
+      return;
+    }
 
-		try {
-			var path = Paths.get(backupPath.getPath());
-			var files = path.toFile().listFiles();
+    var ingredients = ingredientRepository.findByEmptyUnit();
+    log.info("Found {} unoptimized ingredients", ingredients.size());
 
-			for (var file : files) {
-				log("Deleting temporary backup path {}", file.getPath());
-				FileUtils.forceDelete(file);
-			}
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    for (var ingredient : ingredients) {
+      ingredient.setUnit(null);
+      ingredientRepository.save(ingredient);
+    }
 
-	private Boolean cleanHighlights() {
-		try {
-			if (highlightRepository.count() == 0) {
-				log("Skipping highlight cleaning");
-				return true;
-			}
+    log.info("Optimized {} ingredients", ingredients.size());
+  }
 
-			var offset = LocalDate.now().minusDays(HIGHLIGHT_DAYS);
-			var highlights = highlightRepository.findAllByDateBefore(offset);
+  private void cleanContentFiles() {
+    if (fileRepository.count() == 0) {
+      log.info("Skipping content file cleaning");
+      return;
+    }
 
-			log("Found {} old highlights", highlights.size());
+    var files = fileRepository.findAll();
 
-			if (highlights.isEmpty())
-				return true;
+    for (var file : files) {
+      var path = Paths.get(pathsConfig.content().getPath(), file.getPath());
+      if (!Files.exists(path)) {
+        log.info("File {} not found, deleting...", file.getPath());
+        fileRepository.deleteById(file.getId());
+      }
+    }
+  }
 
-			log("Deleting old highlights");
-			highlightRepository.deleteAll(highlights);
+  private void cleanBackupFiles() throws Exception {
 
-			log("Deleted {} highlights", highlights.size());
-			return true;
-		} catch (Exception e) {
-			warning("Highlights could not be cleaned");
-			return false;
-		}
-	}
+    if (fileRepository.count() == 0) {
+      log.info("Skipping backup file cleaning");
+      return;
+    }
 
+    try {
+      var path = Paths.get(pathsConfig.backup().getPath());
+      var files = path.toFile().listFiles();
 
-	private Boolean cleanTags() {
-		try {
-			if (tagRepository.count() == 0) {
-				log("Skipping tag cleaning");
-				return true;
-			}
+      // if there are no files, delete all entries inside the database
+      if (files == null) {
+        fileRepository.deleteAll();
+        return;
+      }
 
-			var tags = tagRepository.findAllEmpty();
+      for (var file : files) {
+        log.info("Deleting temporary backup path {}", file.getPath());
+        FileUtils.forceDelete(file);
+      }
+    } catch (Exception e) {
+      log.error("Backup files could not be cleaned");
+      throw e;
+    }
+  }
 
-			log("Found {} empty tags", tags.size());
+  private void cleanHighlights() {
+    if (highlightRepository.count() == 0) {
+      log.info("Skipping highlight cleaning");
+      return;
+    }
 
-			if (tags.isEmpty())
-				return true;
+    var offset = LocalDate.now().minusDays(miscConfig.highlightDays());
+    var highlights = highlightRepository.findAllByDateBefore(offset);
 
-			log("Deleting empty tags");
-			tagRepository.deleteAll(tags);
+    log.info("Found {} old highlights", highlights.size());
 
-			log("Deleted {} tags", tags.size());
-			return true;
-		} catch (Exception e) {
-			warning("Tags could not be cleaned");
-			return false;
-		}
-	}
+    if (highlights.isEmpty()) return;
 
-	private boolean cleanUnits() {
-		try {
-			var units = unitRepository.findEmpty();
+    log.info("Deleting old highlights");
+    highlightRepository.deleteAll(highlights);
 
-			if (units.isEmpty()) {
-				log("Skipping unit cleaning");
-				return true;
-			}
+    log.info("Deleted {} highlights", highlights.size());
+  }
 
-			log("Found {} invalid units", units.size());
+  private void cleanTags() {
+    if (tagRepository.count() == 0) {
+      log.info("Skipping tag cleaning");
+      return;
+    }
 
-			log("Deleting invalid units");
+    var tags = tagRepository.findAllEmpty();
 
-			unitRepository.deleteAll(units);
+    log.info("Found {} empty tags", tags.size());
 
-			log("Deleted {} units", units.size());
-			return true;
-		} catch (Exception e) {
-			warning("Units could not be cleaned");
-			return false;
-		}
-	}
+    if (tags.isEmpty()) return;
 
-	private Boolean cleanTokens() {
-		try {
-			if (tokenRepository.count() == 0) {
-				log("Skipping token cleaning");
-				return true;
-			}
+    log.info("Deleting empty tags");
+    tagRepository.deleteAll(tags);
 
-			var tokens = tokenRepository.findAll().stream().filter(Predicate.not(Token::isValid))
-					.toList();
+    log.info("Deleted {} tags", tags.size());
+  }
 
+  private void cleanUnits() {
+    var units = unitRepository.findEmpty();
 
-			log("Found {} invalid tokens", tokens.size());
+    if (units.isEmpty()) {
+      log.info("Skipping unit cleaning");
+      return;
+    }
 
-			if (tokens.isEmpty())
-				return true;
+    log.info("Found {} invalid units", units.size());
 
-			log("Deleting invalid tokens");
-			tokenRepository.deleteAll(tokens);
+    log.info("Deleting invalid units");
 
-			log("Deleted {} tokens", tokens.size());
-			return true;
-		} catch (Exception e) {
-			warning("Tokens could not be cleaned");
-			return false;
-		}
-	}
+    unitRepository.deleteAll(units);
 
+    log.info("Deleted {} units", units.size());
+  }
 
+  private void cleanTokens() {
+    if (tokenRepository.count() == 0) {
+      log.info("Skipping token cleaning");
+      return;
+    }
+
+    var tokens = tokenRepository.findAll().stream().filter(Predicate.not(Token::isValid)).toList();
+
+    log.info("Found {} invalid tokens", tokens.size());
+
+    if (tokens.isEmpty()) return;
+
+    log.info("Deleting invalid tokens");
+    tokenRepository.deleteAll(tokens);
+
+    log.info("Deleted {} tokens", tokens.size());
+  }
 }
