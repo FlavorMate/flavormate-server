@@ -98,13 +98,12 @@ You must have these dependencies installed:
 - Postgresql
 - Java 21
 
-1. Download the latest [FlavorMate-Server.jar]().
-2. Create a `secret.key`-file with `openssl rand -hex 64 > secret.key` and copy it into the right folder.
-3. Download the [.env.template](./example/.env.template)-file and rename it to `.env`.
-4. Enter your details in the `.env`-file
-5. Export your `.env`-file
-6. Start the backend with
-   ` java -jar -Dspring.profiles.active=release FlavorMate-Server.jar`.
+1. Download the latest [FlavorMate-Server.jar](https://github.com/FlavorMate/flavormate-server/releases).
+2. Create a `secret.key` file with `openssl rand -hex 64 > secret.key` and copy it into the right folder.
+3. Download the [.env.template](./example/.env.template) file and rename it to `.env`.
+4. Enter your details in the `.env` file
+5. Export your `.env` file
+6. Start the backend with `java -jar -Dspring.profiles.active=release FlavorMate-Server.jar`.
 
 </details>
 
