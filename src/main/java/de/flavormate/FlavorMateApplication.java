@@ -21,7 +21,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
   CommonConfig.class,
   FeaturesConfig.class,
   MiscConfig.class,
-  PathsConfig.class
+  PathsConfig.class,
+  MailConfig.class,
 })
 public class FlavorMateApplication {
 
