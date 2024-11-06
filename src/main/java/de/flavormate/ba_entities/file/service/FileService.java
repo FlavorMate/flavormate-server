@@ -45,7 +45,7 @@ public class FileService extends BaseService implements ICRUDService<File, FileD
 
       var content = body.content().split(",")[1];
 
-      var path = Paths.get(pathsConfig.content().toExternalForm(), file.getPath());
+      var path = Paths.get(pathsConfig.content().getPath(), file.getPath());
 
       Files.createDirectories(path.getParent());
 
@@ -92,7 +92,7 @@ public class FileService extends BaseService implements ICRUDService<File, FileD
       }
 
       var deleted =
-          Files.deleteIfExists(Paths.get(pathsConfig.content().toExternalForm(), file.getPath()));
+          Files.deleteIfExists(Paths.get(pathsConfig.content().getPath(), file.getPath()));
 
       if (deleted) {
         fileRepository.deleteById(id);

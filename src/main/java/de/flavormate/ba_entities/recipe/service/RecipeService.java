@@ -291,7 +291,7 @@ public class RecipeService extends BaseService
     for (var file : recipe.getFiles()) {
       try {
         var deleted =
-            Files.deleteIfExists(Paths.get(pathsConfig.content().toExternalForm(), file.getPath()));
+            Files.deleteIfExists(Paths.get(pathsConfig.content().getPath(), file.getPath()));
 
         if (deleted) {
           fileRepository.deleteById(id);
