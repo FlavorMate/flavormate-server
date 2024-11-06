@@ -77,7 +77,7 @@ You must have these dependencies installed:
 | FLAVORMATE_FEATURE_RECOVERY        | No       | Enables the password recovery feature !!! Mail config is required!!!       | `true`  | `false` |
 | FLAVORMATE_FEATURE_REGISTRATION    | No       | Enables the registration                                                   | `true`  | `false` |
 | FLAVORMATE_FEATURE_BRING           | No       | Enables the [Bring!](https://www.getbring.com) integration                 | `true`  | `false` |
-| FLAVORMATE_FEATURE_OPEN-FOOD-FACTS | No       | Enables the [Open Food Facts](https://world.openfoodfacts.org) integration | `true`  | `false` |
+| FLAVORMATE_FEATURE_OPEN_FOOD_FACTS | No       | Enables the [Open Food Facts](https://world.openfoodfacts.org) integration | `true`  | `false` |
 
 ### Paths
 
