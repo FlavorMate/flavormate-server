@@ -1,46 +1,97 @@
 # FlavorMate
 
-This is the Project for the FlavorMate backend, which is written in Java with Spring Boot.
+<p align="center">
+    <img src="docs/logo_transparent.png" alt="FlavorMate logo" height="64px">
+</p>
 
-## Migrate to V2
+FlavorMate is your personal, self-hosted, open-source recipe management app, available on iOS, macOS, Android, and as a
+web application. You can also build it from source for Linux and Windows. Organize your culinary creations by
+categorizing and tagging them to suit your needs. Whether you’re crafting a recipe from scratch or importing one from
+the web, FlavorMate makes it easy.
 
-### Migrate the .env file
+Stuck on what to cook or bake? Let FlavorMate inspire you with the Recipe of the Day or choose a dish at random. For
+those following vegetarian or vegan lifestyles, simply set your preference in your profile, and you'll receive recipes
+tailored just for you.
 
-The following properties have been changed:
+> [!TIP]
+> This is the repository for the FlavorMate backend, which is written in Java with SpringBoot.<br>
+> For the frontend, please visit [this repository](https://github.com/FlavorMate/flavormate-app).
 
-|        old property        |       new property        | required |                                                        note                                                         |
-|----------------------------|---------------------------|----------|---------------------------------------------------------------------------------------------------------------------|
-| -                          | `FLAVORMATE_LANGUAGE`     | x        | Either `de` or `en`                                                                                                 |
-| `FLAVORMATE_DATA_PATH`     | `FLAVORMATE_PATH_CONTENT` |          |                                                                                                                     |
-| `FLAVORMATE_FRONTEND_URL`  |                           |          | no longer required                                                                                                  |
-| `MAIL_FROM`                |                           |          | should only contain the mail                                                                                        |
-| `FLAVORMATE_FEATURE_STORY` |                           |          | default is now `false`                                                                                              |
-| `FLAVORMATE_FEATURE_BRING` |                           |          | default is now `false`                                                                                              |
-| `FLAVORMATE_JWT_TOKEN`     |                           |          | default is now `file:${user.home}/.flavormate/secret.key`, please change to `file:/opt/app/secret.key` if necessary |
+## Migration Guides
 
-### Migrate image to V2
+<details>
+<summary>v1 to v2</summary>
+
+### Environment Changes:
+
+The following properties have been CHANGED:
+
+**General:**
+
+|       old property        |     new property      | required |                                                        note                                                         |
+|---------------------------|-----------------------|----------|---------------------------------------------------------------------------------------------------------------------|
+| -                         | `FLAVORMATE_LANGUAGE` | Yes      | Either `de` or `en`                                                                                                 |
+| `FLAVORMATE_FRONTEND_URL` |                       | No       | no longer required                                                                                                  |
+| `FLAVORMATE_JWT_TOKEN`    |                       | No       | default is now `file:${user.home}/.flavormate/secret.key`, please change to `file:/opt/app/secret.key` if necessary |
+
+**Paths:**
+
+|      old property      |       new property        | required | note |
+|------------------------|---------------------------|----------|------|
+| `FLAVORMATE_DATA_PATH` | `FLAVORMATE_PATH_CONTENT` | No       |      |
+
+**Mail**
+
+| old property | new property | required |             note             |
+|--------------|--------------|----------|------------------------------|
+| `MAIL_FROM`  |              | No       | should only contain the mail |
+
+**Features**
+
+|        old property        | new property | required |          note          |
+|----------------------------|--------------|----------|------------------------|
+| `FLAVORMATE_FEATURE_STORY` |              | No       | default is now `false` |
+| `FLAVORMATE_FEATURE_BRING` |              | No       | default is now `false` |
+
+The following properties have been ADDED:
+
+**General**
+
+|     new property      | required |        note         |
+|-----------------------|----------|---------------------|
+| `FLAVORMATE_LANGUAGE` | Yes      | Either `de` or `en` |
+
+### Change the docker image
 
 Change the image tag from `ghcr.io/flavormate/flavormate-server:1` to `ghcr.io/flavormate/flavormate-server:2`
 
 ### Migrate ingredient units
 
-To support features like Open Food Facts integration and unit conversion, a new unit system has been implemented. The
-server will attempt to convert all free-text units to the new system. If a conversion fails, manual editing of the
+To support features like the [Open Food Facts](https://world.openfoodfacts.org) integration and unit conversion, a new
+unit
+system has been implemented. The server will attempt to convert all free-text units to the new system. If a conversion
+fails, manual editing of the
 recipe will be required to align with the new unit system. Failed conversions will be logged in a separate file for
 review. Recipes will continue to function as usual, even if units are not migrated.
 
+</details>
+
 ## Getting Started
 
-### Docker
+<details>
+<summary>Docker</summary>
 
-1. Create a `docker-compose.yaml`-file (or download one from the [examples](./example))
-2. Create the folders the container mounts.
-3. Create a `secret.key`-file with `openssl rand -hex 64 > secret.key` and copy it into the right folder.
-4. Download the [.env.template](./example/.env.template)-file and rename it to `.env`.
-5. Enter your details in the `.env`-file
+1. Create a `docker-compose.yaml` file (or download one from the [examples](./example))
+2. Create the folders the container needs.
+3. Create a `secret.key` file with `openssl rand -hex 64 > secret.key` and copy it into the right folder.
+4. Download the [.env.template](./example/.env.template) file and rename it to `.env`.
+5. Enter your details into the `.env` file
 6. Start your container with `docker compose up -d --remove-orphans`
 
-### Barebone
+</details>
+
+<details>
+<summary>Barebone</summary>
 
 You must have these dependencies installed:
 
@@ -55,9 +106,12 @@ You must have these dependencies installed:
 6. Start the backend with
    ` java -jar -Dspring.profiles.active=release FlavorMate-Server.jar`.
 
+</details>
+
 ## Environment Variables
 
-### General
+<details open>
+<summary>General</summary>
 
 |            Key             | Required |                                    Description                                     |           Example           |                  Default                   |
 |----------------------------|----------|------------------------------------------------------------------------------------|-----------------------------|--------------------------------------------|
@@ -69,7 +123,10 @@ You must have these dependencies installed:
 | FLAVORMATE_BACKEND_URL     | Yes      | The URL the server is running on. Including the port if it is non standard         | `http://localhost:8095`     |                                            |
 | FLAVORMATE_FRONTEND_URL    | No       | [WebApp](https://github.com/FlavorMate/flavormate-app) is required                 | `https://app.flavormate.de` |                                            |
 
-### Features
+</details>
+
+<details open>
+<summary>Features</summary>
 
 |                Key                 | Required |                                Description                                 | Example | Default |
 |------------------------------------|----------|----------------------------------------------------------------------------|---------|---------|
@@ -79,7 +136,10 @@ You must have these dependencies installed:
 | FLAVORMATE_FEATURE_BRING           | No       | Enables the [Bring!](https://www.getbring.com) integration                 | `true`  | `false` |
 | FLAVORMATE_FEATURE_OPEN_FOOD_FACTS | No       | Enables the [Open Food Facts](https://world.openfoodfacts.org) integration | `true`  | `false` |
 
-### Paths
+</details>
+
+<details open>
+<summary>Paths</summary>
 
 |           Key           | Required |                    Description                    |                Example                 |                Default                 |
 |-------------------------|----------|---------------------------------------------------|----------------------------------------|----------------------------------------|
@@ -87,7 +147,10 @@ You must have these dependencies installed:
 | FLAVORMATE_PATH_CONTENT | No       | Path where files (e.g. recipe pictures) are saved | `file:${user.home}/.flavormate/files`  | `file:${user.home}/.flavormate/files`  |
 | FLAVORMATE_PATH_LOG     | No       | Path where logs are saved                         | `file:${user.home}/.flavormate/logs`   | `file:${user.home}/.flavormate/logs`   |
 
-### Admin account
+</details>
+
+<details open>
+<summary>Admin account</summary>
 
 |             Key              | Required |            Description             |        Example         | Default |
 |------------------------------|----------|------------------------------------|------------------------|---------|
@@ -96,7 +159,10 @@ You must have these dependencies installed:
 | FLAVORMATE_ADMIN_MAIL        | Yes      | Mail address for the admin account | `example@localhost.de` |         |
 | FLAVORMATE_ADMIN_PASSWORD    | Yes      | Password for the admin account     | `Passw0rd!`            |         |
 
-### Database
+</details>
+
+<details open>
+<summary>Database</summary>
 
 |     Key     | Required |               Description               |     Example      | Default |
 |-------------|----------|-----------------------------------------|------------------|---------|
@@ -105,7 +171,10 @@ You must have these dependencies installed:
 | DB_PASSWORD | Yes      | Password for the postgres database      | `Passw0rd!`      |         |
 | DB_DATABASE | Yes      | Database name for the postgres database | `flavormate`     |         |
 
-### Mail
+</details>
+
+<details open>
+<summary>Mail</summary>
 
 |      Key      | Required |       Description       |        Example        | Default |
 |---------------|----------|-------------------------|-----------------------|---------|
@@ -116,4 +185,6 @@ You must have these dependencies installed:
 | MAIL_PASSWORD | No       | Mail password           | `Passw0rd!`           |         |
 | MAIL_STARTTLS | No       | Use StartTLS?           | `true`                | `true`  |
 | MAIL_AUTH     | No       | Does the mail use auth? | `true`                | `true`  |
+
+</details>
 
