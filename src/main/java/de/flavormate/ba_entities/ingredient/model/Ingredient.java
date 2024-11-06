@@ -34,7 +34,7 @@ public class Ingredient extends BaseEntity {
   @JoinColumn(name = "unit_id", referencedColumnName = "id")
   private Unit unit;
 
-  @ManyToOne(cascade = {CascadeType.PERSIST})
+  @ManyToOne(cascade = {CascadeType.ALL})
   @JoinColumn(name = "nutrition_id", referencedColumnName = "id")
   private Nutrition nutrition;
 
