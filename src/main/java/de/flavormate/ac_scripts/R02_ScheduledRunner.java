@@ -1,33 +1,32 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ac_scripts;
 
 import de.flavormate.aa_interfaces.scripts.AScript;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
+@Slf4j
 @Service
-public class R02_ScheduledRunner extends AScript {
-	// Runtime Services
-	@Autowired
-	private S21_HighlightGeneratorScript s21_highlightGenerator;
+public class R02_ScheduledRunner implements AScript {
 
-	// Cleaning Services
-	@Autowired
-	private S99_CleanScript s99_clean;
+  // Runtime Services
+  private final S21_HighlightGeneratorScript s21_highlightGenerator;
 
-	public R02_ScheduledRunner() {
-		super("Scheduled Runner");
-	}
+  // Cleaning Services
+  private final S99_CleanScript s99_clean;
 
-	@Scheduled(cron = "0 0 0 * * *")
-	@Override
-	public void run() {
-		log("Running scheduled scripts");
+  @Scheduled(cron = "0 0 0 * * *")
+  @Override
+  public void run() throws Exception {
+    log.info("Running scheduled scripts");
 
-		s21_highlightGenerator.run();
+    s21_highlightGenerator.run();
 
-		s99_clean.run();
+    s99_clean.run();
 
-		log("Ran all scheduled scripts");
-	}
+    log.info("Ran all scheduled scripts");
+  }
 }

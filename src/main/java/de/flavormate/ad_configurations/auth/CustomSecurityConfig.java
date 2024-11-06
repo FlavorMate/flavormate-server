@@ -1,27 +1,26 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ad_configurations.auth;
 
 import de.flavormate.ad_configurations.auth.filters.UserDetailsEnabledFilter;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class CustomSecurityConfig {
 
-	@Autowired
-	private AccountRepository repository;
+  private final AccountRepository repository;
 
-	@Bean
-	public FilterRegistrationBean<UserDetailsEnabledFilter> userDetailsEnabledFilterBean() {
-		FilterRegistrationBean<UserDetailsEnabledFilter> registrationBean =
-				new FilterRegistrationBean<>();
-		registrationBean.setFilter(new UserDetailsEnabledFilter(repository));
-		registrationBean.setOrder(1); // Set the order of the filter in the chain
-		registrationBean.addInitParameter("afterFilters", "UsernamePasswordAuthenticationFilter");
-		return registrationBean;
-	}
-
-
+  @Bean
+  public FilterRegistrationBean<UserDetailsEnabledFilter> userDetailsEnabledFilterBean() {
+    FilterRegistrationBean<UserDetailsEnabledFilter> registrationBean =
+        new FilterRegistrationBean<>();
+    registrationBean.setFilter(new UserDetailsEnabledFilter(repository));
+    registrationBean.setOrder(1); // Set the order of the filter in the chain
+    registrationBean.addInitParameter("afterFilters", "UsernamePasswordAuthenticationFilter");
+    return registrationBean;
+  }
 }

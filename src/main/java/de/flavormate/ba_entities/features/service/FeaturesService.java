@@ -1,23 +1,20 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.features.service;
 
-import de.flavormate.ad_configurations.features.FeatureConfig;
+import de.flavormate.ad_configurations.flavormate.CommonConfig;
+import de.flavormate.ad_configurations.flavormate.FeaturesConfig;
 import de.flavormate.ba_entities.features.model.FeatureResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 
 @RequiredArgsConstructor
 @Service
 public class FeaturesService {
 
-	private final FeatureConfig features;
+  private final FeaturesConfig featuresConfig;
+  private final CommonConfig commonConfig;
 
-	@Value("${flavorMate.app.version}")
-	private String version;
-
-
-	public FeatureResponse getFeatures() {
-		return new FeatureResponse(version, features.getFeatures());
-	}
+  public FeatureResponse getFeaturesConfig() {
+    return new FeatureResponse(commonConfig.getVersion().toString(), featuresConfig.getFeatures());
+  }
 }

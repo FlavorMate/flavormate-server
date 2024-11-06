@@ -1,0 +1,21 @@
+#!/bin/bash
+# Gather the staged files - to make sure changes are saved only for these files.
+STAGED_FILES=$(git diff --staged --name-only | sed 's|^|.*|' | paste -sd "," -)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "No files to format."
+    exit 0
+fi
+
+# Run Spotless on the staged files only
+echo "Running Spotless on staged files..."
+mvn spotless:apply -DspotlessFiles="$STAGED_FILES"
+
+# Re-add any files that Spotless changed
+IFS=',' read -r -a FILE_ARRAY <<< "$STAGED_FILES"
+for file in "${FILE_ARRAY[@]}"; do
+    # Remove the leading ".*" before adding to Git
+    git add "${file#.*}"
+done
+
+exit 0

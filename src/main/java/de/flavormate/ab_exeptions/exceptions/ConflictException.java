@@ -1,16 +1,15 @@
+/* Licensed under AGPLv3 2024 */
 package de.flavormate.ab_exeptions.exceptions;
 
 import org.springframework.http.HttpStatus;
 
 public class ConflictException extends CustomException {
 
-	private static final HttpStatus STATUS = HttpStatus.CONFLICT;
+  private static final HttpStatus STATUS = HttpStatus.CONFLICT;
 
-	public ConflictException(Class<?> identifier) {
-		super(identifier, STATUS);
+  public ConflictException(Class<?> identifier) {
+    super(identifier, STATUS);
 
-		getResponse().put("message",
-				String.format("%s is conflicting!", identifier.getSimpleName()));
-	}
-
+    getResponse().put("message", String.format("%s is conflicting!", identifier.getSimpleName()));
+  }
 }
