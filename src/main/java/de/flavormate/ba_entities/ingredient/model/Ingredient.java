@@ -29,6 +29,7 @@ public class Ingredient extends BaseEntity {
 
   private Double amount;
 
+  @Deprecated
   @ManyToOne(cascade = {CascadeType.PERSIST})
   @JoinColumn(name = "unit_id", referencedColumnName = "id")
   private Unit unit;
