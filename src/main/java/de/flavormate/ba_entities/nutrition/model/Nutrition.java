@@ -22,15 +22,15 @@ public class Nutrition extends BaseEntity {
   private String openFoodFactsId;
 
   // Nutritional values per 100g
-  private double carbohydrates;
-  private double energyKcal;
-  private double fat;
-  private double saturatedFat;
-  private double sugars;
-  private double fiber;
-  private double proteins;
-  private double salt;
-  private double sodium;
+  private Double carbohydrates;
+  private Double energyKcal;
+  private Double fat;
+  private Double saturatedFat;
+  private Double sugars;
+  private Double fiber;
+  private Double proteins;
+  private Double salt;
+  private Double sodium;
 
   public static Nutrition fromNutritionDraft(NutritionDraft draft) {
     if (draft == null) return null;
