@@ -1,6 +1,7 @@
 /* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.token.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.flavormate.aa_interfaces.models.BaseEntity;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.token.enums.TokenType;
@@ -31,9 +32,12 @@ public class Token extends BaseEntity {
   @Enumerated(value = EnumType.STRING)
   private TokenType type;
 
+  @JsonIgnore
   @NotNull @ManyToOne
   @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
   private Account owner;
+
+  private Long content;
 
   public static Token PasswordToken(Account owner) {
     return Token.builder()
@@ -43,7 +47,13 @@ public class Token extends BaseEntity {
         .build();
   }
 
+  public static Token ShareToken(Account owner, long recipeId) {
+    return Token.builder().type(TokenType.SHARE).owner(owner).content(recipeId).build();
+  }
+
   public boolean isValid() {
+    if (validFor == null) return true;
+
     return Instant.now().isBefore(createdOn.plus(validFor));
   }
 }
