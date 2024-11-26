@@ -11,10 +11,15 @@ import de.flavormate.ba_entities.token.model.TokenForm;
 import de.flavormate.ba_entities.token.service.TokenService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@ConditionalOnProperty(
+    prefix = "flavormate.features.share",
+    value = "enabled",
+    havingValue = "true")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v2/token")

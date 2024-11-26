@@ -16,8 +16,13 @@ import de.flavormate.ba_entities.token.repository.TokenRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
+@ConditionalOnProperty(
+    prefix = "flavormate.features.share",
+    value = "enabled",
+    havingValue = "true")
 @Slf4j
 @Service
 @RequiredArgsConstructor
