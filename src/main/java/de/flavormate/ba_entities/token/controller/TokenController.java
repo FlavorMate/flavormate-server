@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.flavormate.aa_interfaces.controllers.ICRUDController;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
-import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.model.TokenForm;
 import de.flavormate.ba_entities.token.service.TokenService;
@@ -50,6 +49,6 @@ public class TokenController implements ICRUDController<Token, TokenForm> {
   @Secured("ROLE_ADMIN")
   @Override
   public List<Token> findAll() throws CustomException {
-    throw new NotFoundException(Recipe.class);
+    return tokenService.findAll();
   }
 }

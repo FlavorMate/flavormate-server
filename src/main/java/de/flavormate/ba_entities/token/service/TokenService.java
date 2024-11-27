@@ -11,6 +11,7 @@ import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
+import de.flavormate.ba_entities.token.enums.TokenType;
 import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.repository.TokenRepository;
 import java.util.List;
@@ -60,7 +61,7 @@ public class TokenService extends BaseService implements ICRUDService<Token, Lon
             .findByUsername(getPrincipal().getUsername())
             .orElseThrow(() -> new NotFoundException(Account.class));
 
-    if (!token.getOwner().getId().equals(owner.getId())) {
+    if (!(owner.hasRole("ROLE_ADMIN") || token.getOwner().getId().equals(owner.getId()))) {
       throw new ForbiddenException(Token.class);
     }
 
@@ -75,6 +76,6 @@ public class TokenService extends BaseService implements ICRUDService<Token, Lon
 
   @Override
   public List<Token> findAll() throws CustomException {
-    throw new NotFoundException(Token.class);
+    return tokenRepository.findAllByType(TokenType.SHARE);
   }
 }

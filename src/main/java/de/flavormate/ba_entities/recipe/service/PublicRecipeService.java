@@ -30,6 +30,13 @@ public class PublicRecipeService extends BaseService {
       throw new ForbiddenException(Token.class);
     }
 
+    try {
+      t.increaseUses();
+      tokenRepository.save(t);
+    } catch (Exception e) {
+      log.error("Could not update token usage");
+    }
+
     var recipe =
         recipeRepository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
 
