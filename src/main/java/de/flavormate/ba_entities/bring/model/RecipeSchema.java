@@ -3,15 +3,25 @@ package de.flavormate.ba_entities.bring.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.flavormate.ba_entities.file.model.File;
+import de.flavormate.ba_entities.ingredient.model.Ingredient;
+import de.flavormate.ba_entities.ingredientGroup.model.IngredientGroup;
+import de.flavormate.ba_entities.instruction.model.Instruction;
+import de.flavormate.ba_entities.instructionGroup.model.InstructionGroup;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.tag.model.Tag;
-import java.util.ArrayList;
+import de.flavormate.ba_entities.unit.model.Unit;
+import de.flavormate.ba_entities.unit.model.UnitLocalized;
+import de.flavormate.utils.NumberUtils;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @Setter
@@ -59,8 +69,8 @@ public class RecipeSchema {
 
     var name = recipe.getLabel();
 
-    var images = new ArrayList<String>();
-    if (recipe.getCoverUrl() != null) images.add(recipe.getCoverUrl());
+    var images =
+        recipe.getFiles().stream().filter(Objects::nonNull).map(File::getFullPath).toList();
 
     var author = new AuthorSchema(recipe.getAuthor().getAccount().getDisplayName());
 
@@ -75,36 +85,25 @@ public class RecipeSchema {
     var totalTime =
         recipe.getCookTime().plus(recipe.getRestTime()).plus(recipe.getPrepTime()).toString();
 
-    var keywords = StringUtils.join(recipe.getTags().stream().map(Tag::getLabel).toList(), ", ");
+    var keywords = recipe.getTags().stream().map(Tag::getLabel).collect(Collectors.joining(", "));
 
     var recipeYield = recipe.getServing().toString(serving);
 
     var recipeCategory = recipe.getCourse().toString();
 
-    // TODO: handle unit v2
+    var factor = serving / recipe.getServing().getAmount();
+
     var recipeIngredients =
         recipe.getIngredientGroups().stream()
-            .map(
-                iG ->
-                    iG.getIngredients().stream()
-                        .map(
-                            i -> {
-                              i.setAmount(
-                                  i.getAmount() * (serving / recipe.getServing().getAmount()));
-                              return i.toString();
-                            })
-                        .toList())
+            .map(group -> handleIngredientGroup(group, factor))
             .flatMap(Collection::stream)
             .toList();
 
     var recipeInstructions =
         recipe.getInstructionGroups().stream()
-            .map(
-                iG ->
-                    iG.getInstructions().stream()
-                        .map(i -> new InstructionSchema(i.getLabel()))
-                        .toList())
+            .map(iG -> handleInstructionGroup(iG, factor))
             .flatMap(Collection::stream)
+            .map(InstructionSchema::new)
             .toList();
 
     var url = recipe.getUrl();
@@ -124,5 +123,49 @@ public class RecipeSchema {
         recipeIngredients,
         recipeInstructions,
         url);
+  }
+
+  private static List<String> handleIngredientGroup(
+      IngredientGroup ingredientGroup, double factor) {
+    return ingredientGroup.getIngredients().stream()
+        .map((ingredient -> handleIngredients(ingredient, factor)))
+        .toList();
+  }
+
+  private static String handleIngredients(Ingredient ingredient, double factor) {
+    var amount =
+        Optional.ofNullable(ingredient.getAmount())
+            .map((a) -> NumberUtils.beautify(a * factor))
+            .orElse(null);
+
+    var unit = handleUnit(ingredient.getUnit(), ingredient.getUnitLocalized(), factor);
+
+    var label = ingredient.getLabel();
+
+    return Stream.of(amount, unit, label).filter(Objects::nonNull).collect(Collectors.joining(" "));
+  }
+
+  private static String handleUnit(Unit unit, UnitLocalized unitLocalized, double factor) {
+    // Unit v1
+    if (unit != null) {
+      return unit.getLabel();
+    }
+    // Unit v2
+    else if (unitLocalized != null) {
+      return unitLocalized.getLabel(factor);
+    } else {
+      return null;
+    }
+  }
+
+  private static List<String> handleInstructionGroup(
+      InstructionGroup instructionGroup, double factor) {
+    return instructionGroup.getInstructions().stream()
+        .map((instruction) -> handleInstruction(instruction, factor))
+        .toList();
+  }
+
+  private static String handleInstruction(Instruction instruction, double factor) {
+    return instruction.getCalculatedLabel(factor);
   }
 }

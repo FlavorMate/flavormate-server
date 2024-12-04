@@ -4,7 +4,6 @@ package de.flavormate.ba_entities.recipe.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import de.flavormate.aa_interfaces.models.BaseEntity;
-import de.flavormate.ad_configurations.flavormate.CommonConfig;
 import de.flavormate.ba_entities.author.model.Author;
 import de.flavormate.ba_entities.book.model.Book;
 import de.flavormate.ba_entities.category.model.Category;
@@ -132,10 +131,6 @@ public class Recipe extends BaseEntity {
   }
 
   public String getCoverUrl() {
-    try {
-      return CommonConfig.backendUrl() + "/" + files.getFirst().getPath();
-    } catch (Exception e) {
-      return null;
-    }
+    return files.stream().findFirst().map(File::getFullPath).orElse(null);
   }
 }

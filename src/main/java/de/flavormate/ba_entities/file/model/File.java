@@ -3,6 +3,7 @@ package de.flavormate.ba_entities.file.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.flavormate.aa_interfaces.models.BaseEntity;
+import de.flavormate.ad_configurations.flavormate.CommonConfig;
 import de.flavormate.ba_entities.file.enums.FileCategory;
 import de.flavormate.ba_entities.file.enums.FileType;
 import jakarta.persistence.*;
@@ -66,5 +67,10 @@ public class File extends BaseEntity {
   @JsonIgnore
   public String getPath() {
     return Paths.get(getCategoryPath(), owner.toString(), getTypePath(), getName()).toString();
+  }
+
+  @JsonIgnore
+  public String getFullPath() {
+    return CommonConfig.backendUrl() + "/" + getPath();
   }
 }
