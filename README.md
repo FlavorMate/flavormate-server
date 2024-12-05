@@ -20,7 +20,28 @@ tailored just for you.
 ## Migration Guides
 
 <details>
-<summary>v1 to v2</summary>
+<summary>v2.0.* to 2.1.*</summary>
+
+### Environment Changes:
+
+The following properties have been added:
+
+**General:**
+
+|       new property        | required |       note        |
+|---------------------------|----------|-------------------|
+| FLAVORMATE_SHARE_DURATION | No       | ISO 8601 Duration |
+
+**Features**
+
+|        new property        | required | note |
+|----------------------------|----------|------|
+| `FLAVORMATE_FEATURE_SHARE` | No       |      |
+
+</details>
+
+<details>
+<summary>v1.* to v2.0.*</summary>
 
 ### Environment Changes:
 
@@ -112,15 +133,16 @@ You must have these dependencies installed:
 <details open>
 <summary>General</summary>
 
-|            Key             | Required |                                    Description                                     |           Example           |                  Default                   |
-|----------------------------|----------|------------------------------------------------------------------------------------|-----------------------------|--------------------------------------------|
-| FLAVORMATE_PORT            | No       | Port the server runs inside the container                                          | `8095`                      | `8095`                                     |
-| FLAVORMATE_HIGHLIGHT_COUNT | No       | Amount of highlights getting generated                                             | `14`                        | `14`                                       |
-| FLAVORMATE_PATH            | No       | The path the server uses. Useful when hosting frontend and backend on the same url | `/api`                      |                                            |
-| FLAVORMATE_LANGUAGE        | Yes      | Either `de` or `en`                                                                | `de`                        |                                            |
-| FLAVORMATE_JWT_TOKEN       | No       | The path where the `secret.key`-file is saved                                      | `/opt/app/secret.key`       | `file:${user.home}/.flavormate/secret.key` |
-| FLAVORMATE_BACKEND_URL     | Yes      | The URL the server is running on. Including the port if it is non standard         | `http://localhost:8095`     |                                            |
-| FLAVORMATE_FRONTEND_URL    | No       | [WebApp](https://github.com/FlavorMate/flavormate-app) is required                 | `https://app.flavormate.de` |                                            |
+|            Key             | Required |                                             Description                                             |           Example           |                  Default                   |
+|----------------------------|----------|-----------------------------------------------------------------------------------------------------|-----------------------------|--------------------------------------------|
+| FLAVORMATE_PORT            | No       | Port the server runs inside the container                                                           | `8095`                      | `8095`                                     |
+| FLAVORMATE_HIGHLIGHT_COUNT | No       | Amount of highlights getting generated                                                              | `14`                        | `14`                                       |
+| FLAVORMATE_PATH            | No       | The path the server uses. Useful when hosting frontend and backend on the same url                  | `/api`                      |                                            |
+| FLAVORMATE_LANGUAGE        | Yes      | Either `de` or `en`                                                                                 | `de`                        |                                            |
+| FLAVORMATE_JWT_TOKEN       | No       | The path where the `secret.key`-file is saved                                                       | `/opt/app/secret.key`       | `file:${user.home}/.flavormate/secret.key` |
+| FLAVORMATE_BACKEND_URL     | Yes      | The URL the server is running on. Including the port if it is non standard                          | `http://localhost:8095`     |                                            |
+| FLAVORMATE_FRONTEND_URL    | No       | [WebApp](https://github.com/FlavorMate/flavormate-app) is required                                  | `https://app.flavormate.de` |                                            |
+| FLAVORMATE_SHARE_DURATION  | No       | Sets the duration a recipe share is valid. If empty a share is valid forever. Use ISO 8601 Duration | `P1M`                       |                                            |
 
 </details>
 

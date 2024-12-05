@@ -50,8 +50,14 @@ public class Token extends BaseEntity {
         .build();
   }
 
-  public static Token ShareToken(Account owner, long recipeId) {
-    return Token.builder().type(TokenType.SHARE).owner(owner).content(recipeId).uses(0L).build();
+  public static Token ShareToken(Account owner, long recipeId, Duration duration) {
+    return Token.builder()
+        .type(TokenType.SHARE)
+        .owner(owner)
+        .content(recipeId)
+        .validFor(duration)
+        .uses(0L)
+        .build();
   }
 
   public boolean isValid() {

@@ -7,6 +7,7 @@ import de.flavormate.aa_interfaces.services.ICRUDService;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
 import de.flavormate.ab_exeptions.exceptions.ForbiddenException;
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
+import de.flavormate.ad_configurations.flavormate.MiscConfig;
 import de.flavormate.ba_entities.account.model.Account;
 import de.flavormate.ba_entities.account.repository.AccountRepository;
 import de.flavormate.ba_entities.recipe.model.Recipe;
@@ -32,6 +33,7 @@ public class TokenService extends BaseService implements ICRUDService<Token, Lon
   private final AccountRepository accountRepository;
   private final RecipeRepository recipeRepository;
   private final TokenRepository tokenRepository;
+  private final MiscConfig miscConfig;
 
   @Override
   public Token create(Long recipeId) throws CustomException {
@@ -42,7 +44,7 @@ public class TokenService extends BaseService implements ICRUDService<Token, Lon
             .findByUsername(getPrincipal().getUsername())
             .orElseThrow(() -> new NotFoundException(Account.class));
 
-    var token = Token.ShareToken(account, recipeId);
+    var token = Token.ShareToken(account, recipeId, miscConfig.shareDuration());
 
     return tokenRepository.save(token);
   }
