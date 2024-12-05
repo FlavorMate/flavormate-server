@@ -11,10 +11,10 @@ public record FeaturesConfig(
     Feature registration,
     Feature importExport,
     Feature recovery,
-    Feature shareRecipes,
     Feature story,
     Feature bring,
-    Feature openFoodFacts) {
+    Feature openFoodFacts,
+    Feature share) {
 
   public List<String> getFeatures() {
     var enabled = new ArrayList<String>();
@@ -31,10 +31,6 @@ public record FeaturesConfig(
       enabled.add("recovery");
     }
 
-    if (shareRecipes.enabled()) {
-      enabled.add("shareRecipes");
-    }
-
     if (story.enabled()) {
       enabled.add("story");
     }
@@ -45,6 +41,10 @@ public record FeaturesConfig(
 
     if (openFoodFacts.enabled()) {
       enabled.add("open-food-facts");
+    }
+
+    if (share.enabled()) {
+      enabled.add("share");
     }
 
     return enabled;

@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.context.MessageSource;
 
 @Getter
 @Setter
@@ -65,7 +66,8 @@ public class RecipeSchema {
 
   private final String url;
 
-  public static RecipeSchema fromRecipe(Recipe recipe, Integer serving) {
+  public static RecipeSchema fromRecipe(
+      Recipe recipe, Integer serving, MessageSource messageSource) {
 
     var name = recipe.getLabel();
 
@@ -89,7 +91,7 @@ public class RecipeSchema {
 
     var recipeYield = recipe.getServing().toString(serving);
 
-    var recipeCategory = recipe.getCourse().toString();
+    var recipeCategory = recipe.getCourse().getName(messageSource);
 
     var factor = serving / recipe.getServing().getAmount();
 
