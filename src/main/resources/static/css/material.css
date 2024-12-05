@@ -1,0 +1,61 @@
+/* Global Styling */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  text-align: center;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+mdui-card {
+  background-color: rgb(var(--mdui-color-inverse-primary));
+}
+
+.split-content {
+  display: flex;
+  gap: 16px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.center-row {
+  justify-content: center;
+}
+
+.center-column {
+  align-content: center;
+}
+
+ul,
+ol {
+  text-align: start;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .split-content {
+    flex-direction: column;
+    align-items: center;
+  }
+}
