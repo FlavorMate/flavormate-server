@@ -6,6 +6,7 @@
 >
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title th:text="${recipe.label}">FlavorMate</title>
     <link
       rel="icon"
@@ -22,8 +23,25 @@
     <script th:utext="${json}" type="application/ld+json"></script>
   </head>
   <body>
-    <main class="mdui-prose">
+    <main>
       <section class="content column">
+        <mdui-card class="column header p-16">
+          <div>
+            <span th:text="#{public-recipe_app-hint-1}" th:remove="tag" />
+            <br />
+            <span th:text="#{public-recipe_app-hint-2}" th:remove="tag" />
+            <br />
+            <span th:text="#{public-recipe_app-hint-3}" th:remove="tag" />
+          </div>
+
+          <img
+            width="180px"
+            height="60px"
+            th:src="${'/icons/open-in/app/'+#locale+'.png'}"
+            th:onclick="window.location.href=[[${appUrl}]]"
+            style="cursor: pointer; align-self: center"
+          />
+        </mdui-card>
         <div class="split-content">
           <mdui-card style="flex-basis: 50%; width: 100%">
             <img
@@ -40,15 +58,15 @@
               th:text="${recipe.description}"
             />
 
-            <mdui-card th:if="${!recipe.prepTime.isZero()}">
+            <mdui-card th:if="${!recipe.prepTime.isZero()}" class="p-16">
               <h4 th:text="#{public-recipe_prep-time} + ':'" />
               <h3 th:text="${prepTime}" />
             </mdui-card>
-            <mdui-card th:if="${!recipe.cookTime.isZero()}">
+            <mdui-card th:if="${!recipe.cookTime.isZero()}" class="p-16">
               <h4 th:text="#{public-recipe_cook-time} + ':'" />
               <h3 th:text="${cookTime}" />
             </mdui-card>
-            <mdui-card th:if="${!recipe.restTime.isZero()}">
+            <mdui-card th:if="${!recipe.restTime.isZero()}" class="p-16">
               <h4 th:text="#{public-recipe_rest-time} + ':'" />
               <h3 th:text="${restTime}" />
             </mdui-card>

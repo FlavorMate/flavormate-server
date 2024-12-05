@@ -15,6 +15,7 @@ import de.flavormate.ba_entities.token.model.Token;
 import de.flavormate.ba_entities.token.repository.TokenRepository;
 import de.flavormate.utils.DurationUtils;
 import de.flavormate.utils.JSONUtils;
+import java.util.Base64;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,7 +82,8 @@ public class PublicRecipeService extends BaseService {
             Map.entry("cookTime", cookTime),
             Map.entry("restTime", restTime),
             Map.entry("diet", diet),
-            Map.entry("course", course));
+            Map.entry("course", course),
+            Map.entry("appUrl", getAppUrl(recipe.getId(), token)));
 
     var context = new Context(LocaleContextHolder.getLocale());
 
@@ -90,5 +92,13 @@ public class PublicRecipeService extends BaseService {
     context.setVariable("backendUrl", commonConfig.getBackendUrl());
 
     return templateEngine.process("public/recipe.html", context);
+  }
+
+  private String getAppUrl(long id, String token) {
+    var serverUrl = commonConfig.getBackendUrl().toString();
+    var serverUrlBase64 = Base64.getEncoder().encodeToString(serverUrl.getBytes());
+
+    return String.format(
+        "flavormate://open?server=%s&page=recipe&id=%s&token=%s", serverUrlBase64, id, token);
   }
 }

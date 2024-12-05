@@ -6,6 +6,11 @@ body {
   text-align: center;
 }
 
+.header {
+  background-color: rgb(var(--mdui-color-secondary));
+  color: rgb(var(--mdui-color-on-secondary));
+}
+
 h1,
 h2,
 h3,
@@ -14,6 +19,10 @@ h5,
 h6 {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
+}
+
+.p-16 {
+  padding: 16px;
 }
 
 mdui-card {
@@ -53,7 +62,7 @@ ol {
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
+@media screen and (max-width: 600px) {
   .split-content {
     flex-direction: column;
     align-items: center;
