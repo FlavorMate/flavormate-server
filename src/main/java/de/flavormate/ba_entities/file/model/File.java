@@ -69,7 +69,6 @@ public class File extends BaseEntity {
     return Paths.get(getCategoryPath(), owner.toString(), getTypePath(), getName()).toString();
   }
 
-  @JsonIgnore
   public String getFullPath() {
     return CommonConfig.backendUrl() + "/" + getPath();
   }
