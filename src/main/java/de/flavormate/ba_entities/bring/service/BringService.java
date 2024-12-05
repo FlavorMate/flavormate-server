@@ -13,6 +13,7 @@ import de.flavormate.bb_thymeleaf.MainPage;
 import de.flavormate.utils.JSONUtils;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 
@@ -25,12 +26,14 @@ public class BringService {
 
   private final TemplateEngine templateEngine;
 
+  private final MessageSource messageSource;
+
   public String get(Long id, Integer serving) throws JsonProcessingException, CustomException {
 
     var recipe =
         recipeRepository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
 
-    RecipeSchema json = RecipeSchema.fromRecipe(recipe, serving);
+    RecipeSchema json = RecipeSchema.fromRecipe(recipe, serving, messageSource);
 
     Map<String, Object> data =
         Map.ofEntries(
