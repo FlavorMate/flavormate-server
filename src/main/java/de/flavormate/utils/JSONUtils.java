@@ -1,9 +1,11 @@
 /* Licensed under AGPLv3 2024 */
 package de.flavormate.utils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
 import de.flavormate.ab_exeptions.exceptions.NotAcceptableException;
 import java.util.Arrays;
@@ -18,7 +20,12 @@ import java.util.Optional;
 public class JSONUtils {
 
   /** ObjectMapper instance for JSON serialization and deserialization. */
-  public static ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+  public static ObjectMapper mapper =
+      new ObjectMapper()
+          .findAndRegisterModules()
+          .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+          .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+          .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS);
 
   // Private constructor to prevent instantiation of the utility class.
   private JSONUtils() {}
@@ -68,5 +75,9 @@ public class JSONUtils {
     return Optional.ofNullable(body)
         .map(jsonNode -> (JSONUtils.mapper.convertValue(jsonNode, clazz)))
         .orElseThrow(() -> new NotAcceptableException(clazz));
+  }
+
+  public static String toJsonString(Object object) throws JsonProcessingException {
+    return mapper.writeValueAsString(object);
   }
 }

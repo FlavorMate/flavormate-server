@@ -10,8 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Getter
 @Setter
@@ -29,10 +27,4 @@ public class SThing {
   private String name;
 
   private URI url;
-
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(
-        this, ToStringStyle.JSON_STYLE, false, false, true, null);
-  }
 }
