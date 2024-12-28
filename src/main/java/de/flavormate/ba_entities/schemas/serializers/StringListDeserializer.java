@@ -22,7 +22,7 @@ public class StringListDeserializer extends JDeserializer<List<String>> {
 
   @Override
   List<String> handleString(JsonNode node) throws JsonException {
-    return List.of(node.textValue());
+    return createStringList(node.textValue());
   }
 
   @Override

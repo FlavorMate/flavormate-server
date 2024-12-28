@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.flavormate.ab_exeptions.exceptions.JsonException;
 import de.flavormate.ba_entities.schemas.helpers.SDefinedTerm;
 import de.flavormate.ba_entities.schemas.helpers.SSchema;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import org.apache.commons.lang3.StringUtils;
 
 public class SKeywordDeserializer extends JDeserializer<List<String>> {
   @Override
@@ -30,13 +28,14 @@ public class SKeywordDeserializer extends JDeserializer<List<String>> {
           default -> throw new JsonException();
         };
 
-    return List.of(keyword);
+    return createStringList(keyword);
   }
 
   @Override
   List<String> handleString(JsonNode node) throws JsonException {
     final var raw = node.textValue();
-    return Stream.of(raw.split(",")).map(StringUtils::trimToNull).filter(Objects::nonNull).toList();
+    final var list = Arrays.asList(raw.split(","));
+    return cleanStringList(list);
   }
 
   @Override

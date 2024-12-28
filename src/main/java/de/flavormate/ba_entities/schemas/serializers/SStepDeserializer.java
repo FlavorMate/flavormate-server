@@ -24,21 +24,24 @@ public class SStepDeserializer extends JDeserializer<List<String>> {
   List<String> handleObject(JsonNode node) throws JsonException {
 
     final var type = objectMapper.convertValue(node, SSchema.class).type();
-    return switch (type) {
-      case "HowToStep" -> objectMapper.convertValue(node, SHowToStep.class).toStepList();
-      case "HowToSection" -> objectMapper.convertValue(node, SHowToSection.class).toStepList();
-      case "Text" -> objectMapper.convertValue(node, STextStep.class).toStepList();
-      default -> throw new JsonException();
-    };
+    final var list =
+        switch (type) {
+          case "HowToStep" -> objectMapper.convertValue(node, SHowToStep.class).toStepList();
+          case "HowToSection" -> objectMapper.convertValue(node, SHowToSection.class).toStepList();
+          case "Text" -> objectMapper.convertValue(node, STextStep.class).toStepList();
+          default -> throw new JsonException();
+        };
+
+    return cleanStringList(list);
   }
 
   @Override
   List<String> handleString(JsonNode node) {
-    return List.of(node.asText());
+    return createStringList(node.textValue());
   }
 
   @Override
   List<String> handleNumber(JsonNode node) {
-    return List.of(node.asText());
+    return createStringList(node.numberValue().toString());
   }
 }

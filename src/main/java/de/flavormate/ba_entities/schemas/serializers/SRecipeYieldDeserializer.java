@@ -21,7 +21,8 @@ public class SRecipeYieldDeserializer extends JDeserializer<String> {
 
   @Override
   String handleString(JsonNode node) throws JsonException {
-    return node.textValue();
+    final var raw = node.textValue();
+    return cleanString(raw);
   }
 
   @Override

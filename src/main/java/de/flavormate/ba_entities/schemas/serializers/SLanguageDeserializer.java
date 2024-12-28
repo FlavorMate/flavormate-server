@@ -19,15 +19,19 @@ public class SLanguageDeserializer extends JDeserializer<String> {
   @Override
   String handleObject(JsonNode node) throws JsonException {
     final var type = objectMapper.convertValue(node, SSchema.class).type();
-    return switch (type) {
-      case "Language" -> objectMapper.convertValue(node, SLanguage.class).name();
-      default -> throw new JsonException();
-    };
+    final var language =
+        switch (type) {
+          case "Language" -> objectMapper.convertValue(node, SLanguage.class).name();
+          default -> throw new JsonException();
+        };
+
+    return cleanString(language);
   }
 
   @Override
   String handleString(JsonNode node) throws JsonException {
-    return node.textValue();
+    final var raw = node.textValue();
+    return cleanString(raw);
   }
 
   @Override

@@ -8,7 +8,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.flavormate.ab_exeptions.exceptions.JsonException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 public abstract class JDeserializer<T> extends JsonDeserializer<T> {
@@ -48,4 +51,18 @@ public abstract class JDeserializer<T> extends JsonDeserializer<T> {
   abstract T handleString(JsonNode node) throws JsonException;
 
   abstract T handleNumber(JsonNode node) throws JsonException;
+
+  protected String cleanString(String str) {
+    str = str.replaceAll("\\s+", " ");
+    return StringUtils.trimToNull(str);
+  }
+
+  protected List<String> cleanStringList(List<String> list) {
+    return list.stream().map(this::cleanString).filter(Objects::nonNull).toList();
+  }
+
+  protected List<String> createStringList(String str) {
+    final var raw = cleanString(str);
+    return raw == null ? List.of() : List.of(raw);
+  }
 }

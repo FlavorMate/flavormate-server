@@ -20,16 +20,20 @@ public class SOrganizationPersonDeserializer extends JDeserializer<String> {
   String handleObject(JsonNode node) throws JsonException {
     final var type = objectMapper.convertValue(node, SSchema.class).type();
 
-    return switch (type) {
-      case "Person", "Organization" ->
-          objectMapper.convertValue(node, SOrganizationPerson.class).name();
-      default -> throw new JsonException();
-    };
+    final var name =
+        switch (type) {
+          case "Person", "Organization" ->
+              objectMapper.convertValue(node, SOrganizationPerson.class).name();
+          default -> throw new JsonException();
+        };
+
+    return cleanString(name);
   }
 
   @Override
   String handleString(JsonNode node) throws JsonException {
-    return node.textValue();
+    final var raw = node.textValue();
+    return cleanString(raw);
   }
 
   @Override
