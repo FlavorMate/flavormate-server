@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+@Deprecated
 public interface UnitRepository extends JpaRepository<Unit, Long> {
 
   Optional<Unit> findByLabel(String label);

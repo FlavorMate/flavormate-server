@@ -8,6 +8,7 @@ import de.flavormate.ad_configurations.flavormate.CommonConfig;
 import de.flavormate.ba_entities.bring.model.RecipeSchema;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
+import de.flavormate.ba_entities.schemas.mappers.SRecipeMapper;
 import de.flavormate.bb_thymeleaf.Fragments;
 import de.flavormate.bb_thymeleaf.MainPage;
 import de.flavormate.utils.JSONUtils;
@@ -28,18 +29,22 @@ public class BringService {
 
   private final MessageSource messageSource;
 
+  private final SRecipeMapper sRecipeMapper;
+
   public String get(Long id, Integer serving) throws JsonProcessingException, CustomException {
 
     var recipe =
         recipeRepository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
+
+    final var sRecipe = sRecipeMapper.fromRecipe(recipe);
 
     RecipeSchema json = RecipeSchema.fromRecipe(recipe, serving, messageSource);
 
     Map<String, Object> data =
         Map.ofEntries(
             Map.entry(
-                "json",
-                JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json)));
+                "json", JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json)),
+            Map.entry("recipe", JSONUtils.toJsonString(sRecipe)));
 
     return new MainPage(templateEngine, commonConfig).process(Fragments.BRING, data);
   }

@@ -2,6 +2,7 @@
 package de.flavormate.ba_entities.schemas;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.flavormate.ba_entities.schemas.serializers.SInstantDeserializer;
 import de.flavormate.ba_entities.schemas.serializers.SKeywordDeserializer;
@@ -20,6 +21,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SCreativeWork extends SThing {
+  @JsonProperty("@Type")
+  private final String type = "CreativeWork";
+
   private String alternativeHeadline;
 
   @JsonDeserialize(using = SOrganizationPersonDeserializer.class)

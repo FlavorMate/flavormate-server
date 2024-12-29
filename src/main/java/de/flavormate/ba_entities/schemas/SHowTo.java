@@ -2,6 +2,7 @@
 package de.flavormate.ba_entities.schemas;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.flavormate.ba_entities.schemas.serializers.SStepDeserializer;
 import java.time.Duration;
@@ -17,6 +18,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SHowTo extends SCreativeWork {
+  @JsonProperty("@Type")
+  private final String type = "HowTo";
+
   private Duration performTime;
 
   private Duration prepTime;

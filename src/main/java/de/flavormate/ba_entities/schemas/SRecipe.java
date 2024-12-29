@@ -2,6 +2,7 @@
 package de.flavormate.ba_entities.schemas;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.flavormate.ba_entities.schemas.helpers.SNutritionInformation;
 import de.flavormate.ba_entities.schemas.helpers.SRestrictedDiet;
@@ -21,6 +22,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SRecipe extends SHowTo {
+  @JsonProperty("@Type")
+  private final String type = "Recipe";
+
   private Duration cookTime;
 
   private String cookingMethod;

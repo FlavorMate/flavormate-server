@@ -130,6 +130,10 @@ public class Recipe extends BaseEntity {
     }
   }
 
+  public Duration getTotalTime() {
+    return Duration.ZERO.plus(prepTime).plus(cookTime).plus(restTime);
+  }
+
   public String getCoverUrl() {
     return files.stream().findFirst().map(File::getFullPath).orElse(null);
   }

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.flavormate.ab_exeptions.exceptions.JsonException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,9 @@ public abstract class JDeserializer<T> extends JsonDeserializer<T> {
   }
 
   protected List<String> createStringList(String str) {
-    final var raw = cleanString(str);
-    return raw == null ? List.of() : List.of(raw);
+    return Arrays.stream(str.split("\\n+"))
+        .map(this::cleanString)
+        .filter(Objects::nonNull)
+        .toList();
   }
 }
