@@ -17,11 +17,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SThing {
-  @JsonProperty("@Type")
+  @JsonProperty("@type")
   private final String type = "Thing";
 
-  @JsonProperty("@Schema")
-  private final String schema = "https://schema.org/";
+  @JsonProperty("@context")
+  private final String context = "https://schema.org";
 
   private String alternateName;
 

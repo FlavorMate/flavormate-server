@@ -18,7 +18,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SHowTo extends SCreativeWork {
-  @JsonProperty("@Type")
+  @JsonProperty("@type")
   private final String type = "HowTo";
 
   private Duration performTime;

@@ -21,7 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SCreativeWork extends SThing {
-  @JsonProperty("@Type")
+  @JsonProperty("@type")
   private final String type = "CreativeWork";
 
   private String alternativeHeadline;

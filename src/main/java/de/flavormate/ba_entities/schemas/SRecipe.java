@@ -22,7 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SRecipe extends SHowTo {
-  @JsonProperty("@Type")
+  @JsonProperty("@type")
   private final String type = "Recipe";
 
   private Duration cookTime;
