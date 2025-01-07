@@ -78,6 +78,6 @@ public class JSONUtils {
   }
 
   public static String toJsonString(Object object) throws JsonProcessingException {
-    return mapper.writeValueAsString(object);
+    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
   }
 }

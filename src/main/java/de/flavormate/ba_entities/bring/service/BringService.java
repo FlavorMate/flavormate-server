@@ -36,9 +36,11 @@ public class BringService {
     var recipe =
         recipeRepository.findById(id).orElseThrow(() -> new NotFoundException(Recipe.class));
 
-    final var sRecipe = sRecipeMapper.fromRecipe(recipe);
+    final var sRecipe = sRecipeMapper.fromRecipe(recipe, serving, messageSource);
 
-    RecipeSchema json = RecipeSchema.fromRecipe(recipe, serving, messageSource);
+    RecipeSchema json =
+        RecipeSchema.fromRecipe(
+            recipe, serving, messageSource, commonConfig.getPreferredLanguage());
 
     Map<String, Object> data =
         Map.ofEntries(

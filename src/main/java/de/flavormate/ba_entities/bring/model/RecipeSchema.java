@@ -67,7 +67,7 @@ public class RecipeSchema {
   private final String url;
 
   public static RecipeSchema fromRecipe(
-      Recipe recipe, Integer serving, MessageSource messageSource) {
+      Recipe recipe, Integer serving, MessageSource messageSource, String locale) {
 
     var name = recipe.getLabel();
 
@@ -91,7 +91,7 @@ public class RecipeSchema {
 
     var recipeYield = recipe.getServing().toString(serving);
 
-    var recipeCategory = recipe.getCourse().getName(messageSource);
+    var recipeCategory = recipe.getCourse().getName(messageSource, locale);
 
     var factor = serving / recipe.getServing().getAmount();
 

@@ -4,9 +4,10 @@ package de.flavormate.ba_entities.schemas;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import de.flavormate.ba_entities.schemas.helpers.SPerson;
 import de.flavormate.ba_entities.schemas.serializers.SInstantDeserializer;
 import de.flavormate.ba_entities.schemas.serializers.SLanguageDeserializer;
-import de.flavormate.ba_entities.schemas.serializers.SOrganizationPersonDeserializer;
+import de.flavormate.ba_entities.schemas.serializers.SPersonDeserializer;
 import de.flavormate.ba_entities.schemas.serializers.StringListCommaDeserializer;
 import java.time.Instant;
 import java.util.List;
@@ -26,8 +27,8 @@ public class SCreativeWork extends SThing {
 
   private String alternativeHeadline;
 
-  @JsonDeserialize(using = SOrganizationPersonDeserializer.class)
-  private String author;
+  @JsonDeserialize(using = SPersonDeserializer.class)
+  private SPerson author;
 
   @JsonDeserialize(using = SInstantDeserializer.class)
   private Instant dateCreated;

@@ -7,17 +7,16 @@ import de.flavormate.ad_configurations.flavormate.CommonConfig;
 import de.flavormate.ba_entities.category.model.Category;
 import de.flavormate.ba_entities.category.repository.CategoryRepository;
 import de.flavormate.ba_entities.file.model.File;
-import de.flavormate.ba_entities.ingredient.model.Ingredient;
 import de.flavormate.ba_entities.ingredient.wrapper.IngredientDraft;
 import de.flavormate.ba_entities.ingredientGroup.model.IngredientGroup;
 import de.flavormate.ba_entities.ingredientGroup.wrapper.IngredientGroupDraft;
-import de.flavormate.ba_entities.instruction.model.Instruction;
 import de.flavormate.ba_entities.instruction.wrapper.InstructionDraft;
 import de.flavormate.ba_entities.instructionGroup.model.InstructionGroup;
 import de.flavormate.ba_entities.instructionGroup.wrapper.InstructionGroupDraft;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.wrapper.RecipeDraft;
 import de.flavormate.ba_entities.schemas.SRecipe;
+import de.flavormate.ba_entities.schemas.helpers.SPerson;
 import de.flavormate.ba_entities.serving.wrapper.ServingDraft;
 import de.flavormate.ba_entities.tag.model.Tag;
 import de.flavormate.ba_entities.tag.wrapper.TagDraft;
@@ -29,8 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,7 +42,9 @@ public class SRecipeMapper {
   private final CategoryRepository categoryRepository;
   private final UnitLocalizedRepository unitLocalizedRepository;
 
-  public SRecipe fromRecipe(Recipe recipe) {
+  public SRecipe fromRecipe(Recipe recipe, Integer requestedServing, MessageSource messageSource) {
+    final var factor = requestedServing / recipe.getServing().getAmount();
+
     final var author = recipe.getAuthor().getAccount().getDisplayName();
 
     final var cookTime = recipe.getCookTime();
@@ -70,20 +73,24 @@ public class SRecipeMapper {
             .map(this::getLocalizationValue)
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));
+    recipeCategory.add(
+        recipe.getCourse().getName(messageSource, commonConfig.getPreferredLanguage()));
+    recipeCategory.add(
+        recipe.getDiet().getName(messageSource, commonConfig.getPreferredLanguage()));
 
     final var recipeIngredient =
         recipe.getIngredientGroups().stream()
             .map(IngredientGroup::getIngredients)
             .flatMap(List::stream)
-            .map(Ingredient::toString)
+            .map(i -> i.requestServing(factor))
             .toList();
 
     final var recipeInstruction =
         recipe.getInstructionGroups().stream()
             .map(InstructionGroup::getInstructions)
             .flatMap(List::stream)
-            .map(Instruction::getLabel)
+            .map(i -> i.getCalculatedLabel(factor))
             .toList();
 
     final var recipeYield = recipe.getServing().toString();
@@ -95,7 +102,7 @@ public class SRecipeMapper {
     final var yield = recipe.getServing().toString();
 
     final var sRecipe = new SRecipe();
-    sRecipe.setAuthor(author);
+    sRecipe.setAuthor(new SPerson(author));
     sRecipe.setCookTime(cookTime);
     sRecipe.setDateCreated(dateCreated);
     sRecipe.setDateModified(dateModified);

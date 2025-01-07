@@ -4,4 +4,4 @@ package de.flavormate.ba_entities.schemas.helpers;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record SOrganizationPerson(String name) {}
+public record SName(String name) {}
