@@ -17,7 +17,7 @@ public class NumberUtils {
     }
   }
 
-  public static double tryParseDouble(String value, double defaultVal) {
+  public static Double tryParseDouble(String value, Double defaultVal) {
     try {
       return Double.parseDouble(value);
     } catch (NumberFormatException e) {

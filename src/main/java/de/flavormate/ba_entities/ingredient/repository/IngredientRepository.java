@@ -16,4 +16,7 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
   @Query("SELECT count(i) FROM Ingredient i WHERE i.schema = :i")
   int countBySchema(@Param("i") int i);
+
+  @Query("SELECT i FROM Ingredient i WHERE i.amount <= 0")
+  List<Ingredient> findAllInvalidIngredients();
 }

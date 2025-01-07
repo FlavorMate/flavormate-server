@@ -64,14 +64,22 @@ public class S99_CleanScript implements AScript {
     }
 
     var ingredients = ingredientRepository.findByEmptyUnit();
-    log.info("Found {} unoptimized ingredients", ingredients.size());
+    log.info("Found {} unoptimized ingredients (step 1)", ingredients.size());
 
     for (var ingredient : ingredients) {
       ingredient.setUnit(null);
       ingredientRepository.save(ingredient);
     }
 
-    log.info("Optimized {} ingredients", ingredients.size());
+    log.info("Optimized {} ingredients (step 1)", ingredients.size());
+
+    var ingredients2 = ingredientRepository.findAllInvalidIngredients();
+    log.info("Found {} unoptimized ingredients (step 2)", ingredients2.size());
+    for (var ingredient : ingredients2) {
+      ingredient.setAmount(null);
+      ingredientRepository.save(ingredient);
+    }
+    log.info("Optimized {} ingredients (step 2)", ingredients2.size());
   }
 
   private void cleanContentFiles() {
