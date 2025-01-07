@@ -35,7 +35,7 @@ public class Instruction extends BaseEntity {
 
       if (lIndex != -1) {
         var foundText = copy.substring(lIndex + 2, rIndex);
-        double newValue = NumberUtils.tryParseDouble(foundText, 1);
+        double newValue = NumberUtils.tryParseDouble(foundText, 1.0);
         newValue = newValue * (factor);
         copy = copy.replaceAll("\\[\\[" + foundText + "]]", NumberUtils.beautify(newValue));
       }

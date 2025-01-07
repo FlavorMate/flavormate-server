@@ -181,14 +181,14 @@ public class SRecipeMapper {
 
       var ingredientParts = ingredient.split(" ");
 
-      double amount = NumberUtils.tryParseDouble(ingredientParts[0], -1);
+      Double amount = NumberUtils.tryParseDouble(ingredientParts[0], null);
       String label;
       UnitLocalized unit;
 
       int startIndex;
 
       // The ingredient has no amount
-      if (amount <= 0) {
+      if (amount == null || amount <= 0) {
         unit =
             unitLocalizedRepository.findByLabelAndLanguage(ingredientParts[0], language).stream()
                 .findFirst()
@@ -235,9 +235,9 @@ public class SRecipeMapper {
   private ServingDraft getServiceDraft(String recipeYield) {
     final var parts = recipeYield.split(" ");
 
-    var amount = NumberUtils.tryParseDouble(parts[0], -1);
+    Double amount = NumberUtils.tryParseDouble(parts[0], null);
 
-    if (amount > 0)
+    if (amount != null && amount > 0)
       return new ServingDraft(amount, String.join(" ", List.of(parts).subList(1, parts.length)));
     else return new ServingDraft(amount, recipeYield);
   }

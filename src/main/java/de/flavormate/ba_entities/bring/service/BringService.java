@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.flavormate.ab_exeptions.exceptions.CustomException;
 import de.flavormate.ab_exeptions.exceptions.NotFoundException;
 import de.flavormate.ad_configurations.flavormate.CommonConfig;
-import de.flavormate.ba_entities.bring.model.RecipeSchema;
 import de.flavormate.ba_entities.recipe.model.Recipe;
 import de.flavormate.ba_entities.recipe.repository.RecipeRepository;
 import de.flavormate.ba_entities.schemas.mappers.SRecipeMapper;
@@ -38,15 +37,7 @@ public class BringService {
 
     final var sRecipe = sRecipeMapper.fromRecipe(recipe, serving, messageSource);
 
-    RecipeSchema json =
-        RecipeSchema.fromRecipe(
-            recipe, serving, messageSource, commonConfig.getPreferredLanguage());
-
-    Map<String, Object> data =
-        Map.ofEntries(
-            Map.entry(
-                "json", JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json)),
-            Map.entry("recipe", JSONUtils.toJsonString(sRecipe)));
+    Map<String, Object> data = Map.ofEntries(Map.entry("recipe", JSONUtils.toJsonString(sRecipe)));
 
     return new MainPage(templateEngine, commonConfig).process(Fragments.BRING, data);
   }
