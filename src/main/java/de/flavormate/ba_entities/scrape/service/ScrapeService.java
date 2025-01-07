@@ -71,34 +71,49 @@ public class ScrapeService {
     for (Element jsonLdElement : jsonLdElements) {
       String json = jsonLdElement.html();
 
-      // Clean the String to be properly parsed
-      //      json = json.replaceAll("\\n+", "\n");
-      //      json = json.replaceAll("\\r+", "");
-      //      json = json.replaceAll("\\t", " ");
-      //      json = json.replaceAll("\\s+", " ");
-      //      json = StringEscapeUtils.unescapeHtml4(json);
-
       // Parse the JSON into a generic JsonNode first
       JsonNode rootNode = JSONUtils.mapper.readTree(json);
 
-      // Handle cases where the JSON-LD contains an array of objects
-      if (rootNode.isArray()) {
-        for (JsonNode node : rootNode) {
-          if (isRecipeNode(node)) {
-            // Parse the node into a Recipe object and add to the list
-            return JSONUtils.mapper.treeToValue(node, SRecipe.class);
-          }
-        }
-      } else if (isRecipeNode(rootNode)) {
-        // If it's a single object and a recipe, parse and add it to the list
-        return JSONUtils.mapper.treeToValue(rootNode, SRecipe.class);
+      JsonNode recipeNode = findRecipeNode(rootNode);
+
+      if (recipeNode != null) {
+        return JSONUtils.mapper.treeToValue(recipeNode, SRecipe.class);
       }
     }
     throw new NotFoundException(SRecipe.class);
   }
 
+  private JsonNode findRecipeNode(JsonNode node) {
+    // Base case: Check if the current node is a Recipe node
+    if (isRecipeNode(node)) {
+      return node;
+    }
+
+    // Recursive case: Check nested objects and arrays
+    if (node.isObject()) {
+      // Check all fields of the object
+      for (JsonNode child : node) {
+        JsonNode found = findRecipeNode(child);
+        if (found != null) {
+          return found;
+        }
+      }
+    } else if (node.isArray()) {
+      // Check each element in the array
+      for (JsonNode child : node) {
+        JsonNode found = findRecipeNode(child);
+        if (found != null) {
+          return found;
+        }
+      }
+    }
+
+    // Return null if no Recipe node is found
+    return null;
+  }
+
   // Helper method to check if a JsonNode is a Recipe
   private boolean isRecipeNode(JsonNode node) {
-    return node.path("@type").asText().equals("Recipe");
+    return node.path("@type").asText().equalsIgnoreCase("recipe");
   }
 }
