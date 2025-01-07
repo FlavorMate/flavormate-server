@@ -21,14 +21,14 @@ public class SHowTo extends SCreativeWork {
   @JsonProperty("@type")
   private final String type = "HowTo";
 
-  private Duration performTime;
+  private Duration performTime = Duration.ZERO;
 
-  private Duration prepTime;
+  private Duration prepTime = Duration.ZERO;
 
   @JsonDeserialize(using = SStepDeserializer.class)
   private List<String> step;
 
-  private Duration totalTime;
+  private Duration totalTime = Duration.ZERO;
 
   private String yield;
 }

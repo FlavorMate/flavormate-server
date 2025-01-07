@@ -226,8 +226,13 @@ public class SRecipeMapper {
   }
 
   private ServingDraft getServiceDraft(String recipeYield) {
-    var amount = NumberUtils.tryParseDouble(recipeYield, -1);
-    return new ServingDraft(amount, "");
+    final var parts = recipeYield.split(" ");
+
+    var amount = NumberUtils.tryParseDouble(parts[0], -1);
+
+    if (amount > 0)
+      return new ServingDraft(amount, String.join(" ", List.of(parts).subList(1, parts.length)));
+    else return new ServingDraft(amount, recipeYield);
   }
 
   private List<TagDraft> getTags(List<String> keywords) {

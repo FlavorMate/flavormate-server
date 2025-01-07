@@ -8,6 +8,7 @@ import de.flavormate.ba_entities.schemas.helpers.SNutritionInformation;
 import de.flavormate.ba_entities.schemas.helpers.SRestrictedDiet;
 import de.flavormate.ba_entities.schemas.serializers.SRecipeYieldDeserializer;
 import de.flavormate.ba_entities.schemas.serializers.SStepDeserializer;
+import de.flavormate.ba_entities.schemas.serializers.StringListCommaDeserializer;
 import de.flavormate.ba_entities.schemas.serializers.StringListDeserializer;
 import java.time.Duration;
 import java.util.List;
@@ -25,16 +26,16 @@ public class SRecipe extends SHowTo {
   @JsonProperty("@type")
   private final String type = "Recipe";
 
-  private Duration cookTime;
+  private Duration cookTime = Duration.ZERO;
 
   private String cookingMethod;
 
   private SNutritionInformation nutrition;
 
-  @JsonDeserialize(using = StringListDeserializer.class)
+  @JsonDeserialize(using = StringListCommaDeserializer.class)
   private List<String> recipeCategory;
 
-  @JsonDeserialize(using = StringListDeserializer.class)
+  @JsonDeserialize(using = StringListCommaDeserializer.class)
   private List<String> recipeCuisine;
 
   @JsonDeserialize(using = StringListDeserializer.class)

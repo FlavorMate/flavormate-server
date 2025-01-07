@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-public class SKeywordDeserializer extends JDeserializer<List<String>> {
+public class StringListCommaDeserializer extends JDeserializer<List<String>> {
   @Override
   List<String> handleArray(JsonNode node) throws JsonException {
     return StreamSupport.stream(node.spliterator(), false)

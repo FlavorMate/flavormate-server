@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.flavormate.ba_entities.schemas.serializers.SInstantDeserializer;
-import de.flavormate.ba_entities.schemas.serializers.SKeywordDeserializer;
 import de.flavormate.ba_entities.schemas.serializers.SLanguageDeserializer;
 import de.flavormate.ba_entities.schemas.serializers.SOrganizationPersonDeserializer;
+import de.flavormate.ba_entities.schemas.serializers.StringListCommaDeserializer;
 import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -41,7 +41,7 @@ public class SCreativeWork extends SThing {
   @JsonDeserialize(using = SLanguageDeserializer.class)
   private String inLanguage;
 
-  @JsonDeserialize(using = SKeywordDeserializer.class)
+  @JsonDeserialize(using = StringListCommaDeserializer.class)
   private List<String> keywords;
 
   private String text;
