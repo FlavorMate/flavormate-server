@@ -19,4 +19,11 @@ public interface UnitLocalizedRepository extends JpaRepository<UnitLocalized, Lo
           + " = lower(:label) OR lower(lu.labelSgAbrv) = lower(:label) OR lower(lu.labelPlAbrv) ="
           + " lower(:label)")
   List<UnitLocalized> findByLabel(@Param("label") String label);
+
+  @Query(
+      "SELECT lu FROM UnitLocalized lu WHERE (lower(lu.labelSg) = lower(:label) OR"
+          + " lower(lu.labelPl) = lower(:label) OR lower(lu.labelSgAbrv) = lower(:label) OR"
+          + " lower(lu.labelPlAbrv) = lower(:label)) AND lu.language = :language")
+  List<UnitLocalized> findByLabelAndLanguage(
+      @Param("label") String label, @Param("language") String language);
 }

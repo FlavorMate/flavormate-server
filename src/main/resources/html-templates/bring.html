@@ -1,4 +1,6 @@
 <section class="content">
+  <script th:utext="${recipe}" type="application/ld+json"></script>
+
   <script th:utext="${json}" type="application/ld+json"></script>
 
   <p class="h4 text-primary" th:text="#{html-bring-title}"></p>

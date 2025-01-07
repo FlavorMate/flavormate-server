@@ -72,4 +72,24 @@ public class Ingredient extends BaseEntity {
         .filter(StringUtils::isNotEmpty)
         .collect(Collectors.joining(" "));
   }
+
+  public String requestServing(double factor) {
+    String amountLabel = null;
+
+    if (amount != null) {
+      amountLabel = NumberUtils.beautify(amount * factor);
+    }
+
+    String unitLabel = null;
+
+    if (unit != null) {
+      unitLabel = unit.getLabel();
+    } else if (unitLocalized != null) {
+      unitLabel = unitLocalized.getLabel(amountLabel == null ? null : amount * factor);
+    }
+
+    return Stream.of(amountLabel, unitLabel, label)
+        .filter(StringUtils::isNotEmpty)
+        .collect(Collectors.joining(" "));
+  }
 }

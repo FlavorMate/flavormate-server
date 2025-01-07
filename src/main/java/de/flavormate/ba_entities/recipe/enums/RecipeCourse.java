@@ -1,8 +1,8 @@
 /* Licensed under AGPLv3 2024 */
 package de.flavormate.ba_entities.recipe.enums;
 
+import java.util.Locale;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 public enum RecipeCourse {
   Appetizer,
@@ -12,8 +12,8 @@ public enum RecipeCourse {
   Bakery,
   Drink;
 
-  public String getName(MessageSource messageSource) {
-    final var locale = LocaleContextHolder.getLocale();
+  public String getName(MessageSource messageSource, String preferredLanguage) {
+    final var locale = Locale.forLanguageTag(preferredLanguage);
     return switch (this) {
       case Appetizer -> messageSource.getMessage("course_appetizer", null, locale);
       case MainDish -> messageSource.getMessage("course_main-dish", null, locale);

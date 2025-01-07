@@ -64,14 +64,18 @@ public class PublicRecipeService extends BaseService {
     var recipe = findByIdL10n(id, language, token);
 
     RecipeSchema json =
-        RecipeSchema.fromRecipe(recipe, recipe.getServing().getAmount().intValue(), messageSource);
+        RecipeSchema.fromRecipe(
+            recipe,
+            recipe.getServing().getAmount().intValue(),
+            messageSource,
+            commonConfig.getPreferredLanguage());
 
     var prepTime = DurationUtils.beautify(recipe.getPrepTime(), messageSource);
     var cookTime = DurationUtils.beautify(recipe.getCookTime(), messageSource);
     var restTime = DurationUtils.beautify(recipe.getRestTime(), messageSource);
 
-    var diet = recipe.getDiet().getName(messageSource);
-    var course = recipe.getCourse().getName(messageSource);
+    var diet = recipe.getDiet().getName(messageSource, commonConfig.getPreferredLanguage());
+    var course = recipe.getCourse().getName(messageSource, commonConfig.getPreferredLanguage());
 
     Map<String, Object> data =
         Map.ofEntries(
