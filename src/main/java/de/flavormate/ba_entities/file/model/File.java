@@ -2,6 +2,7 @@
 package de.flavormate.ba_entities.file.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.flavormate.aa_interfaces.models.BaseEntity;
 import de.flavormate.ad_configurations.flavormate.CommonConfig;
 import de.flavormate.ba_entities.file.enums.FileCategory;
@@ -20,6 +21,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class File extends BaseEntity {
 
   // e.g. image, video, etc.
