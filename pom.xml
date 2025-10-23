@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.0</version>
+    <version>3.5.6</version>
     <relativePath />
   </parent>
   <groupId>de.flavormate</groupId>
@@ -13,18 +13,18 @@
   <name>FlavorMate</name>
   <description>The backend for FlavorMate</description>
   <properties>
-    <apache.commons-io.version>2.19.0</apache.commons-io.version>
-    <apache.commons-lang3.version>3.17.0</apache.commons-lang3.version>
-    <apache.commons-text.version>1.13.1</apache.commons-text.version>
-    <gitbuildhook.version>3.5.0</gitbuildhook.version>
+    <apache.commons-io.version>2.20.0</apache.commons-io.version>
+    <apache.commons-lang3.version>3.19.0</apache.commons-lang3.version>
+    <apache.commons-text.version>1.14.0</apache.commons-text.version>
+    <gitbuildhook.version>3.6.0</gitbuildhook.version>
     <java.version>21</java.version>
-    <jsoup.version>1.20.1</jsoup.version>
-    <jsr310.version>2.19.0</jsr310.version>
-    <postgresql.version>42.7.7</postgresql.version>
+    <jsoup.version>1.21.2</jsoup.version>
+    <jsr310.version>2.20.0</jsr310.version>
+    <postgresql.version>42.7.8</postgresql.version>
     <security-jwt.version>5.0.12</security-jwt.version>
-    <spotless.google-format.version>1.27.0</spotless.google-format.version>
-    <spotless.prettier.version>3.5.3</spotless.prettier.version>
-    <spotless.version>2.44.5</spotless.version>
+    <spotless.google-format.version>1.30.0</spotless.google-format.version>
+    <spotless.prettier.version>3.6.2</spotless.prettier.version>
+    <spotless.version>3.0.0</spotless.version>
   </properties>
   <dependencies>
     <dependency>
