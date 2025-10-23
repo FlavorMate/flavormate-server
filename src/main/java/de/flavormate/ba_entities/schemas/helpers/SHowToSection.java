@@ -2,11 +2,16 @@
 package de.flavormate.ba_entities.schemas.helpers;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import de.flavormate.ba_entities.schemas.serializers.SStepDeserializer;
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record SHowToSection(String name, int position, List<SStep> itemListElement)
+public record SHowToSection(
+    String name,
+    int position,
+    @JsonDeserialize(using = SStepDeserializer.class) List<String> itemListElement)
     implements SStep {
 
   @Override
@@ -16,9 +21,7 @@ public record SHowToSection(String name, int position, List<SStep> itemListEleme
       result.add(name);
     }
     if (itemListElement != null) {
-      for (var step : itemListElement) {
-        result.addAll(step.toStepList());
-      }
+      result.addAll(itemListElement);
     }
     return result;
   }

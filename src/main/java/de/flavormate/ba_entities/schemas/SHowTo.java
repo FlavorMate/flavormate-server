@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.flavormate.ba_entities.schemas.serializers.SStepDeserializer;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class SHowTo extends SCreativeWork {
   private Duration prepTime = Duration.ZERO;
 
   @JsonDeserialize(using = SStepDeserializer.class)
-  private List<String> step;
+  private List<String> step = new ArrayList<>();
 
   private Duration totalTime = Duration.ZERO;
 
