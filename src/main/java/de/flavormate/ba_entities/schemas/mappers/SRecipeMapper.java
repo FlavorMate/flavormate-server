@@ -175,7 +175,7 @@ public class SRecipeMapper {
     ArrayList<IngredientDraft> ingredients = new ArrayList<>();
 
     for (var ingredient : recipeIngredient) {
-      // e.g. Convert 1/4 into 0.25
+      // e.g. Convert ¼ into 0.25
       ingredient = NumberUtils.convertExtendedFractionString(ingredient);
       ingredient = StringUtils.trimToEmpty(ingredient);
 

@@ -10,6 +10,7 @@ import de.flavormate.ba_entities.schemas.serializers.SLanguageDeserializer;
 import de.flavormate.ba_entities.schemas.serializers.SPersonDeserializer;
 import de.flavormate.ba_entities.schemas.serializers.StringListCommaDeserializer;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,7 +44,7 @@ public class SCreativeWork extends SThing {
   private String inLanguage;
 
   @JsonDeserialize(using = StringListCommaDeserializer.class)
-  private List<String> keywords;
+  private List<String> keywords = new ArrayList<>();
 
   private String text;
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.flavormate.ba_entities.schemas.serializers.SImageDeserializer;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +29,7 @@ public class SThing {
   private String description;
 
   @JsonDeserialize(using = SImageDeserializer.class)
-  private List<String> image;
+  private List<String> image = new ArrayList<>();
 
   private String name;
 
