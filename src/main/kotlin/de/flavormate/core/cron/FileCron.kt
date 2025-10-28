@@ -1,0 +1,121 @@
+/* Licensed under AGPLv3 2024 - 2025 */
+package de.flavormate.core.cron
+
+import de.flavormate.features.account.repositories.AccountFileRepository
+import de.flavormate.features.recipe.repositories.RecipeFileRepository
+import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
+import de.flavormate.shared.enums.FilePath
+import de.flavormate.shared.interfaces.CRepository
+import de.flavormate.shared.services.FileService
+import io.quarkus.logging.Log
+import io.quarkus.runtime.Startup
+import io.quarkus.scheduler.Scheduled
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.transaction.Transactional
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import org.apache.commons.io.FileUtils
+
+@ApplicationScoped
+class FileCron(
+  private val fileAccountRepository: AccountFileRepository,
+  private val fileService: FileService,
+  private val fileRecipeRepository: RecipeFileRepository,
+  private val fileRecipeDraftRepository: RecipeDraftFileRepository,
+) {
+
+  @Scheduled(cron = "5 0 0 * * ?")
+  @Startup
+  fun run() {
+    Log.info("Start deleting empty or orphan folders")
+
+    cleanCategory(FilePath.AccountAvatar, fileAccountRepository)
+
+    cleanCategory(FilePath.Recipe, fileRecipeRepository)
+
+    cleanCategory(FilePath.RecipeDraft, fileRecipeDraftRepository)
+
+    Log.info("Finished deleting empty or orphan folders")
+
+    Log.info("Start deleting missing db entries")
+
+    cleanAvatarTable(FilePath.AccountAvatar, fileAccountRepository)
+
+    Log.info("Finished deleting missing db entries")
+  }
+
+  @Transactional
+  fun cleanCategory(prefix: FilePath, repository: CRepository<*>) {
+    val path = fileService.rootPath(prefix)
+    path.createDirectories()
+
+    executeFolder(path, 0) { segment1 ->
+      executeFolder(segment1, 1) { segment2 ->
+        executeFolder(segment2, 2) { recipe ->
+          val exists = repository.existsById(recipe.fileName.toString())
+          if (!exists) {
+            deleteFolder(recipe)
+          }
+        }
+      }
+    }
+
+    for (id in repository.findIds()) {
+      if (!fileService.readPath(prefix, id).exists()) {
+        repository.deleteById(id)
+      }
+    }
+  }
+
+  fun executeFolder(folder: Path, level: Int, callback: (Path) -> Unit) {
+    var subFolders = Files.list(folder).filter(Files::isDirectory).toList()
+
+    subFolders.forEach { callback(it) }
+
+    if (level == 0) return
+
+    subFolders = Files.list(folder).filter(Files::isDirectory).toList()
+
+    if (subFolders.isEmpty()) {
+      deleteFolder(folder)
+    }
+  }
+
+  fun deleteFolder(folder: Path) {
+    Log.info("Deleting empty folder: ${folder.absolutePathString()}")
+    FileUtils.deleteDirectory(folder.toFile())
+  }
+
+  @Transactional
+  fun cleanAvatarTable(prefix: FilePath, repository: AccountFileRepository) {
+    var pageIndex = 0
+    var hasMore = true
+
+    while (hasMore) {
+      val page = repository.findAll().page(pageIndex, 10)
+      val items = page.list()
+      hasMore = page.hasNextPage()
+
+      for (data in items) {
+        // Check filesystem existence outside of main logic if possible
+        val path = fileService.readPath(prefix, data.id)
+        val isNonExistent =
+          !path.exists() || Files.list(path).use { stream -> stream.findAny().isEmpty }
+
+        if (data.ownedBy.avatar?.id != data.id) {
+          Log.info("Deleting orphan db entry: ${data.id}")
+          repository.deleteById(data.id)
+        } else if (isNonExistent) {
+          Log.info("Deleting entry with non-existent files: ${data.id}")
+          data.ownedBy.avatar = null
+          repository.deleteById(data.id)
+        }
+      }
+
+      pageIndex++
+    }
+  }
+}

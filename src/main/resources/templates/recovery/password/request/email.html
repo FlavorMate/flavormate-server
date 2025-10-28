@@ -1,0 +1,23 @@
+{@String shortUrl} {#include layouts/main} {#body}
+<section class="content">
+  <p class="h4 text-primary">
+    {msg:passwordRecoveryMail_greeting1(displayName)}
+  </p>
+  <p>{msg:passwordRecoveryMail_greeting2(username)}</p>
+  <p>{msg:passwordRecoveryMail_notYou}</p>
+  <p>{msg:passwordRecoveryMail_hint1}</p>
+
+  <p class="center-content">
+    <a class="btn" href="{shortUrl}">
+      {msg:passwordRecoveryMail_resetPassword}
+    </a>
+  </p>
+
+  <p>
+    <span> {msg:passwordRecoveryMail_hint2(expiresInMinutes)} </span> <br />
+    <span> {msg:passwordRecoveryMail_hint3.raw} </span> <br />
+  </p>
+
+  <p>{msg:passwordRecoveryMail_hint4}</p>
+</section>
+{/body} {/include}

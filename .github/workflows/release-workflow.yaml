@@ -8,7 +8,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  project-build:
+  build-jar:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,23 +19,23 @@ jobs:
         with:
           java-version: "21"
           distribution: "temurin"
-          cache: maven
+          cache: gradle
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml -DskipTests
+      - name: Build with Gradle
+        run: ./gradlew build -Dquarkus.package.jar.type=uber-jar -Dquarkus.package.jar.add-runner-suffix=false -x test
+
+      - name: Rename JAR File
+        run: mv build/flavormate-*.jar build/flavormate-server.jar
 
       - name: Cache JAR File
         id: artifact-upload
         uses: actions/upload-artifact@v4
         with:
           name: flavormate-jar
-          path: target/flavormate-server.jar
+          path: build/flavormate-server.jar
           retention-days: 1
 
-  release-build:
-    needs:
-      - project-build
-
+  build-docker:
     runs-on: ubuntu-latest
 
     permissions:
@@ -47,24 +47,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: gradle
+
+      - name: Build with Gradle
+        run: ./gradlew quarkusBuild -x test
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-
-      - name: Download JAR File
-        uses: actions/download-artifact@v4
-        with:
-          name: flavormate-jar
-          path: target
-
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: "target/flavormate-server.jar"
-          artifactErrorsFailBuild: true
-          generateReleaseNotes: true
-          removeArtifacts: true
-          replacesArtifacts: true
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -90,6 +84,7 @@ jobs:
         id: push
         uses: docker/build-push-action@v6
         with:
+          file: ./src/main/docker/Dockerfile.jvm
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
@@ -108,3 +103,34 @@ jobs:
         with:
           delete-untagged: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  release-build:
+    needs:
+      - build-jar
+      - build-docker
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+      attestations: write
+
+    steps:
+
+      - name: Download JAR File
+        uses: actions/download-artifact@v4
+        with:
+          name: flavormate-jar
+          path: target
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "target/flavormate-server.jar"
+          artifactErrorsFailBuild: true
+          generateReleaseNotes: true
+          removeArtifacts: true
+          replacesArtifacts: true
