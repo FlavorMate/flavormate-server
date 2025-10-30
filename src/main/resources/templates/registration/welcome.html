@@ -1,0 +1,19 @@
+{@String shortUrl}
+{#include layouts/main} {#body}
+<section class="content">
+    <p class="h4 text-primary">{msg:verifyMail_greeting1(displayName)}</p>
+    <p>{msg:verifyMail_greeting2}</p>
+    <p>{msg:verifyMail_hint1}</p>
+
+    <p class="center-content">
+        <a class="btn" href="{shortUrl}"> {msg:verifyMail_verifyAccount} </a>
+    </p>
+
+    <p>
+        <span> {msg:verifyMail_hint2(expiresInMinutes)} </span> <br/>
+        <span> {msg:verifyMail_hint3.raw} </span> <br/>
+    </p>
+
+    <p>{msg:verifyMail_hint4}</p>
+</section>
+{/body} {/include}

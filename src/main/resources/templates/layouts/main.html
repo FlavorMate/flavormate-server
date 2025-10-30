@@ -1,0 +1,30 @@
+{@String locale} {@String backendUrl}
+<!DOCTYPE html>
+<html lang="{locale}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" href="{backendUrl}/icons/icon.png" type="image/png" />
+    <link rel="stylesheet" href="{backendUrl}/css/index.css" />
+    <link rel="stylesheet" href="{backendUrl}/css/font.css" />
+    <title>FlavorMate</title>
+  </head>
+
+  <body>
+    <header>
+      <img
+        alt="FlavorMate Logo"
+        style="width: 48px; height: 48px"
+        src="{backendUrl}/icons/icon.png"
+      />
+      <div class="h2">FlavorMate</div>
+    </header>
+    <main>{#insert body} No body! {/insert}</main>
+    <footer>
+      &copy; 2024 - 2025
+      <a class="link" href="https://flavormate.de" target="_blank">
+        FlavorMate
+      </a>
+    </footer>
+  </body>
+</html>

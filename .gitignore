@@ -1,52 +1,45 @@
-*#
-*.iml
-*.env
-*.ipr
-*.iws
-*.jar
-*.sw?
-*~
-.#*
-.*.md.html
-.DS_Store
-.attach_pid*
-.classpath
-.factorypath
-.gradle
-.idea
-.metadata
+buildAndDeploy.fish
+# Gradle
+.gradle/
+build/
+
+*.pem
+.kotlin/
+
+# Eclipse
 .project
-.recommenders
-.settings
-.springBeans
-/code
-MANIFEST.MF
-_site/
-activemq-data
-bin
-build
-!/**/src/**/bin
-!/**/src/**/build
-build.log
-dependency-reduced-pom.xml
-dump.rdb
-interpolated*.xml
-lib/
-manifest.yml
-out
-overridedb.*
-target
-target/
-transaction-logs
-.flattened-pom.xml
-secrets.yml
-.gradletasknamecache
-.sts4-cache
-secret.key
+.classpath
+.settings/
+bin/
 
-/**/src/**/files/api/
-database.sql
+# IntelliJ
+.idea
+*.ipr
+*.iml
+*.iws
 
-.vscode/
+# NetBeans
+nb-configuration.xml
 
-drone_options.env
+# Visual Studio Code
+.vscode
+.factorypath
+
+# OSX
+.DS_Store
+
+# Vim
+*.swp
+*.swo
+
+# patch
+*.orig
+*.rej
+
+# Local environment
+.env
+
+# Plugin directory
+/.quarkus/cli/plugins/
+# TLS Certificates
+.certs/

@@ -1,0 +1,34 @@
+[versions]
+versions = "0.53.0"
+spotless = "8.0.0"
+kotlin = "2.2.21"
+quarkus = "3.28.5"
+commons-io = "2.20.0"
+commons-lang3 = "3.19.0"
+jackson = "2.20.0"
+nanoid = "1.0.1"
+ksoup = "0.2.5"
+
+[libraries]
+quarkus-platform = { group = "io.quarkus.platform", name = "quarkus-bom", version.ref = "quarkus" }
+kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
+
+apache-commons-io = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
+apache-commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commons-lang3" }
+
+jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
+jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
+
+nanoid = { group = "io.viascom.nanoid", name = "nanoid", version.ref = "nanoid" }
+
+ksoup-general = { group = "com.fleeksoft.ksoup", name = "ksoup", version.ref = "ksoup" }
+ksoup-network = { group = "com.fleeksoft.ksoup", name = "ksoup-network", version.ref = "ksoup" }
+
+[bundles]
+
+[plugins]
+quarkus = { id = "io.quarkus", version.ref = "quarkus" }
+kotlin-all-open = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
