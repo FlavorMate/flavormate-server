@@ -19,10 +19,10 @@ import de.flavormate.utils.ImageUtils
 import de.flavormate.utils.MimeTypes
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
-import java.net.URI
-import kotlin.io.path.createTempFile
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
+import java.net.URI
+import kotlin.io.path.createTempFile
 
 @RequestScoped
 class LDJsonService(
@@ -56,13 +56,18 @@ class LDJsonService(
             ingredientService.mapIngredientGroupDrafts(input.recipeIngredient, language, this)
           this.categories =
             input.recipeCategory.mapNotNullTo(mutableListOf()) { mapCategory(it, language) }
-          this.tags = input.keywords.filter(StringUtils::isNotBlank).toMutableList()
+            this.tags = input.keywords.filter(StringUtils::isNotBlank).map { it.lowercase() }.toMutableList()
           this.diet = mapDiet(input.suitableForDiet)
           this.url = input.url
         }
         .also {
           it.generateIndices()
           recipeDraftRepository.persist(it)
+
+            for (category in it.categories) {
+                category.recipeDrafts.add(it)
+                categoryRepository.persist(category)
+            }
         }
 
     saveImages(input.images, recipeDraft)
@@ -71,7 +76,7 @@ class LDJsonService(
   }
 
   fun mapCategory(input: String, language: String): CategoryEntity? =
-    categoryRepository.findByLocalizedLabelAndLanguage(input, language)
+      categoryRepository.findByLocalizedLabelAndLanguage(input)?.also { it.translate(language) }
 
   fun mapDiet(input: LDJsonRestrictedDiet?): Diet? =
     when (input) {
@@ -97,35 +102,39 @@ class LDJsonService(
 
   fun saveImages(images: List<String>, recipe: RecipeDraftEntity) {
     for (image in images) {
-      val entity =
-        RecipeDraftFileEntity.create(authorizationDetails.getSelf(), recipe)
-          .apply { this.mimeType = MimeTypes.WEBP_MIME }
-          .also { fileRecipeDraftRepository.persist(it) }
+        try {
+            val bytes = URI(image).toURL().readBytes()
 
-      val destination = fileService.createPath(FilePath.RecipeDraft, entity.id)
+            val tmpFile = createTempFile().toFile().also { it.deleteOnExit() }
 
-      val tmpFile = createTempFile().toFile().also { it.deleteOnExit() }
+            FileUtils.writeByteArrayToFile(tmpFile, bytes)
 
-      val bytes = URI(image).toURL().readBytes()
+            val entity =
+                RecipeDraftFileEntity.create(authorizationDetails.getSelf(), recipe)
+                    .apply { this.mimeType = MimeTypes.WEBP_MIME }
+                    .also { fileRecipeDraftRepository.persist(it) }
 
-      FileUtils.writeByteArrayToFile(tmpFile, bytes)
+            val destination = fileService.createPath(FilePath.RecipeDraft, entity.id)
 
-      for (entry in ImageWideResolution.entries) {
-        if (entry == ImageWideResolution.Original)
-          ImageUtils.scaleMagick(
-            tmpFile.toPath(),
-            destination.resolve(entry.fileName),
-            entry.resolution,
-          )
-        else
-          ImageUtils.resizeMagick(
-            tmpFile.toPath(),
-            destination.resolve(entry.fileName),
-            entry.resolution,
-          )
-      }
+            for (entry in ImageWideResolution.entries) {
+                if (entry == ImageWideResolution.Original)
+                    ImageUtils.scaleMagick(
+                        tmpFile.toPath(),
+                        destination.resolve(entry.fileName),
+                        entry.resolution,
+                    )
+                else
+                    ImageUtils.resizeMagick(
+                        tmpFile.toPath(),
+                        destination.resolve(entry.fileName),
+                        entry.resolution,
+                    )
+            }
 
-      tmpFile.delete()
+            tmpFile.delete()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
   }
 }

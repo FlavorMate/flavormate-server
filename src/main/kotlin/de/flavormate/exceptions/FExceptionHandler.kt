@@ -1,9 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.exceptions
 
-import jakarta.ws.rs.core.Context
-import jakarta.ws.rs.core.Response
-import jakarta.ws.rs.core.UriInfo
+import jakarta.ws.rs.core.*
 import jakarta.ws.rs.ext.ExceptionMapper
 import jakarta.ws.rs.ext.Provider
 
@@ -21,7 +19,9 @@ class FExceptionHandler : ExceptionMapper<FException> {
         message = exception.message,
         id = exception.id,
       )
-    val response = Response.status(exception.status).entity(data).build()
+      val response =
+          Response.status(exception.status).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).entity(data)
+              .build()
 
     return response
   }

@@ -2,9 +2,7 @@
 package de.flavormate.exceptions
 
 import jakarta.validation.ConstraintViolationException
-import jakarta.ws.rs.core.Context
-import jakarta.ws.rs.core.Response
-import jakarta.ws.rs.core.UriInfo
+import jakarta.ws.rs.core.*
 import jakarta.ws.rs.ext.ExceptionMapper
 import jakarta.ws.rs.ext.Provider
 
@@ -23,7 +21,8 @@ class ExceptionHandler : ExceptionMapper<Throwable> {
         statusText = status.name,
         message = "An unknown error occurred, please try again later",
       )
-    val response = Response.status(status).entity(data).build()
+      val response =
+          Response.status(status).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).entity(data).build()
 
     exception.printStackTrace()
 

@@ -27,10 +27,10 @@ class CategoryRepository : PanacheRepositoryBase<CategoryEntity, String> {
         )
   }
 
-  fun findByLocalizedLabelAndLanguage(label: String, language: String): CategoryEntity? {
-    val params = mapOf("label" to label, "language" to language)
+    fun findByLocalizedLabelAndLanguage(label: String): CategoryEntity? {
+        val params = mapOf("label" to label)
     return find(
-        "select new CategoryEntity(c, l.value) from CategoryEntity c left join  c.localizations l where lower(l.value) = lower(:label) and l.id.language = :language",
+        "select c from CategoryEntity c left join c.localizations l where lower(l.value) = lower(:label)",
         params,
       )
       .firstResult()
