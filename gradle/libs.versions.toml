@@ -2,12 +2,14 @@
 versions = "0.53.0"
 spotless = "8.0.0"
 kotlin = "2.2.21"
-quarkus = "3.28.5"
+quarkus = "3.29.0"
 commons-io = "2.20.0"
 commons-lang3 = "3.19.0"
-jackson = "2.20.0"
+jackson = "2.20.1"
 nanoid = "1.0.1"
 ksoup = "0.2.5"
+google-java-format = "1.31.0"
+assertj = "3.27.6"
 
 [libraries]
 quarkus-platform = { group = "io.quarkus.platform", name = "quarkus-bom", version.ref = "quarkus" }
@@ -23,6 +25,8 @@ nanoid = { group = "io.viascom.nanoid", name = "nanoid", version.ref = "nanoid" 
 
 ksoup-general = { group = "com.fleeksoft.ksoup", name = "ksoup", version.ref = "ksoup" }
 ksoup-network = { group = "com.fleeksoft.ksoup", name = "ksoup-network", version.ref = "ksoup" }
+
+assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
 
 [bundles]
 
