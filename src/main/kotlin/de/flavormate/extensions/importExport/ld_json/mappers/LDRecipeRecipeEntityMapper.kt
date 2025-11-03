@@ -15,7 +15,6 @@ object LDRecipeRecipeEntityMapper : BasicMapper<RecipeEntity, LDJsonRecipe>() {
   override fun mapNotNullBasic(input: RecipeEntity): LDJsonRecipe {
     return LDJsonRecipe().apply {
       this.cookTime = input.cookTime
-      this.cookingMethod
       this.nutrition = LDJsonNutritionInformationMapper.mapBasic(input)
       this.recipeCategory = input.categories.map { it.label }
       this.recipeIngredient =

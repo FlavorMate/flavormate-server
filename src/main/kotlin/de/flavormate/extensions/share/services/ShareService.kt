@@ -38,6 +38,9 @@ class ShareService(
   private val fileService: FileService,
 ) {
 
+  private val server
+    get() = flavorMateProperties.server().url()
+
   @Location("share/bring.html") private lateinit var bringTemplate: Template
   @Location("share/recipe.html") private lateinit var recipeTemplate: Template
 
@@ -100,7 +103,12 @@ class ShareService(
     val recipeEntity =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
 
-    val ldJson = LDRecipeRecipeEntityMapper.mapNotNullBasic(recipeEntity)
+    val ldJson =
+      LDRecipeRecipeEntityMapper.mapNotNullWithToken(
+        input = recipeEntity,
+        token = authorizationDetails.token,
+        server = server,
+      )
 
     val appUrl =
       UriBuilder.fromPath("flavormate://")

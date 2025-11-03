@@ -10,6 +10,7 @@ import de.flavormate.shared.services.AuthorizationDetails
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.UriBuilder
+import java.net.URI
 
 @RequestScoped
 class BringService(
@@ -18,6 +19,9 @@ class BringService(
   val recipeRepository: RecipeRepository,
   val tokenService: AuthTokenService,
 ) {
+
+  private val server
+    get() = flavorMateProperties.server().url()
 
   @Transactional
   fun getBringUrl(recipeId: String): String {
@@ -32,6 +36,6 @@ class BringService(
         .build(token, recipe.id)
         .toString()
 
-    return "${flavorMateProperties.server().url()}$path"
+    return URI.create(server).resolve(path).toString()
   }
 }

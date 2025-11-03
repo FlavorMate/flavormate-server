@@ -8,6 +8,7 @@ import de.flavormate.features.recipe.dtos.models.RecipeFileDtoPreview
 import de.flavormate.shared.enums.ImageWideResolution
 import de.flavormate.shared.interfaces.BasicMapper
 import jakarta.ws.rs.core.UriBuilder
+import java.net.URI
 
 object RecipeFileDtoPreviewMapper : BasicMapper<RecipeFileEntity, RecipeFileDtoPreview>() {
   override fun mapNotNullBasic(input: RecipeFileEntity): RecipeFileDtoPreview =
@@ -24,15 +25,14 @@ object RecipeFileDtoPreviewMapper : BasicMapper<RecipeFileEntity, RecipeFileDtoP
     input: RecipeFileEntity,
     token: String,
     server: String,
-  ): RecipeFileDtoPreview =
-    RecipeFileDtoPreview(
-      id = input.id,
-      path =
-        server +
-          UriBuilder.fromResource(ShareController::class.java)
-            .path(ShareController::class.java, ShareController::shareFile.name)
-            .queryParam("resolution", ImageWideResolution.Original.name)
-            .build(token, input.recipe.id)
-            .toString(),
-    )
+  ): RecipeFileDtoPreview {
+    val path =
+      UriBuilder.fromResource(ShareController::class.java)
+        .path(ShareController::class.java, ShareController::shareFile.name)
+        .queryParam("resolution", ImageWideResolution.Original.name)
+        .build(token, input.recipe.id)
+        .toString()
+
+    return RecipeFileDtoPreview(id = input.id, path = URI.create(server).resolve(path).toString())
+  }
 }

@@ -2,6 +2,7 @@
 {@String appUrl}
 {@String locale}
 {@String token}
+{@String backendUrl}
 {#include layouts/material}
 {#body}
 <section class="content column">
@@ -17,7 +18,7 @@
         <img
                 width="180px"
                 height="60px"
-                src="/icons/open-in/app/{locale}.png"
+                src="{backendUrl}/icons/open-in/app/{locale}.png"
                 onclick="window.location.href=`{appUrl}`"
                 style="cursor: pointer; align-self: center"
         />

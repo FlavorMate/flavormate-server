@@ -1,6 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.extensions.share.mappers
 
+import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.extensions.share.controllers.ShareController
 import de.flavormate.extensions.share.models.SharedIngredientGroup
 import de.flavormate.extensions.share.models.SharedInstructionGroup
@@ -21,20 +22,22 @@ import de.flavormate.utils.DurationUtils
 import de.flavormate.utils.NumberUtils
 import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.core.UriBuilder
+import java.net.URI
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import org.apache.commons.lang3.StringUtils
-import org.eclipse.microprofile.config.inject.ConfigProperty
 
 @RequestScoped
 class SharedRecipeMapper(
-  val authorizationDetails: AuthorizationDetails,
-  val templateService: TemplateService,
+  private val authorizationDetails: AuthorizationDetails,
+  private val templateService: TemplateService,
+  private val flavorMateProperties: FlavorMateProperties,
 ) : BasicMapper<RecipeEntity, SharedRecipe>() {
 
-  @ConfigProperty(name = "flavormate.server.url") private lateinit var serverUrl: String
+  private val server
+    get() = flavorMateProperties.server().url()
 
   override fun mapNotNullBasic(input: RecipeEntity): SharedRecipe {
     return SharedRecipe(
@@ -68,7 +71,7 @@ class SharedRecipeMapper(
         .queryParam("resolution", quality)
         .build(token, id)
 
-    return "$serverUrl/$path"
+    return URI.create(server).resolve(path).toString()
   }
 
   private fun mapDuration(input: Duration): String {

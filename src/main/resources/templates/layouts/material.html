@@ -1,5 +1,6 @@
-{@String locale} {@String backendUrl}
-{@de.flavormate.extensions.importExport.ld_json.models.LDJsonRecipe ldJson}
+{@String locale}
+{@String backendUrl}
+{@String ldJson}
 <!DOCTYPE html>
 <html class="mdui-theme-auto" lang="{locale}">
 <head>
@@ -8,17 +9,12 @@
     <link rel="icon" href="{backendUrl}/icons/icon.png" type="image/png"/>
     <link rel="stylesheet" href="{backendUrl}/css/material.css"/>
     <link rel="stylesheet" href="{backendUrl}/css/font.css"/>
-    <link rel="stylesheet" href="/mdui-2.1.4/mdui.css"/>
+    <link rel="stylesheet" href="{backendUrl}/mdui-2.1.4/mdui.css"/>
 
-    <script src="/mdui-2.1.4/mdui.global.js"></script>
-    <script src="/mdui-2.1.4/theme.js"></script>
+    <script src="{backendUrl}/mdui-2.1.4/mdui.global.js"></script>
+    <script src="{backendUrl}/mdui-2.1.4/theme.js"></script>
 
-    <script type="application/ld+json">
-      {ldJson.safe}
-
-
-
-    </script>
+    <script type="application/ld+json">{ldJson.safe}</script>
 
     <title>FlavorMate</title>
 </head>
