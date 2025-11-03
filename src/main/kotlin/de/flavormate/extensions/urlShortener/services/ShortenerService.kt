@@ -6,18 +6,23 @@ import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.urlShortener.models.ShortenerEntity
 import de.flavormate.extensions.urlShortener.repositories.ShortenerRepository
 import jakarta.enterprise.context.ApplicationScoped
+import java.net.URI
 
 @ApplicationScoped
-class ShortenerService(val repository: ShortenerRepository, val flavorMateProperties: FlavorMateProperties) {
+class ShortenerService(
+  val repository: ShortenerRepository,
+  val flavorMateProperties: FlavorMateProperties,
+) {
 
-    private val backendUrl get() = flavorMateProperties.server().url()
+  private val server
+    get() = flavorMateProperties.server().url()
 
   fun findByShortPath(shortPath: String): String {
     val originalPath =
       repository.findByShortPath(shortPath)
-          ?: throw FNotFoundException(message = "No shortened path found for $shortPath")
+        ?: throw FNotFoundException(message = "No shortened path found for $shortPath")
 
-    return "$backendUrl$originalPath"
+    return URI.create(server).resolve(originalPath).toString()
   }
 
   fun generateUrl(originalPath: String): String {
@@ -25,6 +30,6 @@ class ShortenerService(val repository: ShortenerRepository, val flavorMateProper
       repository.findByOriginalPath(originalPath)
         ?: ShortenerEntity.create(originalPath).also { repository.persist(it) }.shortPath
 
-    return "$backendUrl/s/$shortenedPath"
+    return URI.create(server).resolve("s").resolve(shortenedPath).toString()
   }
 }

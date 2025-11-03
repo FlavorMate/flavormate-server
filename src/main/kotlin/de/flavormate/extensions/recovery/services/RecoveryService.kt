@@ -3,7 +3,6 @@ package de.flavormate.extensions.recovery.services
 
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FBadRequestException
-import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.recovery.controllers.RecoveryController
 import de.flavormate.extensions.urlShortener.services.ShortenerService
 import de.flavormate.features.account.repositories.AccountRepository
@@ -20,8 +19,8 @@ import jakarta.transaction.Transactional
 import jakarta.ws.rs.NotFoundException
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.core.UriBuilder
-import org.jboss.resteasy.reactive.RestForm
 import java.time.Duration
+import org.jboss.resteasy.reactive.RestForm
 
 /**
  * RecoveryService handles user account recovery-related functionalities. Provides endpoints to
@@ -69,17 +68,18 @@ class RecoveryService(
    */
   @Transactional
   fun requestPasswordReset(email: String): Boolean {
-    val account =
-        accountRepository.findByEmail(email) ?: throw FNotFoundException("Account not found")
+    val account = accountRepository.findByEmail(email) ?: return true
 
     val token = tokenService.createAndSaveResetToken(account)
 
-      val path = UriBuilder.fromResource(RecoveryController::class.java).path(
-          RecoveryController::class.java,
-          RecoveryController::handlePasswordReset.name
-      ).queryParam("token", token).build().toString();
+    val path =
+      UriBuilder.fromResource(RecoveryController::class.java)
+        .path(RecoveryController::class.java, RecoveryController::handlePasswordReset.name)
+        .queryParam("token", token)
+        .build()
+        .toString()
 
-      val shortUrl = shortenerService.generateUrl(path)
+    val shortUrl = shortenerService.generateUrl(path)
 
     val data =
       mutableMapOf<String, Any?>(
@@ -121,12 +121,12 @@ class RecoveryService(
   fun handlePasswordReset(@RestForm password: String): TemplateInstance {
     try {
       if (!tokenService.revokeJWT(authorizationDetails.token))
-          throw FBadRequestException("Invalid token")
+        throw FBadRequestException("Invalid token")
 
       authorizationDetails.getSelf().password = BcryptUtil.bcryptHash(password)
 
       return templateService.handleTemplate(successTemplate)
-    } catch (_: Error) {
+    } catch (_: Exception) {
       return templateService.handleTemplate(failureTemplate)
     }
   }

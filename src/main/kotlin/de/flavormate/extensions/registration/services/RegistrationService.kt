@@ -1,12 +1,12 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.extensions.registration.services
 
+import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.extensions.registration.controllers.RegistrationController
 import de.flavormate.extensions.registration.models.RegistrationForm
 import de.flavormate.extensions.urlShortener.services.ShortenerService
 import de.flavormate.features.account.repositories.AccountRepository
-import de.flavormate.features.role.repositories.RoleRepository
 import de.flavormate.shared.services.AccountCreateService
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.TemplateService
@@ -18,25 +18,25 @@ import io.quarkus.qute.TemplateInstance
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.UriBuilder
-import java.time.Duration
 
 @RequestScoped
 class RegistrationService(
   val accountRepository: AccountRepository,
   val authorizationDetails: AuthorizationDetails,
   var mailer: Mailer,
-  val roleRepository: RoleRepository,
   val tokenService: AuthTokenService,
   val shortenerService: ShortenerService,
   val templateService: TemplateService,
   val accountCreateService: AccountCreateService,
+  val flavorMateProperties: FlavorMateProperties,
 ) {
 
   @Location("registration/welcome.html") private lateinit var emailTemplate: Template
 
   @Location("registration/ok.html") private lateinit var successTemplate: Template
 
-  private val verifyTokenExpiration = Duration.parse("PT5M")
+  private val verifyTokenExpiration
+    get() = flavorMateProperties.auth().jwt().verifyToken().duration()
 
   @Transactional
   fun register(form: RegistrationForm): Boolean {
@@ -48,13 +48,16 @@ class RegistrationService(
         email = form.email,
       )
 
-      val token = tokenService.createAndSaveVerifyToken(account)
+    val token = tokenService.createAndSaveVerifyToken(account)
 
-      val path = UriBuilder.fromResource(RegistrationController::class.java)
-          .path(RegistrationController::class.java, RegistrationController::verifyAccount.name)
-          .queryParam("token", token).build().toString();
+    val path =
+      UriBuilder.fromResource(RegistrationController::class.java)
+        .path(RegistrationController::class.java, RegistrationController::verifyAccount.name)
+        .queryParam("token", token)
+        .build()
+        .toString()
 
-      val shortUrl = shortenerService.generateUrl(path)
+    val shortUrl = shortenerService.generateUrl(path)
 
     val data =
       mutableMapOf<String, Any?>(

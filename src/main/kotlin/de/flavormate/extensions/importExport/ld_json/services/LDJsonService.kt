@@ -1,6 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.extensions.importExport.ld_json.services
 
+import de.flavormate.exceptions.FBadRequestException
 import de.flavormate.extensions.importExport.ld_json.models.LDJsonRecipe
 import de.flavormate.extensions.importExport.ld_json.models.types.LDJsonRestrictedDiet
 import de.flavormate.features.category.daos.models.CategoryEntity
@@ -17,12 +18,15 @@ import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
 import de.flavormate.utils.ImageUtils
 import de.flavormate.utils.MimeTypes
+import io.quarkus.logging.Log
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
-import org.apache.commons.io.FileUtils
-import org.apache.commons.lang3.StringUtils
+import java.io.File
+import java.net.HttpURLConnection
 import java.net.URI
 import kotlin.io.path.createTempFile
+import org.apache.commons.io.FileUtils
+import org.apache.commons.lang3.StringUtils
 
 @RequestScoped
 class LDJsonService(
@@ -56,7 +60,8 @@ class LDJsonService(
             ingredientService.mapIngredientGroupDrafts(input.recipeIngredient, language, this)
           this.categories =
             input.recipeCategory.mapNotNullTo(mutableListOf()) { mapCategory(it, language) }
-            this.tags = input.keywords.filter(StringUtils::isNotBlank).map { it.lowercase() }.toMutableList()
+          this.tags =
+            input.keywords.filter(StringUtils::isNotBlank).map { it.lowercase() }.toMutableList()
           this.diet = mapDiet(input.suitableForDiet)
           this.url = input.url
         }
@@ -64,10 +69,10 @@ class LDJsonService(
           it.generateIndices()
           recipeDraftRepository.persist(it)
 
-            for (category in it.categories) {
-                category.recipeDrafts.add(it)
-                categoryRepository.persist(category)
-            }
+          for (category in it.categories) {
+            category.recipeDrafts.add(it)
+            categoryRepository.persist(category)
+          }
         }
 
     saveImages(input.images, recipeDraft)
@@ -76,7 +81,7 @@ class LDJsonService(
   }
 
   fun mapCategory(input: String, language: String): CategoryEntity? =
-      categoryRepository.findByLocalizedLabelAndLanguage(input)?.also { it.translate(language) }
+    categoryRepository.findByLocalizedLabel(input)?.also { it.translate(language) }
 
   fun mapDiet(input: LDJsonRestrictedDiet?): Diet? =
     when (input) {
@@ -102,39 +107,89 @@ class LDJsonService(
 
   fun saveImages(images: List<String>, recipe: RecipeDraftEntity) {
     for (image in images) {
-        try {
-            val bytes = URI(image).toURL().readBytes()
+      var tmpFile: File? = null
+      try {
+        val uri = URI(image)
 
-            val tmpFile = createTempFile().toFile().also { it.deleteOnExit() }
-
-            FileUtils.writeByteArrayToFile(tmpFile, bytes)
-
-            val entity =
-                RecipeDraftFileEntity.create(authorizationDetails.getSelf(), recipe)
-                    .apply { this.mimeType = MimeTypes.WEBP_MIME }
-                    .also { fileRecipeDraftRepository.persist(it) }
-
-            val destination = fileService.createPath(FilePath.RecipeDraft, entity.id)
-
-            for (entry in ImageWideResolution.entries) {
-                if (entry == ImageWideResolution.Original)
-                    ImageUtils.scaleMagick(
-                        tmpFile.toPath(),
-                        destination.resolve(entry.fileName),
-                        entry.resolution,
-                    )
-                else
-                    ImageUtils.resizeMagick(
-                        tmpFile.toPath(),
-                        destination.resolve(entry.fileName),
-                        entry.resolution,
-                    )
-            }
-
-            tmpFile.delete()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        // 1. Validate scheme
+        if (uri.scheme != "https") {
+          Log.info("Image scraping aborted for $image: No https")
+          continue
         }
+
+        // 2. Validate host is not null
+        val host = uri.host
+        if (host.isNullOrBlank()) {
+          Log.info("Image scraping aborted for $image: Invalid host")
+          continue
+        }
+
+        // 3. Set timeouts and size limits to prevent DoS
+        val url = uri.toURL()
+        val connection = url.openConnection() as HttpURLConnection
+        connection.connectTimeout = 5000 // 5 seconds
+        connection.readTimeout = 10000 // 10 seconds
+        connection.setRequestProperty("User-Agent", "FlavorMate/3.0")
+
+        // 4. Check content length before downloading
+        val contentLength = connection.contentLengthLong
+        val maxSize = 10 * 1024 * 1024 // 10MB limit
+        if (contentLength > maxSize) {
+          Log.info("Image scraping aborted for $image: File too large ($contentLength bytes)")
+          connection.disconnect()
+          continue
+        }
+
+        // 5. Read with size limit
+        val bytes =
+          connection.inputStream.use { input ->
+            val buffer = ByteArray(8192)
+            val output = java.io.ByteArrayOutputStream()
+            var totalRead = 0L
+            var bytesRead: Int
+
+            while (input.read(buffer).also { bytesRead = it } != -1) {
+              totalRead += bytesRead
+              if (totalRead > maxSize) {
+                throw FBadRequestException(message = "File exceeds maximum size limit")
+              }
+              output.write(buffer, 0, bytesRead)
+            }
+            output.toByteArray()
+          }
+
+        connection.disconnect()
+
+        tmpFile = createTempFile().toFile().also { it.deleteOnExit() }
+
+        FileUtils.writeByteArrayToFile(tmpFile, bytes)
+
+        val entity =
+          RecipeDraftFileEntity.create(authorizationDetails.getSelf(), recipe)
+            .apply { this.mimeType = MimeTypes.WEBP_MIME }
+            .also { fileRecipeDraftRepository.persist(it) }
+
+        val destination = fileService.createPath(FilePath.RecipeDraft, entity.id)
+
+        for (entry in ImageWideResolution.entries) {
+          if (entry == ImageWideResolution.Original)
+            ImageUtils.scaleMagick(
+              tmpFile.toPath(),
+              destination.resolve(entry.fileName),
+              entry.resolution,
+            )
+          else
+            ImageUtils.resizeMagick(
+              tmpFile.toPath(),
+              destination.resolve(entry.fileName),
+              entry.resolution,
+            )
+        }
+      } catch (e: Exception) {
+        e.printStackTrace()
+      } finally {
+        tmpFile?.delete()
+      }
     }
   }
 }

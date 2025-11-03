@@ -12,23 +12,21 @@ import jakarta.enterprise.context.ApplicationScoped
 class CategoryRepository : PanacheRepositoryBase<CategoryEntity, String> {
 
   override fun findAll(sort: Sort): PanacheQuery<CategoryEntity> {
-      return find(
-          query = "select c from CategoryEntity c left join  c.localizations l",
+    return find(query = "select c from CategoryEntity c left join  c.localizations l", sort = sort)
+  }
+
+  fun findAll(sort: Sort, language: String): PanacheQuery<CategoryEntity> {
+    val params = mapOf("language" to language)
+    return find(
+      query =
+        "select c from CategoryEntity c left join c.localizations l where l.id.language = :language and c.recipes is not empty",
       sort = sort,
+      params = params,
     )
   }
 
-    fun findAll(sort: Sort, language: String): PanacheQuery<CategoryEntity> {
-        val params = mapOf("language" to language)
-        return find(
-            query = "select c from CategoryEntity c left join c.localizations l where l.id.language = :language and c.recipes is not empty",
-            sort = sort,
-            params = params,
-        )
-  }
-
-    fun findByLocalizedLabelAndLanguage(label: String): CategoryEntity? {
-        val params = mapOf("label" to label)
+  fun findByLocalizedLabel(label: String): CategoryEntity? {
+    val params = mapOf("label" to label)
     return find(
         "select c from CategoryEntity c left join c.localizations l where lower(l.value) = lower(:label)",
         params,
@@ -39,7 +37,7 @@ class CategoryRepository : PanacheRepositoryBase<CategoryEntity, String> {
   fun findBySearch(sort: Sort, language: String, query: String): PanacheQuery<CategoryEntity> {
     val params = mapOf("language" to language, "query" to query)
     return find(
-        "select c from CategoryEntity c left join c.localizations l where l.id.language = :language and lower(l.value) like lower(concat('%', :query, '%'))",
+      "select c from CategoryEntity c left join c.localizations l where l.id.language = :language and lower(l.value) like lower(concat('%', :query, '%'))",
       sort,
       params,
     )

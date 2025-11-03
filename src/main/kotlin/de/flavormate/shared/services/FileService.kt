@@ -2,6 +2,7 @@
 package de.flavormate.shared.services
 
 import de.flavormate.configuration.properties.FlavorMateProperties
+import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.shared.enums.FilePath
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.ws.rs.core.StreamingOutput
@@ -35,7 +36,7 @@ class FileService(private val flavorMateProperties: FlavorMateProperties) {
   fun streamFile(prefix: FilePath, uuid: String, fileName: String): StreamingOutput {
     val file = readPath(prefix, uuid).resolve(fileName)
 
-    if (!file.exists()) throw IllegalArgumentException("File not found")
+    if (!file.exists()) throw FNotFoundException(message = "File not found")
 
     return de.flavormate.utils.FileUtils.streamFile(file)
   }
