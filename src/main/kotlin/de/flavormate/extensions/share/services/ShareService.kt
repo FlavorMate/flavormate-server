@@ -41,7 +41,6 @@ class ShareService(
   private val server
     get() = flavorMateProperties.server().url()
 
-  @Location("share/bring.html") private lateinit var bringTemplate: Template
   @Location("share/recipe.html") private lateinit var recipeTemplate: Template
 
   @Transactional
@@ -59,25 +58,6 @@ class ShareService(
         .toString()
 
     return shortenerService.generateUrl(path)
-  }
-
-  fun shareBring(id: String): String {
-    if (!authTokenService.validateAccess(authorizationDetails.token, id))
-      throw FForbiddenException(message = "Token is invalid")
-
-    val recipeEntity =
-      recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
-
-    val ldJson =
-      LDRecipeRecipeEntityMapper.mapNotNullWithToken(
-        input = recipeEntity,
-        token = authorizationDetails.token,
-        server = flavorMateProperties.server().url(),
-      )
-
-    val data = mutableMapOf<String, Any?>("json" to JSONUtils.mapper.writeValueAsString(ldJson))
-
-    return templateService.handleTemplate(bringTemplate, data).render()
   }
 
   fun shareFile(id: String, resolution: ImageWideResolution?): StreamingOutput {
@@ -103,11 +83,18 @@ class ShareService(
     val recipeEntity =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
 
+    val imagePath =
+      UriBuilder.fromResource(ShareController::class.java)
+        .path(ShareController::class.java, ShareController::shareFile.name)
+        .queryParam("resolution", ImageWideResolution.Original.name)
+        .build(authorizationDetails.token, id)
+        .toString()
+
     val ldJson =
       LDRecipeRecipeEntityMapper.mapNotNullWithToken(
         input = recipeEntity,
-        token = authorizationDetails.token,
         server = server,
+        path = imagePath,
       )
 
     val appUrl =

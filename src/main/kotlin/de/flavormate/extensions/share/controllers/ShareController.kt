@@ -30,12 +30,6 @@ class ShareController(val service: ShareService) {
   @POST
   fun createShareLink(@PathParam("id") id: String) = service.createShareLink(id)
 
-  @GET
-  @Path("/{token}/{id}/bring")
-  @RolesAllowed(RoleTypes.BRING_VALUE)
-  @Produces(MediaType.TEXT_HTML)
-  fun shareBring(@RestPath token: String, @RestPath id: String) = service.shareBring(id = id)
-
   @Path("/{token}/{id}/web")
   @Produces(MediaType.TEXT_HTML)
   @RolesAllowed(RoleTypes.SHARE_VALUE)
@@ -44,7 +38,7 @@ class ShareController(val service: ShareService) {
 
   @GET
   @Path("/{token}/{id}/file")
-  @RolesAllowed(RoleTypes.BRING_VALUE, RoleTypes.SHARE_VALUE)
+  @RolesAllowed(RoleTypes.SHARE_VALUE)
   @Produces(MimeTypes.WEBP_MIME)
   fun shareFile(
     @RestPath token: String,

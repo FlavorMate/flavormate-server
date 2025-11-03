@@ -1,6 +1,8 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.extensions.openFoodFacts.services
 
+import de.flavormate.configuration.properties.FlavorMateProperties
+import de.flavormate.core.features.enums.FeatureType
 import de.flavormate.extensions.openFoodFacts.api.clients.OFFClient
 import de.flavormate.extensions.openFoodFacts.api.repository.OFFClientStatsRepository
 import de.flavormate.extensions.openFoodFacts.dao.models.OFFProductEntity
@@ -16,11 +18,18 @@ import jakarta.transaction.Transactional
 class OFFService(
   private val statsRepository: OFFClientStatsRepository,
   private val productRepository: OFFProductRepository,
+  flavorMateProperties: FlavorMateProperties,
 ) {
+
+  private val openFoodFactsEnabled =
+    flavorMateProperties.features()[FeatureType.OpenFoodFacts]!!.enabled()
+
   @Scheduled(cron = "0 0 * * * ?")
   @Startup
   @Transactional
   fun fetchProducts() {
+    if (!openFoodFactsEnabled) return
+
     val products = productRepository.findByState(OFFProductState.New).page(0, 80).list()
 
     if (products.isEmpty()) return

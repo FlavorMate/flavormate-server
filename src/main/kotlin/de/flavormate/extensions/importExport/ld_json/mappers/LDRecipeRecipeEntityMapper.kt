@@ -46,11 +46,11 @@ object LDRecipeRecipeEntityMapper : BasicMapper<RecipeEntity, LDJsonRecipe>() {
     }
   }
 
-  fun mapNotNullWithToken(input: RecipeEntity, token: String, server: String): LDJsonRecipe =
+  fun mapNotNullWithToken(input: RecipeEntity, path: String, server: String): LDJsonRecipe =
     mapNotNullBasic(input).apply {
       this.images =
         input.files.map {
-          RecipeFileDtoPreviewMapper.mapNotNullWithToken(it, token = token, server = server).path
+          RecipeFileDtoPreviewMapper.mapNotNullWithToken(it, server = server, path = path).path
         }
     }
 }

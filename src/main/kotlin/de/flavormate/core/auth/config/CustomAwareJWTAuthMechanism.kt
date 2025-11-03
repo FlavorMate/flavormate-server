@@ -106,7 +106,7 @@ class CustomAwareJWTAuthMechanism(
    */
   fun addTokenToContext(context: RoutingContext) {
     val pathParts = context.request().path().split("/")
-    if (pathParts.size > 5 && pathParts[2] == "share") {
+    if (pathParts.size >= 4 && listOf("share", "bring").contains(pathParts[2])) {
       context.request().headers().add("Authorization", "Bearer ${pathParts[3]}")
     }
   }
