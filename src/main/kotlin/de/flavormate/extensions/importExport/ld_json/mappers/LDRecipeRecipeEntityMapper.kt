@@ -29,8 +29,7 @@ object LDRecipeRecipeEntityMapper : BasicMapper<RecipeEntity, LDJsonRecipe>() {
           )
         }
       this.recipeYield = input.serving.toString()
-      this.suitableForDiet =
-        LDJsonRestrictedDiet.entries.firstOrNull { it.name == input.diet!!.name }
+      this.suitableForDiet = LDJsonRestrictedDiet.entries.firstOrNull { it.name == input.diet.name }
 
       this.prepTime = input.prepTime
       this.totalTime = input.totalTime
