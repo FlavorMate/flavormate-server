@@ -3,6 +3,7 @@ package de.flavormate.core.auth.config
 
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.models.NoAuthenticationMechanism
+import de.flavormate.shared.extensions.trimToNull
 import io.quarkus.oidc.runtime.OidcAuthenticationMechanism
 import io.quarkus.security.identity.IdentityProviderManager
 import io.quarkus.security.identity.SecurityIdentity
@@ -17,10 +18,11 @@ import io.vertx.ext.web.RoutingContext
 import jakarta.annotation.Priority
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Alternative
+import jakarta.ws.rs.Priorities
 import jakarta.ws.rs.core.HttpHeaders
 
 @Alternative
-@Priority(1)
+@Priority(Priorities.AUTHENTICATION - 1)
 @ApplicationScoped
 class CustomAwareJWTAuthMechanism(
   private val jwtMechanism: JWTAuthMechanism,
@@ -37,7 +39,9 @@ class CustomAwareJWTAuthMechanism(
     context: RoutingContext,
     identityProviderManager: IdentityProviderManager,
   ): Uni<SecurityIdentity> {
-    addTokenToContext(context)
+    val hasAuthHeader = context.request().getHeader("Authorization").trimToNull() != null
+
+    if (!hasAuthHeader) addTokenToContext(context)
 
     return selectBetweenJwtAndOidc(context).authenticate(context, identityProviderManager)
   }
@@ -91,21 +95,19 @@ class CustomAwareJWTAuthMechanism(
   }
 
   /**
-   * Adds an "Authorization" header to the request within the provided routing context if it does
-   * not already exist. If the "Authorization" header is missing and a "token" query parameter is
-   * present, this token is used to create a "Bearer" token and is added as the "Authorization"
-   * header.
+   * Adds a token to the request headers as an "Authorization" header if the routing context's path
+   * matches specific conditions.
    *
-   * @param context The routing context representing the incoming HTTP request and its data.
+   * The method checks if the path contains more than 5 parts and if the third segment equals
+   * "share". If these conditions are met, the token, extracted from the fourth segment of the path,
+   * is added to the "Authorization" header with the "Bearer" prefix.
+   *
+   * @param context The routing context representing the incoming HTTP request and associated data.
    */
   fun addTokenToContext(context: RoutingContext) {
-    val authHeader: String? = context.request().getHeader("Authorization")
-
-    if (authHeader != null) return
-
-    val token: String? = context.request().getParam("token")
-    if (!token.isNullOrBlank()) {
-      context.request().headers().add("Authorization", "Bearer $token")
+    val pathParts = context.request().path().split("/")
+    if (pathParts.size > 5 && pathParts[2] == "share") {
+      context.request().headers().add("Authorization", "Bearer ${pathParts[3]}")
     }
   }
 }

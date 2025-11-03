@@ -12,31 +12,49 @@ import jakarta.ws.rs.core.MediaType
 import org.jboss.resteasy.reactive.RestPath
 import org.jboss.resteasy.reactive.RestQuery
 
+/**
+ * Bring -> share/{token}/bring
+ *
+ * In App -> share/{token}/in-app
+ *
+ * Web -> share/{token}/web
+ *
+ * File -> share/{token}/file
+ */
 @RequestScoped
 @Path("/v3/share")
 class ShareController(val service: ShareService) {
 
   @Path("/{id}")
-  @Produces(MediaType.TEXT_HTML)
-  @RolesAllowed(RoleTypes.BRING_VALUE, RoleTypes.SHARE_VALUE)
-  @GET
-  fun openRecipe(@PathParam("id") id: String) = service.openRecipe(id)
-
-  @Path("/{id}/raw")
-  @RolesAllowed(RoleTypes.BRING_VALUE, RoleTypes.SHARE_VALUE)
-  @GET
-  fun openRecipeRaw(@RestPath id: String, @RestQuery language: String) =
-    service.openRecipeRaw(id = id, language = language)
-
-  @Path("/{id}/cover")
-  @RolesAllowed(RoleTypes.BRING_VALUE, RoleTypes.SHARE_VALUE)
-  @Produces(MimeTypes.WEBP_MIME)
-  @GET
-  fun openRecipeFile(@RestPath id: String, @RestQuery resolution: ImageWideResolution) =
-    service.openRecipeFile(id = id, resolution = resolution)
-
-  @Path("/{id}")
   @RolesAllowed(RoleTypes.USER_VALUE)
   @POST
   fun createShareLink(@PathParam("id") id: String) = service.createShareLink(id)
+
+  @GET
+  @Path("/{token}/{id}/bring")
+  @RolesAllowed(RoleTypes.BRING_VALUE)
+  @Produces(MediaType.TEXT_HTML)
+  fun shareBring(@RestPath token: String, @RestPath id: String) = service.shareBring(id = id)
+
+  @Path("/{token}/{id}/web")
+  @Produces(MediaType.TEXT_HTML)
+  @RolesAllowed(RoleTypes.SHARE_VALUE)
+  @GET
+  fun shareWeb(@RestPath token: String, @RestPath id: String) = service.shareWeb(id)
+
+  @GET
+  @Path("/{token}/{id}/file")
+  @RolesAllowed(RoleTypes.BRING_VALUE, RoleTypes.SHARE_VALUE)
+  @Produces(MimeTypes.WEBP_MIME)
+  fun shareFile(
+    @RestPath token: String,
+    @RestPath id: String,
+    @RestQuery resolution: ImageWideResolution?,
+  ) = service.shareFile(id = id, resolution = resolution)
+
+  @Path("/{token}/{id}/in-app")
+  @RolesAllowed(RoleTypes.SHARE_VALUE)
+  @GET
+  fun openInApp(@RestPath token: String, @RestPath id: String, @RestQuery language: String) =
+    service.openInApp(id = id, language = language)
 }

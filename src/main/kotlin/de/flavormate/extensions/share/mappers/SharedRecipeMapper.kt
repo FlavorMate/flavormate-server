@@ -21,12 +21,12 @@ import de.flavormate.utils.DurationUtils
 import de.flavormate.utils.NumberUtils
 import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.core.UriBuilder
-import org.apache.commons.lang3.StringUtils
-import org.eclipse.microprofile.config.inject.ConfigProperty
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import org.apache.commons.lang3.StringUtils
+import org.eclipse.microprofile.config.inject.ConfigProperty
 
 @RequestScoped
 class SharedRecipeMapper(
@@ -62,11 +62,13 @@ class SharedRecipeMapper(
     val token = authorizationDetails.token
     val quality = ImageWideResolution.W1280.name
 
-      val path = UriBuilder.fromResource(ShareController::class.java)
-          .path(ShareController::class.java, ShareController::openRecipeFile.name).queryParam("token", token)
-          .queryParam("resolution", quality).build(id)
-      
-      return "$serverUrl/$path"
+    val path =
+      UriBuilder.fromResource(ShareController::class.java)
+        .path(ShareController::class.java, ShareController::shareFile.name)
+        .queryParam("resolution", quality)
+        .build(token, id)
+
+    return "$serverUrl/$path"
   }
 
   private fun mapDuration(input: Duration): String {

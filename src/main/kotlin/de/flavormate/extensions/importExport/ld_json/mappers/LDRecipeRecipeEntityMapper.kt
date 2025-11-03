@@ -7,6 +7,7 @@ import de.flavormate.extensions.importExport.ld_json.models.types.LDJsonRestrict
 import de.flavormate.extensions.importExport.ld_json.models.types.step.LDJsonHowToSection
 import de.flavormate.extensions.importExport.ld_json.models.types.step.LDJsonHowToStep
 import de.flavormate.features.recipe.daos.models.RecipeEntity
+import de.flavormate.features.recipe.dtos.mappers.RecipeFileDtoPreviewMapper
 import de.flavormate.shared.interfaces.BasicMapper
 import java.time.ZoneOffset
 
@@ -34,16 +35,24 @@ object LDRecipeRecipeEntityMapper : BasicMapper<RecipeEntity, LDJsonRecipe>() {
       this.prepTime = input.prepTime
       this.totalTime = input.totalTime
 
-      this.author = LDJsonPerson(input.ownedBy!!.displayName!!)
+      this.author = LDJsonPerson(input.ownedBy.displayName)
       this.dateCreated = input.createdOn.toInstant(ZoneOffset.UTC)
       this.dateModified = input.lastModifiedOn.toInstant(ZoneOffset.UTC)
       this.datePublished = input.createdOn.toInstant(ZoneOffset.UTC)
       this.keywords = input.tags.map { it.label }
 
       this.description = input.description
-      this.images = input.files.map { "http://localhost:8080/v3/files/${it.id}" }
+      this.images = input.files.map { RecipeFileDtoPreviewMapper.mapNotNullBasic(it).path }
       this.name = input.label
       this.url = input.url
     }
   }
+
+  fun mapNotNullWithToken(input: RecipeEntity, token: String, server: String): LDJsonRecipe =
+    mapNotNullBasic(input).apply {
+      this.images =
+        input.files.map {
+          RecipeFileDtoPreviewMapper.mapNotNullWithToken(it, token = token, server = server).path
+        }
+    }
 }

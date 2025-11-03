@@ -38,9 +38,62 @@ class ShareService(
   private val fileService: FileService,
 ) {
 
+  @Location("share/bring.html") private lateinit var bringTemplate: Template
   @Location("share/recipe.html") private lateinit var recipeTemplate: Template
 
-  fun openRecipe(id: String): TemplateInstance {
+  @Transactional
+  fun createShareLink(id: String): String {
+    val recipeEntity =
+      recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found!")
+
+    val token =
+      authTokenService.createAndSaveShareToken(authorizationDetails.getSelf(), recipeEntity)
+
+    val path =
+      UriBuilder.fromResource(ShareController::class.java)
+        .path(ShareController::class.java, ShareController::shareWeb.name)
+        .build(token, recipeEntity.id)
+        .toString()
+
+    return shortenerService.generateUrl(path)
+  }
+
+  fun shareBring(id: String): String {
+    if (!authTokenService.validateAccess(authorizationDetails.token, id))
+      throw FForbiddenException(message = "Token is invalid")
+
+    val recipeEntity =
+      recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
+
+    val ldJson =
+      LDRecipeRecipeEntityMapper.mapNotNullWithToken(
+        input = recipeEntity,
+        token = authorizationDetails.token,
+        server = flavorMateProperties.server().url(),
+      )
+
+    val data = mutableMapOf<String, Any?>("json" to JSONUtils.mapper.writeValueAsString(ldJson))
+
+    return templateService.handleTemplate(bringTemplate, data).render()
+  }
+
+  fun shareFile(id: String, resolution: ImageWideResolution?): StreamingOutput {
+    if (!authTokenService.validateAccess(authorizationDetails.token, id))
+      throw FForbiddenException(message = "Token is invalid")
+
+    val recipe =
+      recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
+
+    if (recipe.coverFile == null) throw FNotFoundException(message = "Recipe has no cover")
+
+    return fileService.streamFile(
+      prefix = FilePath.Recipe,
+      uuid = recipe.coverFile!!.id,
+      fileName = resolution?.fileName ?: ImageWideResolution.Original.fileName,
+    )
+  }
+
+  fun shareWeb(id: String): TemplateInstance {
     if (!authTokenService.validateAccess(authorizationDetails.token, id))
       throw FForbiddenException(message = "Token is invalid")
 
@@ -70,7 +123,7 @@ class ShareService(
     return templateService.handleTemplate(recipeTemplate, data)
   }
 
-  fun openRecipeRaw(id: String, language: String): RecipeDtoFull {
+  fun openInApp(id: String, language: String): RecipeDtoFull {
     if (!authTokenService.validateAccess(authorizationDetails.token, id))
       throw FForbiddenException(message = "Token is invalid")
 
@@ -78,39 +131,5 @@ class ShareService(
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
 
     return RecipeDtoFullMapper.mapNotNullL10n(input = recipeEntity, language = language)
-  }
-
-  fun openRecipeFile(id: String, resolution: ImageWideResolution): StreamingOutput {
-    if (!authTokenService.validateAccess(authorizationDetails.token, id))
-      throw FForbiddenException(message = "Token is invalid")
-
-    val recipe =
-      recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
-
-    if (recipe.coverFile == null) throw FNotFoundException(message = "Recipe has no cover")
-
-    return fileService.streamFile(
-      prefix = FilePath.Recipe,
-      uuid = recipe.coverFile!!.id,
-      fileName = resolution.fileName,
-    )
-  }
-
-  @Transactional
-  fun createShareLink(id: String): String {
-    val recipeEntity =
-      recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found!")
-
-    val token =
-      authTokenService.createAndSaveShareToken(authorizationDetails.getSelf(), recipeEntity)
-
-    val path =
-      UriBuilder.fromResource(ShareController::class.java)
-        .path(ShareController::class.java, ShareController::openRecipe.name)
-        .queryParam("token", token)
-        .build(recipeEntity.id)
-        .toString()
-
-    return shortenerService.generateUrl(path)
   }
 }
