@@ -1,0 +1,140 @@
+{@de.flavormate.extensions.share.models.SharedRecipe recipe}
+{@String appUrl}
+{@String locale}
+{@String token}
+{@String backendUrl}
+{#include layouts/material}
+{#body}
+<section class="content column">
+    <mdui-card class="column header p-16">
+        <div>
+            {msg:recipe_appHint1}
+            <br/>
+            {msg:recipe_appHint2}
+            <br/>
+            {msg:recipe_appHint3}
+        </div>
+
+        <img
+                width="180px"
+                height="60px"
+                src="{backendUrl}/icons/open-in/app/{locale}.png"
+                onclick="window.location.href=`{appUrl}`"
+                style="cursor: pointer; align-self: center"
+        />
+    </mdui-card>
+    <div class="split-content">
+        {#if recipe.cover != null}
+
+        <mdui-card style="flex-basis: 50%; width: 100%">
+            <img
+                    style="object-fit: cover; width: 100%; height: 100%"
+                    src="{recipe.cover}"
+                    alt="Recipe Image"
+            />
+        </mdui-card>
+        {/if}
+        <div style="flex-basis: 50%" class="column center-column">
+            <h1>{recipe.label}</h1>
+
+            {#if recipe.description != null}
+            <span class="h4 text-primary"> {recipe.description} </span>
+            {/if} {#if recipe.prepTime != null}
+            <mdui-card class="p-16">
+                <h4>{msg:recipe_prepTime}:</h4>
+                <h3>{recipe.prepTime}</h3>
+            </mdui-card>
+            {/if} {#if recipe.cookTime != null}
+            <mdui-card class="p-16">
+                <h4>{msg:recipe_cookTime}:</h4>
+                <h3>{recipe.cookTime}</h3>
+            </mdui-card>
+            {/if} {#if recipe.restTime != null}
+            <mdui-card class="p-16">
+                <h4>{msg:recipe_restTime}:</h4>
+                <h3>{recipe.restTime}</h3>
+            </mdui-card>
+            {/if}
+        </div>
+    </div>
+
+    <div class="split-content">
+        <div style="flex-basis: 50%" class="column">
+            <h2>{msg:recipe_ingredientsTitle}</h2>
+            {recipe.serving}
+            {#for group in recipe.ingredientGroups}
+            {#if group.label != null}
+            <h4>{group.label}</h4>
+            {/if}
+
+            <ul>
+                {#for ingredient in group.ingredients}
+                <li>{ingredient}</li>
+                {/for}
+            </ul>
+            {/for}
+        </div>
+
+        <div style="flex-basis: 50%" class="column">
+            <h2>{msg:recipe_instructionsTitle}</h2>
+            {#for group in recipe.instructionGroups} {#if group.label != null}
+            <h4>{group.label}</h4>
+            {/if}
+
+            <ol>
+                {#for instruction in group.instructions}
+                <li>{instruction}</li>
+                {/for}
+            </ol>
+            {/for}
+        </div>
+    </div>
+
+    <section class="column" style="gap: 8px">
+        <h2>{msg:recipe_informationTitle}</h2>
+
+        <div class="row center-row">
+            <mdui-chip>{recipe.diet}</mdui-chip>
+            <mdui-chip>{recipe.course}</mdui-chip>
+        </div>
+    </section>
+
+    <section class="column" style="gap: 8px">
+        <h2>{msg:recipe_categoriesTitle}</h2>
+
+        <div class="row center-row">
+            {#for category in recipe.categories}
+            <mdui-chip> {category} </mdui-chip>
+            {/for}
+        </div>
+    </section>
+
+    <section class="column" style="gap: 8px">
+        <h2>{msg:recipe_tagsTitle}</h2>
+
+        <div class="row center-row">
+            {#for tag in recipe.tags}
+            <mdui-chip>#{tag}</mdui-chip>
+            {/for}
+        </div>
+    </section>
+
+    <section class="column" style="gap: 8px">
+        <h2>{msg:recipe_publishedTitle}</h2>
+
+        <div class="row center-row">
+            <span>{recipe.createdOn}</span>
+
+            <div>{msg:recipe_versionTitle}: {recipe.version}</div>
+        </div>
+    </section>
+    <section class="row center-row">
+        {#if recipe.url != null}
+
+        <mdui-button variant="filled" href="{recipe.url}" target="_blank">
+            {msg:recipe_openOriginal}
+        </mdui-button>
+        {/if}
+    </section>
+</section>
+{/body} {/include}

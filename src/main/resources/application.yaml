@@ -1,0 +1,159 @@
+quarkus:
+  datasource:
+    db-kind: postgresql
+    username: ${flavormate.database.username}
+    password: ${flavormate.database.password}
+    jdbc:
+      url: jdbc:postgresql://${flavormate.database.host}:${flavormate.database.port}/${flavormate.database.database}
+      max-size: 16
+
+  hibernate-orm:
+    mapping:
+      format:
+        global: ignore
+
+  smallrye-jwt:
+    enabled: true
+
+  # FlyWay
+  flyway:
+    migrate-at-start: true
+    baseline-version: 3.0.0
+    baseline-on-migrate: true
+    validate-migration-naming: true
+    table: v3_flyway_schema_history
+    placeholders:
+      owner: ${flavormate.database.username}
+
+  # Build settings
+  package:
+    jar:
+      type: fast-jar
+
+  # Log settings
+  log:
+    console:
+      level: INFO
+
+  http:
+    test-port: 0
+    host: 0.0.0.0
+    root-path: ${flavormate.server.path}
+    port: ${flavormate.server.port}
+  
+  devservices:
+    enabled: false
+
+  #Mail
+  mailer:
+    mock: false
+    auth-methods: DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN
+    from: ${flavormate.mailer.from}
+    host: ${flavormate.mailer.host}
+    port: ${flavormate.mailer.port}
+    start-tls: ${flavormate.mailer.start-tls}
+    tls: ${flavormate.mailer.tls}
+    username: ${flavormate.mailer.username}
+    password: ${flavormate.mailer.password}
+
+  default-locale: en
+
+  oidc:
+    tenant-enabled: false
+    resolve-tenants-with-issuer: true
+
+smallrye:
+  jwt:
+    sign:
+      key:
+        location: ${flavormate.auth.jwt.private-key}
+
+  config:
+    mapping:
+      validate-unknown: false
+
+mp:
+  jwt:
+    verify:
+      publickey:
+        location: ${flavormate.auth.jwt.public-key}
+      issuer: ${flavormate.server.url}
+
+flavormate:
+  server:
+    url: ${FLAVORMATE_SERVER_URL}
+    path: ${FLAVORMATE_SERVER_PATH:/}
+    port: ${FLAVORMATE_SERVER_PORT:8080}
+
+  general:
+    admin:
+      display-name: ${FLAVORMATE_GENERAL_ADMIN_DISPLAY_NAME}
+      username: ${FLAVORMATE_GENERAL_ADMIN_USERNAME}
+      password: ${FLAVORMATE_GENERAL_ADMIN_PASSWORD}
+      email: ${FLAVORMATE_GENERAL_ADMIN_EMAIL}
+
+    highlights:
+      days-to-generate: ${FLAVORMATE_GENERAL_HIGHLIGHTS_DAYS_TO_GENERATE:14}
+
+  database:
+    username: ${FLAVORMATE_DB_USER}
+    password: ${FLAVORMATE_DB_PASSWORD}
+    host: ${FLAVORMATE_DB_HOST}
+    port: ${FLAVORMATE_DB_PORT:5432}
+    database: ${FLAVORMATE_DB_DATABASE}
+
+  paths:
+    files: ${FLAVORMATE_PATHS_FILES:${HOME}/.flavormate/files}
+    providers: ${FLAVORMATE_PATHS_PROVIDERS:${HOME}/.flavormate/providers}
+
+  features:
+    registration:
+      enabled: ${FLAVORMATE_FEATURE_REGISTRATION:false}
+    recovery:
+      enabled: ${FLAVORMATE_FEATURE_RECOVERY:false}
+    story:
+      enabled: ${FLAVORMATE_FEATURE_STORY:false}
+    bring:
+      enabled: ${FLAVORMATE_FEATURE_BRING:false}
+    open-food-facts:
+      enabled: ${FLAVORMATE_FEATURE_OPEN_FOOD_FACTS:false}
+    share:
+      enabled: ${FLAVORMATE_FEATURE_SHARE:false}
+
+  mailer:
+    from: ${FLAVORMATE_MAILER_FROM}
+    host: ${FLAVORMATE_MAILER_HOST:localhost}
+    port: ${FLAVORMATE_MAILER_PORT}
+    start-tls: ${FLAVORMATE_MAILER_START_TLS:OPTIONAL}
+    tls: ${FLAVORMATE_MAILER_TLS}
+    username: ${FLAVORMATE_MAILER_USERNAME}
+    password: ${FLAVORMATE_MAILER_PASSWORD}
+
+  auth:
+    jwt:
+      issuer: ${flavormate.server.url}
+      public-key: ${FLAVORMATE_AUTH_PUBLIC_KEY}
+      private-key: ${FLAVORMATE_AUTH_PRIVATE_KEY}
+
+      refresh-token:
+        duration: ${FLAVORMATE_AUTH_REFRESH_TOKEN_DURATION:P30D}
+      access-token:
+        duration: ${FLAVORMATE_AUTH_ACCESS_TOKEN_DURATION:PT5M}
+      reset-token:
+        duration: ${FLAVORMATE_AUTH_RESET_TOKEN_DURATION:PT5M}
+      verify-token:
+        duration: ${FLAVORMATE_AUTH_VERIFY_TOKEN_DURATION:PT5M}
+      bring-token:
+        duration: ${FLAVORMATE_AUTH_BRING_TOKEN_DURATION:PT5M}
+      share-token:
+        duration: ${FLAVORMATE_AUTH_SHARE_TOKEN_DURATION:P1800D}
+
+  #    oidc:
+  #      - name: Authentik
+  #        url:
+  #        client-id:
+  #        id: authentik
+  #        icon: authentik.png
+
+  # Paths
+

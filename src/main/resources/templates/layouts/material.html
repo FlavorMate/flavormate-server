@@ -1,0 +1,39 @@
+{@String locale}
+{@String backendUrl}
+{@String ldJson}
+<!DOCTYPE html>
+<html class="mdui-theme-auto" lang="{locale}">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link rel="icon" href="{backendUrl}/icons/icon.png" type="image/png"/>
+    <link rel="stylesheet" href="{backendUrl}/css/material.css"/>
+    <link rel="stylesheet" href="{backendUrl}/css/font.css"/>
+    <link rel="stylesheet" href="{backendUrl}/mdui-2.1.4/mdui.css"/>
+
+    <script src="{backendUrl}/mdui-2.1.4/mdui.global.js"></script>
+    <script src="{backendUrl}/mdui-2.1.4/theme.js"></script>
+
+    <script type="application/ld+json">{ldJson.safe}</script>
+
+    <title>FlavorMate</title>
+</head>
+
+<body>
+<header>
+    <img
+            alt="FlavorMate Logo"
+            style="width: 48px; height: 48px"
+            src="{backendUrl}/icons/icon.png"
+    />
+    <div class="h2">FlavorMate</div>
+</header>
+<main>{#insert body} No body! {/insert}</main>
+<footer>
+    &copy; 2024 - 2025
+    <a class="link" href="https://flavormate.de" target="_blank">
+        FlavorMate
+    </a>
+</footer>
+</body>
+</html>

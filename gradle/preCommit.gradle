@@ -1,0 +1,21 @@
+tasks.register('installGitHook', Copy) {
+    from new File(projectDir, '.scripts/pre-commit')
+    into { new File(projectDir, '.git/hooks') }
+    filePermissions {
+        user {
+            read = true
+            write = true
+            execute = true
+        }
+        group {
+            read = true
+            execute = true
+        }
+        other {
+            read = true
+            execute = true
+        }
+    }
+}
+
+assemble.dependsOn installGitHook

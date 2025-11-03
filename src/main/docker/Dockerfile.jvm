@@ -1,0 +1,63 @@
+####
+# This Dockerfile is used in order to build a container that runs the Quarkus application in JVM mode
+#
+# Before building the container image run:
+#
+# ./gradlew build (-x test)
+#
+# Then, build the image with:
+#
+# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/flavormate-jvm .
+
+FROM eclipse-temurin:21-jre-alpine
+ 
+RUN apk add --no-cache \
+    # Used for health check
+    curl \
+    # Core image processing suite
+    imagemagick  \
+    # JPEG image format
+    libjpeg-turbo  \
+    # PNG image format
+    libpng  \
+    # TIFF image format
+    tiff  \
+    # WebP image format
+    libwebp  \
+    # HEIF/HEIC image formats
+    libheif  \
+    # GIF image format
+    giflib  \
+    # RAW image formats
+    libraw  \
+    # JPEG 2000 image format
+    openjpeg  \
+    # EXIF metadata in image files
+    libexif
+
+
+RUN addgroup -g 185 -S app &&  \
+    adduser -u 185 -S app -G app &&  \
+    mkdir -p /app &&  \
+    chown -R app:app /app
+
+USER app
+
+WORKDIR /app
+
+# Copy only necessary Quarkus app parts
+COPY build/quarkus-app/lib/ /app/lib/
+COPY build/quarkus-app/*.jar /app/
+COPY build/quarkus-app/app/ /app/app/
+COPY build/quarkus-app/quarkus/ /app/quarkus/
+
+# JVM tuning
+ENV JAVA_OPTS="\
+  -XX:+UseContainerSupport \
+  -XX:MaxRAMPercentage=80 \
+  -Dquarkus.http.host=0.0.0.0 \
+  -Djava.util.logging.manager=org.jboss.logmanager.LogManager \
+"
+
+EXPOSE 8080
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar quarkus-run.jar"]
