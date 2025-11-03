@@ -1,7 +1,9 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.exceptions
 
+import io.quarkus.logging.Log
 import jakarta.validation.ConstraintViolationException
+import jakarta.ws.rs.WebApplicationException
 import jakarta.ws.rs.core.*
 import jakarta.ws.rs.ext.ExceptionMapper
 import jakarta.ws.rs.ext.Provider
@@ -12,19 +14,27 @@ class ExceptionHandler : ExceptionMapper<Throwable> {
   @Context private lateinit var uriInfo: UriInfo
 
   override fun toResponse(exception: Throwable): Response {
-    val status = Response.Status.INTERNAL_SERVER_ERROR
+    val status: Response.Status =
+      if (exception is WebApplicationException) {
+        Response.Status.fromStatusCode(exception.response.status)
+      } else {
+        Response.Status.INTERNAL_SERVER_ERROR
+      }
 
     val data =
       ExceptionDto(
         request = uriInfo.requestUri.toString(),
         statusCode = status.statusCode,
         statusText = status.name,
-        message = "An unknown error occurred, please try again later",
+        message = "An error occurred",
       )
-      val response =
-          Response.status(status).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).entity(data).build()
+    val response =
+      Response.status(status)
+        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        .entity(data)
+        .build()
 
-    exception.printStackTrace()
+    Log.debug("An error occurred: ", exception)
 
     return response
   }
