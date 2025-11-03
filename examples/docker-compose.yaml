@@ -9,7 +9,7 @@ services:
       - ./data/files:/opt/files
     restart: always
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/v3/version" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/v3/version"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -23,7 +23,7 @@ services:
     container_name: flavormate_db
     image: postgres:18
     environment:
-      - POSTGRES_PASSWORD=${FLAVORMATE_DB_USER}
+      - POSTGRES_PASSWORD=${FLAVORMATE_DB_PASSWORD}
       - POSTGRES_USER=${FLAVORMATE_DB_USER}
       - POSTGRES_DB=${FLAVORMATE_DB_DATABASE}
     volumes:
@@ -32,7 +32,7 @@ services:
     networks:
       - flavormate
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${FLAVORMATE_DB_USER}" ]
+      test: ["CMD-SHELL", "pg_isready -U ${FLAVORMATE_DB_USER}"]
       interval: 30s
       timeout: 30s
       retries: 5
