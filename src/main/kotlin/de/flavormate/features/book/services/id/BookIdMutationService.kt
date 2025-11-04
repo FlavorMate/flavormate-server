@@ -49,7 +49,7 @@ class BookIdMutationService(
   fun deleteBooksId(id: String): Boolean {
     val book = bookRepository.findById(id) ?: throw FNotFoundException(message = "Book not found!")
 
-    if (!authorizationDetails.isOwner(book))
+    if (!authorizationDetails.isAdminOrOwner(book))
       throw FUnauthorizedException(message = "You are not allowed to delete this book!")
 
     return bookRepository.deleteById(id)
@@ -58,7 +58,7 @@ class BookIdMutationService(
   fun putBooksId(id: String, form: BookUpdateDto) {
     val book = bookRepository.findById(id) ?: throw FNotFoundException(message = "Book not found!")
 
-    if (!authorizationDetails.isOwner(book))
+    if (!authorizationDetails.isAdminOrOwner(book))
       throw FForbiddenException(message = "You are not allowed to update this book!")
 
     if (form.label != null && form.label.isPresent) {
@@ -67,6 +67,11 @@ class BookIdMutationService(
 
     if (form.visible != null && form.visible.isPresent) {
       book.visible = form.visible.get()
+
+      // remove all subscribers if book is not visible
+      if (!book.visible) {
+        book.subscriber.clear()
+      }
     }
   }
 }

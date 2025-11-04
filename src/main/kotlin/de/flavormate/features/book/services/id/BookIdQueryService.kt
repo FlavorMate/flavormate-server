@@ -26,7 +26,7 @@ class BookIdQueryService(
       repository.findById(id = id)
         ?: throw FNotFoundException(message = "Book with id $id not found")
 
-    if (!authorizationDetails.isAdminOrOwner(entity))
+    if (!authorizationDetails.isAdminOrOwner(entity) && !entity.visible)
       throw FForbiddenException(message = "You are not allowed to access this book!")
 
     return BookDtoMapper.mapNotNullBasic(entity)
@@ -37,7 +37,7 @@ class BookIdQueryService(
       repository.findById(id = id)
         ?: throw FNotFoundException(message = "Book with id $id not found")
 
-    if (!authorizationDetails.isAdminOrOwner(entity))
+    if (!authorizationDetails.isAdminOrOwner(entity) && !entity.visible)
       throw FForbiddenException(message = "You are not allowed to access this book!")
 
     val dataQuery =
