@@ -14,8 +14,8 @@ object RecipeFileDtoPreviewMapper : BasicMapper<RecipeFileEntity, RecipeFileDtoP
       id = input.id,
       path =
         UriBuilder.fromResource(RecipeController::class.java)
-          .path(RecipeController::class.java, RecipeController::getRecipeCover.name)
-          .build(input.recipe.id)
+          .path(RecipeController::class.java, RecipeController::getRecipesFilesId.name)
+          .build(input.recipe.id, input.id)
           .toString(),
     )
 
