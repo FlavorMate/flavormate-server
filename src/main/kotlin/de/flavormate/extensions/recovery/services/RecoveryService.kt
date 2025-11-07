@@ -74,7 +74,7 @@ class RecoveryService(
 
     val path =
       UriBuilder.fromResource(RecoveryController::class.java)
-        .path(RecoveryController::class.java, RecoveryController::handlePasswordReset.name)
+        .path(RecoveryController::class.java, RecoveryController::showPasswordResetPage.name)
         .queryParam("token", token)
         .build()
         .toString()
@@ -93,6 +93,7 @@ class RecoveryService(
 
     val mail =
       Mail.withHtml(email, templateService.getMessage { it.passwordRecoveryMail_subject() }, html)
+
     mailer.send(mail)
 
     return true

@@ -17,7 +17,7 @@ import io.quarkus.qute.Template
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.UriBuilder
-import java.net.URI
+import org.apache.hc.core5.net.URIBuilder
 
 @RequestScoped
 class BringService(
@@ -47,7 +47,7 @@ class BringService(
         .build(token, recipe.id)
         .toString()
 
-    return URI.create(server).resolve(path).toString()
+    return URIBuilder(server).appendPath(path).toString()
   }
 
   fun shareBring(id: String): String {
