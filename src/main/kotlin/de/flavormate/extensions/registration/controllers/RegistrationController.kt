@@ -12,6 +12,7 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
+import org.jboss.resteasy.reactive.RestPath
 
 @LookupIfProperty(name = "flavormate.features.registration.enabled", stringValue = "true")
 @RequestScoped
@@ -21,8 +22,8 @@ class RegistrationController(val service: RegistrationService) {
   @Path("/") @POST fun register(form: RegistrationForm) = service.register(form)
 
   @RolesAllowed(RoleTypes.VERIFY_VALUE)
-  @Path("/verify")
+  @Path("/verify/{token}")
   @Produces(MediaType.TEXT_HTML)
   @GET
-  fun verifyAccount() = service.verifyAccount()
+  fun verifyAccount(@RestPath token: String) = service.verifyAccount()
 }

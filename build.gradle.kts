@@ -44,6 +44,7 @@ dependencies {
   implementation(libs.nanoid)
   implementation(libs.ksoup.general)
   implementation(libs.ksoup.network)
+  implementation(libs.apache.http.client5)
 
   testImplementation("io.quarkus:quarkus-junit5")
   testImplementation("io.quarkus:quarkus-junit5-mockito")
@@ -53,7 +54,7 @@ dependencies {
 
 group = "de.flavormate"
 
-version = "3.0.3"
+version = "3.0.4"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_21

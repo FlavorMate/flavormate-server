@@ -9,6 +9,7 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import org.jboss.resteasy.reactive.RestForm
+import org.jboss.resteasy.reactive.RestPath
 
 /**
  * Controller responsible for handling user account recovery operations.
@@ -52,8 +53,8 @@ class RecoveryController(val service: RecoveryService) {
   @GET
   @RolesAllowed(RoleTypes.RESET_VALUE)
   @Produces(MediaType.TEXT_HTML)
-  @Path("/password/reset")
-  fun showPasswordResetPage() = service.showPasswordResetPage()
+  @Path("/password/reset/{token}")
+  fun showPasswordResetPage(@RestPath token: String) = service.showPasswordResetPage()
 
   /**
    * Handles the password reset process by updating the user's password.
@@ -66,6 +67,7 @@ class RecoveryController(val service: RecoveryService) {
   @POST
   @RolesAllowed(RoleTypes.RESET_VALUE)
   @Produces(MediaType.TEXT_HTML)
-  @Path("/password/reset")
-  fun handlePasswordReset(@RestForm password: String) = service.handlePasswordReset(password)
+  @Path("/password/reset/{token}")
+  fun handlePasswordReset(@RestPath token: String, @RestForm password: String) =
+    service.handlePasswordReset(password)
 }

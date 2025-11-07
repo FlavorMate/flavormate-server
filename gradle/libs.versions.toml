@@ -10,6 +10,7 @@ nanoid = "1.0.1"
 ksoup = "0.2.5"
 google-java-format = "1.31.0"
 assertj = "3.27.6"
+http-client5 = "5.5.1"
 
 [libraries]
 quarkus-platform = { group = "io.quarkus.platform", name = "quarkus-bom", version.ref = "quarkus" }
@@ -17,6 +18,7 @@ kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk
 
 apache-commons-io = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
 apache-commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commons-lang3" }
+apache-http-client5 = { group = "org.apache.httpcomponents.client5", name = "httpclient5", version.ref = "http-client5" }
 
 jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }

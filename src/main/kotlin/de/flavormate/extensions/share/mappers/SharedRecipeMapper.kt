@@ -22,12 +22,12 @@ import de.flavormate.utils.DurationUtils
 import de.flavormate.utils.NumberUtils
 import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.core.UriBuilder
-import java.net.URI
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import org.apache.commons.lang3.StringUtils
+import org.apache.hc.core5.net.URIBuilder
 
 @RequestScoped
 class SharedRecipeMapper(
@@ -70,8 +70,9 @@ class SharedRecipeMapper(
         .path(ShareController::class.java, ShareController::shareFile.name)
         .queryParam("resolution", quality)
         .build(token, id)
+        .toString()
 
-    return URI.create(server).resolve(path).toString()
+    return URIBuilder(server).appendPath(path).toString()
   }
 
   private fun mapDuration(input: Duration): String {

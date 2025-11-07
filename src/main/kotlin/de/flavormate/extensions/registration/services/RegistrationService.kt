@@ -53,8 +53,7 @@ class RegistrationService(
     val path =
       UriBuilder.fromResource(RegistrationController::class.java)
         .path(RegistrationController::class.java, RegistrationController::verifyAccount.name)
-        .queryParam("token", token)
-        .build()
+        .build(token)
         .toString()
 
     val shortUrl = shortenerService.generateUrl(path)

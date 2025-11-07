@@ -6,7 +6,7 @@ import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.urlShortener.models.ShortenerEntity
 import de.flavormate.extensions.urlShortener.repositories.ShortenerRepository
 import jakarta.enterprise.context.ApplicationScoped
-import java.net.URI
+import org.apache.hc.core5.net.URIBuilder
 
 @ApplicationScoped
 class ShortenerService(
@@ -22,7 +22,7 @@ class ShortenerService(
       repository.findByShortPath(shortPath)
         ?: throw FNotFoundException(message = "No shortened path found for $shortPath")
 
-    return URI.create(server).resolve(originalPath).toString()
+    return URIBuilder(server).appendPath(originalPath).toString()
   }
 
   fun generateUrl(originalPath: String): String {
@@ -30,6 +30,6 @@ class ShortenerService(
       repository.findByOriginalPath(originalPath)
         ?: ShortenerEntity.create(originalPath).also { repository.persist(it) }.shortPath
 
-    return URI.create(server).resolve("s").resolve(shortenedPath).toString()
+    return URIBuilder(server).appendPathSegments("s", shortenedPath).toString()
   }
 }
