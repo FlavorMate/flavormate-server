@@ -1,23 +1,49 @@
-{@String shortUrl} {#include layouts/main} {#body}
-<section class="content">
-  <p class="h4 text-primary">
-    {msg:passwordRecoveryMail_greeting1(displayName)}
-  </p>
-  <p>{msg:passwordRecoveryMail_greeting2(username)}</p>
-  <p>{msg:passwordRecoveryMail_notYou}</p>
-  <p>{msg:passwordRecoveryMail_hint1}</p>
+{@String displayName}
+{@String username}
+{@Long expiresInMinutes}
+{@String shortUrl}
+{#include layouts/email} {#body}
 
-  <p class="center-content">
-    <a class="btn" href="{shortUrl}">
-      {msg:passwordRecoveryMail_resetPassword}
-    </a>
-  </p>
+<!-- Main content -->
+<tr>
+    <td style="padding: 40px 30px;">
+        <p style="font-size: 20px; color: #000000; margin: 0 0 16px 0;">{msg:passwordRecoveryMail_greeting1(displayName)}</p>
+        <p style="color: #74787e; margin: 8px 0;">
+            {msg:passwordRecoveryMail_greeting2(username)}
+        </p>
+        <p style="color: #74787e; margin: 8px 0;">
+            {msg:passwordRecoveryMail_notYou}
+        </p>
+        <p style="color: #74787e; margin: 8px 0;">
+            {msg:passwordRecoveryMail_hint1}
+        </p>
 
-  <p>
-    <span> {msg:passwordRecoveryMail_hint2(expiresInMinutes)} </span> <br />
-    <span> {msg:passwordRecoveryMail_hint3.raw} </span> <br />
-  </p>
+        <!-- Button -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+            <tr>
+                <td align="center">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td align="center" style="background-color: #8bc34a; border-radius: 8px;">
+                                <a href="{shortUrl}"
+                                   style="display: inline-block; padding: 16px 40px; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold;">
+                                    {msg:passwordRecoveryMail_resetPassword}
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
 
-  <p>{msg:passwordRecoveryMail_hint4}</p>
-</section>
+        <p style="color: #74787e; margin: 8px 0;">
+            <span>{msg:passwordRecoveryMail_hint2(expiresInMinutes)}</span><br/>
+            <span>{msg:passwordRecoveryMail_hint3.raw}</span>
+        </p>
+
+        <p style="color: #74787e; margin: 16px 0 0 0; font-size: 14px;">
+            {msg:passwordRecoveryMail_hint4}
+        </p>
+    </td>
+</tr>
 {/body} {/include}

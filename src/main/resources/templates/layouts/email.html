@@ -1,0 +1,61 @@
+{@String displayName}
+{@String username}
+{@Long expiresInMinutes}
+{@String shortUrl}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>FlavorMate</title>
+</head>
+
+<body style="margin: 0; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; line-height: 1.5; background-color: #f2f4f6;">
+<!-- Wrapper table for better email client compatibility -->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f2f4f6;">
+    <tr>
+        <td align="center" style="padding: 20px;">
+            <!-- Main content table -->
+            <table width="600" cellpadding="0" cellspacing="0" border="0"
+                   style="background-color: #ffffff; max-width: 600px;">
+                <!-- Header -->
+                <tr>
+                    <td align="center" style="background-color: #f2f4f6; padding: 16px;">
+                        <table cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td align="center">
+                                    <img
+                                            alt="FlavorMate Logo"
+                                            style="width: 48px; height: 48px; display: block;"
+                                            src="http://localhost:8080/icons/icon.png"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center"
+                                    style="font-size: 24px; font-weight: bold; color: #000000; padding-top: 8px;">
+                                    FlavorMate
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                {#insert body} No body! {/insert}
+
+                <!-- Footer -->
+                <tr>
+                    <td align="center"
+                        style="background-color: #f2f4f6; padding: 16px; font-size: 14px; color: #74787e;">
+                        &copy; 2024 - 2025
+                        <a href="https://flavormate.de" target="_blank" style="color: #8bc34a; text-decoration: none;">
+                            FlavorMate
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

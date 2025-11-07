@@ -75,8 +75,7 @@ class RecoveryService(
     val path =
       UriBuilder.fromResource(RecoveryController::class.java)
         .path(RecoveryController::class.java, RecoveryController::showPasswordResetPage.name)
-        .queryParam("token", token)
-        .build()
+        .build(token)
         .toString()
 
     val shortUrl = shortenerService.generateUrl(path)
