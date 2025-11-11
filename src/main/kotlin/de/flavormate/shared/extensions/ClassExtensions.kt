@@ -30,3 +30,7 @@ fun String.toKebabCase(): String {
     .replace(Regex("\\s+"), "-") // Replace spaces with hyphens
     .lowercase() // Convert to lowercase
 }
+
+fun String.stripHTMLTags(): String {
+  return replace("<.*?>".toRegex(), "")
+}

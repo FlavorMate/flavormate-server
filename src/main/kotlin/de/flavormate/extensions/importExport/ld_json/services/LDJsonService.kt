@@ -14,6 +14,7 @@ import de.flavormate.features.recipeDraft.repositories.RecipeDraftRepository
 import de.flavormate.shared.enums.Diet
 import de.flavormate.shared.enums.FilePath
 import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.extensions.toKebabCase
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
 import de.flavormate.utils.ImageUtils
@@ -61,7 +62,7 @@ class LDJsonService(
           this.categories =
             input.recipeCategory.mapNotNullTo(mutableListOf()) { mapCategory(it, language) }
           this.tags =
-            input.keywords.filter(StringUtils::isNotBlank).map { it.lowercase() }.toMutableList()
+            input.keywords.filter(StringUtils::isNotBlank).map { it.toKebabCase() }.toMutableList()
           this.diet = mapDiet(input.suitableForDiet)
           this.url = input.url
         }
