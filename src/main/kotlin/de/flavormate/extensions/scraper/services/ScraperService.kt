@@ -11,6 +11,7 @@ import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.importExport.ld_json.models.LDJsonRecipe
 import de.flavormate.extensions.importExport.ld_json.services.LDJsonService
+import de.flavormate.shared.extensions.stripHTMLTags
 import de.flavormate.shared.services.AuthorizationDetails
 import jakarta.enterprise.context.RequestScoped
 
@@ -23,7 +24,15 @@ class ScraperService(
 
   fun scrape(url: String): String {
     val html = fetchHTML(url)
-    val language = html.selectFirst("html[lang]")?.attr("lang") ?: "en"
+
+    val langAttr = html.selectFirst("html[lang]")?.attr("lang") ?: "en"
+    val language =
+      when {
+        langAttr.startsWith("de", ignoreCase = true) -> "de"
+        langAttr.startsWith("en", ignoreCase = true) -> "en"
+        else -> "en"
+      }
+
     val ldJson = processHTML(html, url)
     return ldJsonService.ldJsonRecipeToRecipeDraftEntity(ldJson, language).id
   }
@@ -36,7 +45,9 @@ class ScraperService(
 
     // Loop through each script tag and check for Recipe objects
     for (jsonLdElement in jsonLdElements) {
-      val json: String = jsonLdElement.html()
+      var json: String = jsonLdElement.html()
+
+      json = json.stripHTMLTags()
 
       // Parse the JSON into a generic JsonNode first
       val rootNode = mapper.readTree(json)
@@ -47,7 +58,7 @@ class ScraperService(
         return mapper.treeToValue<LDJsonRecipe>(recipeNode).apply { this.url = url }
       }
     }
-      throw FNotFoundException(message = "Not Found")
+    throw FNotFoundException(message = "Not Found")
   }
 
   private fun findRecipeNode(node: JsonNode): JsonNode? {
