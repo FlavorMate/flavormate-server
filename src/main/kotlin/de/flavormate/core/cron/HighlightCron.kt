@@ -32,7 +32,16 @@ class HighlightCron(
       Log.info("Generating highlights for $diet")
       generateHighlightsByDiet(diet)
       Log.info("Finished generating highlights for $diet")
+
+      Log.info("Deleting old highlights for $diet")
+      val deletedHighlights = deleteHighlightsByDiet(diet)
+      Log.info("Deleted old $deletedHighlights highlights for $diet")
     }
+  }
+
+  private fun deleteHighlightsByDiet(diet: Diet): Long {
+    val deleteBefore = LocalDate.now().minusDays(daysToGenerate)
+    return highlightRepository.deleteOldEntriesById(diet = diet, deleteBefore = deleteBefore)
   }
 
   private fun generateHighlightsByDiet(diet: Diet) {
@@ -82,10 +91,10 @@ class HighlightCron(
     recentHighlights: Collection<HighlightEntity>,
   ): RecipeEntity {
     val recentIds = recentHighlights.map { it.recipe.id }
-    var recipe: RecipeEntity?
+    var recipe: RecipeEntity
     do {
-      recipe = recipeRepository.findRandomRecipeByDiet(diet.allowedDiets, null).firstResult()
-    } while (recipe!!.id in recentIds)
+      recipe = recipeRepository.findRandomRecipeByDiet(diet.allowedDiets, null).firstResult()!!
+    } while (recipe.id in recentIds)
 
     return recipe
   }

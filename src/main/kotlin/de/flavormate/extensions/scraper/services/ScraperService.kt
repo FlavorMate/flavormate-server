@@ -13,6 +13,7 @@ import de.flavormate.extensions.importExport.ld_json.models.LDJsonRecipe
 import de.flavormate.extensions.importExport.ld_json.services.LDJsonService
 import de.flavormate.shared.extensions.stripHTMLTags
 import de.flavormate.shared.services.AuthorizationDetails
+import de.flavormate.utils.URLUtils
 import jakarta.enterprise.context.RequestScoped
 
 @RequestScoped
@@ -23,7 +24,8 @@ class ScraperService(
   private val mapper = CustomObjectMapper.instance
 
   fun scrape(url: String): String {
-    val html = fetchHTML(url)
+    val cleanedUrl = URLUtils.cleanURL(url)
+    val html = fetchHTML(cleanedUrl)
 
     val langAttr = html.selectFirst("html[lang]")?.attr("lang") ?: "en"
     val language =
@@ -33,7 +35,7 @@ class ScraperService(
         else -> "en"
       }
 
-    val ldJson = processHTML(html, url)
+    val ldJson = processHTML(html, cleanedUrl)
     return ldJsonService.ldJsonRecipeToRecipeDraftEntity(ldJson, language).id
   }
 
