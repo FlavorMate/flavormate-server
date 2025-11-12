@@ -64,4 +64,8 @@ class TokenRepository : PanacheRepositoryBase<TokenEntity, String> {
     val params = mapOf("tokenType" to TokenType.SHARE, "issuerId" to issuerId)
     return find("tokenType = :tokenType and issuer.id = :issuerId", sortBy, params)
   }
+
+  fun deleteAllRevokedAndExpired(): Long {
+    return delete("expiredAt < current_timestamp")
+  }
 }

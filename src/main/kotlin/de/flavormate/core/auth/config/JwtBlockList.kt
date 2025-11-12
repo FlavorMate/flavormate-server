@@ -17,6 +17,7 @@ class JwtBlockList {
   }
 
   fun addAll(tokens: List<String>) {
+    blockedTokens.clear()
     blockedTokens.addAll(tokens)
   }
 }
