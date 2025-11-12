@@ -42,4 +42,9 @@ class HighlightRepository : PanacheRepositoryBase<HighlightEntity, String> {
       diet,
     )
   }
+
+  fun deleteOldEntriesById(diet: Diet, deleteBefore: LocalDate): Long {
+    val params = mapOf("diet" to diet, "deleteBefore" to deleteBefore)
+    return delete("diet = :diet and date <= :deleteBefore", params)
+  }
 }
