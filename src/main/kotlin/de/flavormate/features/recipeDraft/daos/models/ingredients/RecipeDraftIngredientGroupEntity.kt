@@ -30,12 +30,14 @@ class RecipeDraftIngredientGroupEntity : CoreEntity() {
       index: Int,
       ingredients: List<RecipeDraftIngredientGroupItemEntity>,
       recipe: RecipeDraftEntity,
+      id: String? = null,
     ): RecipeDraftIngredientGroupEntity {
       return RecipeDraftIngredientGroupEntity().apply {
         this.label = label
         this.index = index
         this.ingredients = ingredients.toMutableList()
         this.recipe = recipe
+        id?.let { this.id = it }
       }
     }
   }

@@ -23,11 +23,13 @@ class RecipeDraftInstructionGroupItemEntity : CoreEntity() {
       label: String?,
       index: Int,
       group: RecipeDraftInstructionGroupEntity,
+      id: String? = null,
     ): RecipeDraftInstructionGroupItemEntity =
       RecipeDraftInstructionGroupItemEntity().apply {
         this.label = label
         this.index = index
         this.group = group
+        id?.let { this.id = it }
       }
   }
 }
