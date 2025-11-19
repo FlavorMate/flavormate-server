@@ -20,8 +20,7 @@ import de.flavormate.features.recipeDraft.daos.models.ingredients.RecipeDraftIng
 import de.flavormate.features.recipeDraft.daos.models.instructions.RecipeDraftInstructionGroupEntity
 import de.flavormate.features.recipeDraft.daos.models.instructions.RecipeDraftInstructionGroupItemEntity
 import de.flavormate.features.recipeDraft.dtos.models.update.*
-import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
-import de.flavormate.features.recipeDraft.repositories.RecipeDraftRepository
+import de.flavormate.features.recipeDraft.repositories.*
 import de.flavormate.features.tag.daos.models.TagEntity
 import de.flavormate.features.tag.repositories.TagRepository
 import de.flavormate.features.unit.repositories.UnitLocalizedRepository
@@ -32,6 +31,7 @@ import de.flavormate.shared.extensions.trimToNull
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
 import de.flavormate.shared.services.TransactionService
+import de.flavormate.utils.ValidatorUtils
 import jakarta.enterprise.context.RequestScoped
 import kotlin.jvm.optionals.getOrNull
 
@@ -48,6 +48,10 @@ class RecipeDraftMutationService(
   private val transactionService: TransactionService,
   private val unitLocalizedRepository: UnitLocalizedRepository,
   private val fileDraftRepository: RecipeDraftFileRepository,
+  private val recipeDraftIngredientGroupRepository: RecipeDraftIngredientGroupRepository,
+  private val recipeDraftIngredientGroupItemRepository: RecipeDraftIngredientGroupItemRepository,
+  private val recipeDraftInstructionGroupRepository: RecipeDraftInstructionGroupRepository,
+  private val recipeDraftInstructionGroupItemRepository: RecipeDraftInstructionGroupItemRepository,
 ) {
 
   fun delete(id: String): Boolean {
@@ -196,6 +200,10 @@ class RecipeDraftMutationService(
           index = entity.instructionGroups.size,
           ingredients = listOf(),
           recipe = entity,
+          id =
+            form.id
+              .takeIf { ValidatorUtils.validateUUID4(it) }
+              ?.takeUnless { recipeDraftIngredientGroupRepository.existsById(id = it) },
         )
         .also { entity.ingredientGroups.add(it) }
     }
@@ -245,6 +253,10 @@ class RecipeDraftMutationService(
           label = form.label?.getOrNull()?.trimToNull(),
           index = entity.ingredients.size,
           group = entity,
+          id =
+            form.id
+              .takeIf { ValidatorUtils.validateUUID4(it) }
+              ?.takeUnless { recipeDraftIngredientGroupItemRepository.existsById(id = it) },
         )
         .also { entity.ingredients.add(it) }
     }
@@ -303,6 +315,10 @@ class RecipeDraftMutationService(
           index = entity.instructionGroups.size,
           instructions = listOf(),
           recipe = entity,
+          id =
+            form.id
+              .takeIf { ValidatorUtils.validateUUID4(it) }
+              ?.takeUnless { recipeDraftInstructionGroupRepository.existsById(id = it) },
         )
         .also { entity.instructionGroups.add(it) }
     }
@@ -340,8 +356,15 @@ class RecipeDraftMutationService(
           label = form.label?.getOrNull()?.trimToNull(),
           index = entity.instructions.size,
           group = entity,
+          id =
+            form.id
+              .takeIf { ValidatorUtils.validateUUID4(it) }
+              ?.takeUnless { recipeDraftInstructionGroupItemRepository.existsById(id = it) },
         )
-        .also { entity.instructions.add(it) }
+        .also {
+          println(it.id)
+          entity.instructions.add(it)
+        }
     }
   }
 

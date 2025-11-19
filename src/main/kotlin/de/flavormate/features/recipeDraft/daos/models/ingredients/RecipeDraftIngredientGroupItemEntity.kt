@@ -33,12 +33,14 @@ class RecipeDraftIngredientGroupItemEntity : CoreEntity() {
       label: String?,
       index: Int,
       group: RecipeDraftIngredientGroupEntity,
+      id: String? = null,
     ): RecipeDraftIngredientGroupItemEntity =
       RecipeDraftIngredientGroupItemEntity().apply {
         this.label = label
         this.index = index
         this.nutrition = RecipeDraftIngredientGroupItemNutritionEntity()
         this.group = group
+        id?.let { this.id = it }
       }
   }
 }
