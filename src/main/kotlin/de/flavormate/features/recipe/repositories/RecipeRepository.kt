@@ -67,6 +67,10 @@ class RecipeRepository : PanacheRepositoryBase<RecipeEntity, String> {
     return find(query = "url is not null")
   }
 
+  fun findAllWithDescription(): PanacheQuery<RecipeEntity> {
+    return find(query = "description is not null")
+  }
+
   override fun deleteById(id: String): Boolean {
     return delete("id = ?1", id) > 0
   }
