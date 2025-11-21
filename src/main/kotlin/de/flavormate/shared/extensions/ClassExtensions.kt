@@ -17,9 +17,9 @@ fun <S, T> List<S>.mapToSet(transform: (S) -> T): MutableSet<T>? {
   return this.mapTo(mutableSetOf(), transform).takeIf { it.isNotEmpty() }
 }
 
-fun String?.trimToNull() = this?.trim()?.ifEmpty { null }
+fun String?.trimToNull() = this?.trim()?.ifBlank { null }
 
-fun String?.trimToBlank() = this?.trim()?.ifEmpty { "" }
+fun String?.trimToBlank() = this?.trim()?.ifBlank { "" }
 
 fun String.toKebabCase(): String {
   return this.trim() // Remove leading and trailing spaces

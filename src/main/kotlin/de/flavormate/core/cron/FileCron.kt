@@ -7,6 +7,7 @@ import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.shared.enums.FilePath
 import de.flavormate.shared.interfaces.CRepository
 import de.flavormate.shared.services.FileService
+import de.flavormate.utils.DatabaseUtils
 import io.quarkus.logging.Log
 import io.quarkus.runtime.Startup
 import io.quarkus.scheduler.Scheduled
@@ -91,16 +92,9 @@ class FileCron(
 
   @Transactional
   fun cleanAvatarTable(prefix: FilePath, repository: AccountFileRepository) {
-    var pageIndex = 0
-    var hasMore = true
-
-    while (hasMore) {
-      val page = repository.findAll().page(pageIndex, 10)
-      val items = page.list()
-      hasMore = page.hasNextPage()
-
-      for (data in items) {
-        // Check filesystem existence outside of main logic if possible
+    DatabaseUtils.batchedRun(query = repository.findAll()) { items ->
+      items.forEach { data ->
+        // Check filesystem existence outside the main logic if possible
         val path = fileService.readPath(prefix, data.id)
         val isNonExistent =
           !path.exists() || Files.list(path).use { stream -> stream.findAny().isEmpty }
@@ -114,8 +108,6 @@ class FileCron(
           repository.deleteById(data.id)
         }
       }
-
-      pageIndex++
     }
   }
 }

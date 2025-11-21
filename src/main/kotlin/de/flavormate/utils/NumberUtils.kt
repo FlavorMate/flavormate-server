@@ -14,13 +14,8 @@ object NumberUtils {
     }
   }
 
-  fun tryParseDouble(value: String, defaultVal: Double): Double {
-    return try {
-      value.toDouble()
-    } catch (e: NumberFormatException) {
-      defaultVal
-    }
-  }
+  fun tryParseDouble(value: String, defaultVal: Double): Double =
+    runCatching { value.toDouble() }.getOrDefault(defaultVal)
 
   fun isInteger(value: Double): Boolean {
     return (value == floor(value)) && !java.lang.Double.isInfinite(value)
