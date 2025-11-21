@@ -187,7 +187,7 @@ class LDJsonService(
             )
         }
       } catch (e: Exception) {
-        e.printStackTrace()
+        Log.error("Failed to download image $image", e)
       } finally {
         tmpFile?.delete()
       }

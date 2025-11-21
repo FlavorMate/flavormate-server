@@ -89,7 +89,7 @@ class CustomAwareJWTAuthMechanism(
         issuer -> jwtMechanism
         else -> oidcMechanism
       }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
       return NoAuthenticationMechanism()
     }
   }
