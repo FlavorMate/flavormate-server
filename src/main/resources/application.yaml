@@ -40,7 +40,7 @@ quarkus:
     host: 0.0.0.0
     root-path: ${flavormate.server.path}
     port: ${flavormate.server.port}
-  
+
   devservices:
     enabled: false
 
@@ -107,6 +107,8 @@ flavormate:
     providers: ${FLAVORMATE_PATHS_PROVIDERS:${HOME}/.flavormate/providers}
 
   features:
+    ratings:
+      enabled: ${FLAVORMATE_FEATURE_RATINGS:false}
     registration:
       enabled: ${FLAVORMATE_FEATURE_REGISTRATION:false}
     recovery:
@@ -156,4 +158,3 @@ flavormate:
   #        icon: authentik.png
 
   # Paths
-

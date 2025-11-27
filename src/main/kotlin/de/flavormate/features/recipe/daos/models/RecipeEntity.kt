@@ -1,12 +1,12 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.features.recipe.daos.models
 
+import de.flavormate.extensions.ratings.daos.RatingEntity
 import de.flavormate.features.account.dao.models.AccountEntity
 import de.flavormate.features.book.daos.models.BookEntity
 import de.flavormate.features.category.daos.models.CategoryEntity
 import de.flavormate.features.recipe.daos.models.ingredient.IngredientGroupEntity
 import de.flavormate.features.recipe.daos.models.instruction.InstructionGroupEntity
-import de.flavormate.features.recipe.daos.models.rating.RatingEntity
 import de.flavormate.features.tag.daos.models.TagEntity
 import de.flavormate.shared.enums.Course
 import de.flavormate.shared.enums.Diet

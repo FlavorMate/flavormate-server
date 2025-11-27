@@ -4,6 +4,7 @@ package de.flavormate.core.auth.config
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.features.enums.FeatureType
 import de.flavormate.extensions.bring.controllers.BringController
+import de.flavormate.extensions.ratings.controllers.RatingsController
 import de.flavormate.extensions.recovery.controllers.RecoveryController
 import de.flavormate.extensions.registration.controllers.RegistrationController
 import de.flavormate.extensions.share.controllers.ShareController
@@ -30,6 +31,9 @@ class FeatureRequestFilter(private val flavorMateProperties: FlavorMatePropertie
   private val registrationPath =
     RegistrationController::class.java.getAnnotation(Path::class.java).value
 
+  private val ratingsEnabled = flavorMateProperties.features()[FeatureType.Ratings]!!.enabled()
+  private val ratingsPath = RatingsController::class.java.getAnnotation(Path::class.java).value
+
   private val shareEnabled = flavorMateProperties.features()[FeatureType.Share]!!.enabled()
   private val sharePath = ShareController::class.java.getAnnotation(Path::class.java).value
 
@@ -40,6 +44,7 @@ class FeatureRequestFilter(private val flavorMateProperties: FlavorMatePropertie
     if (ctx == null) return
 
     checkBringFeature(ctx)
+    checkRatingsFeature(ctx)
     checkRecoveryFeature(ctx)
     checkRegistrationFeature(ctx)
     checkShareFeature(ctx)
@@ -52,6 +57,14 @@ class FeatureRequestFilter(private val flavorMateProperties: FlavorMatePropertie
     if (!requestedPath.startsWith(bringPath)) return
 
     if (!bringEnabled) ctx.abortWith(Response.status(Response.Status.NOT_FOUND).build())
+  }
+
+  fun checkRatingsFeature(ctx: ContainerRequestContext) {
+    val requestedPath = ctx.uriInfo.requestUri.path
+
+    if (!requestedPath.startsWith(ratingsPath)) return
+
+    if (!ratingsEnabled) ctx.abortWith(Response.status(Response.Status.NOT_FOUND).build())
   }
 
   fun checkRecoveryFeature(ctx: ContainerRequestContext) {
