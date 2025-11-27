@@ -407,6 +407,8 @@ class RecipeDraftMutationService(
       .filter { offProductId -> !offRepository.existsById(offProductId) }
       .forEach { offProductId -> offRepository.persist(OFFProductEntity.new(offProductId)) }
 
+    offRepository.flush()
+
     // Apply fields to the recipe directly
     recipe.apply {
       this.label = draft.label!!

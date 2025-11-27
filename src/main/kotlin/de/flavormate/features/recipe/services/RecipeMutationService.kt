@@ -112,19 +112,20 @@ class RecipeMutationService(
     return entity.id
   }
 
-    fun putRecipesIdTransfer(id: String, form: RecipeTransferDto) {
-        val recipe =
-            recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found!")
+  fun putRecipesIdTransfer(id: String, form: RecipeTransferDto) {
+    val recipe =
+      recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found!")
 
-        if (!authorizationDetails.isAdmin())
-            throw FForbiddenException(message = "You are not allowed to transfer this recipe!")
+    if (!authorizationDetails.isAdmin())
+      throw FForbiddenException(message = "You are not allowed to transfer this recipe!")
 
-        val account =
-            accountRepository.findById(form.newOwner) ?: throw FNotFoundException(message = "Account not found!")
+    val account =
+      accountRepository.findById(form.newOwner)
+        ?: throw FNotFoundException(message = "Account not found!")
 
-        recipe.ownedBy = account
-        recipe.ownedById = account.id
+    recipe.ownedBy = account
+    recipe.ownedById = account.id
 
-        recipeRepository.persist(recipe)
-    }
+    recipeRepository.persist(recipe)
+  }
 }

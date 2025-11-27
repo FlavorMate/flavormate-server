@@ -24,10 +24,10 @@ fun String?.trimToBlank() = this?.trim()?.ifBlank { "" }
 fun String.toKebabCase(): String {
   return this.trim() // Remove leading and trailing spaces
     .replace(
-      Regex("[^\\p{L}\\p{N}\\s]"),
+      Regex("[^\\p{L}\\p{N}\\s-]"),
       "",
     ) // Allow letters (including umlauts) and numbers, remove special characters
-    .replace(Regex("\\s+"), "-") // Replace spaces with hyphens
+    .replace(Regex("-*\\s+"), "-") // Replace spaces with hyphens
     .lowercase() // Convert to lowercase
 }
 

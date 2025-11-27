@@ -20,6 +20,21 @@ tailored just for you.
 ## Migration Guides
 
 <details>
+<summary>v3.0.* to 3.1.*</summary>
+
+### Environment Changes:
+
+The following properties have been added:
+
+**Features**
+
+|         new property         | required | note |
+|------------------------------|----------|------|
+| `FLAVORMATE_FEATURE_RATINGS` | No       |      |
+
+</details>
+
+<details>
 <summary>v2* to v3</summary>
 
 Version 3 is a complete rewrite of the FlavorMate backend, featuring significant architectural changes:
@@ -49,7 +64,7 @@ The following properties have been changed:
 <details open>
 <summary>Server</summary>
 
-| Old property            | New Property           | required | Notes                                                                                      |
+|      Old property       |      New Property      | required |                                           Notes                                            |
 |-------------------------|------------------------|----------|--------------------------------------------------------------------------------------------|
 | FLAVORMATE_BACKEND_URL  | FLAVORMATE_SERVER_URL  | Yes      | -                                                                                          |
 | FLAVORMATE_PORT         | FLAVORMATE_SERVER_PORT | -        | -                                                                                          |
@@ -61,7 +76,7 @@ The following properties have been changed:
 <details open>
 <summary>General</summary>
 
-| Old property               | New Property                                   | required | Notes                                                                                      |
+|        Old property        |                  New Property                  | required |                                           Notes                                            |
 |----------------------------|------------------------------------------------|----------|--------------------------------------------------------------------------------------------|
 | FLAVORMATE_HIGHLIGHT_COUNT | FLAVORMATE_GENERAL_HIGHLIGHTS_DAYS_TO_GENERATE | -        | -                                                                                          |
 | FLAVORMATE_FRONTEND_URL    | -                                              | -        | Not required anymore since the web application should register the `flavormate://` schema. |
@@ -72,7 +87,7 @@ The following properties have been changed:
 <details open>
 <summary>General - Admin</summary>
 
-| Old property                 | New Property                          | required | Notes |
+|         Old property         |             New Property              | required | Notes |
 |------------------------------|---------------------------------------|----------|-------|
 | FLAVORMATE_ADMIN_DISPLAYNAME | FLAVORMATE_GENERAL_ADMIN_DISPLAY_NAME | Yes      | -     |
 | FLAVORMATE_ADMIN_USERNAME    | FLAVORMATE_GENERAL_ADMIN_USERNAME     | Yes      | -     |
@@ -84,7 +99,7 @@ The following properties have been changed:
 <details open>
 <summary>Database</summary>
 
-| Old property | New Property           | required | Notes |
+| Old property |      New Property      | required | Notes |
 |--------------|------------------------|----------|-------|
 | DB_HOST      | FLAVORMATE_DB_HOST     | Yes      | -     |
 | DB_DATABASE  | FLAVORMATE_DB_DATABASE | Yes      | -     |
@@ -97,7 +112,7 @@ The following properties have been changed:
 <details open>
 <summary>Paths</summary>
 
-| Old property            | New Property           | required | Notes                                                                            |
+|      Old property       |      New Property      | required |                                      Notes                                       |
 |-------------------------|------------------------|----------|----------------------------------------------------------------------------------|
 | FLAVORMATE_PATH_CONTENT | FLAVORMATE_PATHS_FILES | Yes      | -                                                                                |
 | FLAVORMATE_PATH_BACKUP  | -                      | -        | Wasn't used yet.                                                                 |
@@ -108,7 +123,7 @@ The following properties have been changed:
 <details open>
 <summary>Auth</summary>
 
-| Old property         | New Property                | required | Notes                          |
+|     Old property     |        New Property         | required |             Notes              |
 |----------------------|-----------------------------|----------|--------------------------------|
 | FLAVORMATE_JWT_TOKEN | -                           | -        | -                              |
 | -                    | FLAVORMATE_AUTH_PUBLIC_KEY  | Yes      | Path to the public key (.pem)  |
@@ -119,7 +134,7 @@ The following properties have been changed:
 <details open>
 <summary>Auth - JWT</summary>
 
-| Old property              | New Property                         | required | Notes |
+|       Old property        |             New Property             | required | Notes |
 |---------------------------|--------------------------------------|----------|-------|
 | FLAVORMATE_SHARE_DURATION | FLAVORMATE_AUTH_SHARE_TOKEN_DURATION | -        | -     |
 
@@ -128,7 +143,7 @@ The following properties have been changed:
 <details open>
 <summary>Email</summary>
 
-| Old property  | New Property                | required | Notes                                                         |
+| Old property  |        New Property         | required |                             Notes                             |
 |---------------|-----------------------------|----------|---------------------------------------------------------------|
 | MAIL_FROM     | FLAVORMATE_MAILER_FROM      | -        | -                                                             |
 | MAIL_HOST     | FLAVORMATE_MAILER_HOST      | -        | -                                                             |
@@ -152,13 +167,13 @@ The following properties have been added:
 
 **General:**
 
-| new property              | required | note              |
+|       new property        | required |       note        |
 |---------------------------|----------|-------------------|
 | FLAVORMATE_SHARE_DURATION | No       | ISO 8601 Duration |
 
 **Features**
 
-| new property               | required | note |
+|        new property        | required | note |
 |----------------------------|----------|------|
 | `FLAVORMATE_FEATURE_SHARE` | No       |      |
 
@@ -173,7 +188,7 @@ The following properties have been CHANGED:
 
 **General:**
 
-| old property              | new property          | required | note                                                                                                                |
+|       old property        |     new property      | required |                                                        note                                                         |
 |---------------------------|-----------------------|----------|---------------------------------------------------------------------------------------------------------------------|
 | -                         | `FLAVORMATE_LANGUAGE` | Yes      | Either `de` or `en`                                                                                                 |
 | `FLAVORMATE_FRONTEND_URL` |                       | No       | no longer required                                                                                                  |
@@ -181,19 +196,19 @@ The following properties have been CHANGED:
 
 **Paths:**
 
-| old property           | new property              | required | note |
+|      old property      |       new property        | required | note |
 |------------------------|---------------------------|----------|------|
 | `FLAVORMATE_DATA_PATH` | `FLAVORMATE_PATH_CONTENT` | No       |      |
 
 **Mail**
 
-| old property | new property | required | note                         |
+| old property | new property | required |             note             |
 |--------------|--------------|----------|------------------------------|
 | `MAIL_FROM`  |              | No       | should only contain the mail |
 
 **Features**
 
-| old property               | new property | required | note                   |
+|        old property        | new property | required |          note          |
 |----------------------------|--------------|----------|------------------------|
 | `FLAVORMATE_FEATURE_STORY` |              | No       | default is now `false` |
 | `FLAVORMATE_FEATURE_BRING` |              | No       | default is now `false` |
@@ -202,7 +217,7 @@ The following properties have been ADDED:
 
 **General**
 
-| new property          | required | note                |
+|     new property      | required |        note         |
 |-----------------------|----------|---------------------|
 | `FLAVORMATE_LANGUAGE` | Yes      | Either `de` or `en` |
 
@@ -229,6 +244,7 @@ review. Recipes will continue to function as usual, even if units are not migrat
 1. Create a `docker-compose.yaml` file (or download one from the [examples](./examples))
 2. Create the folders the container needs.
 3. Create a key pair and copy `publicKey.pem` and `privateKey.pem` into the right folder.
+
    ```bash
    # Generate the private key
    openssl genrsa -out rsaPrivateKey.pem 2048
@@ -253,6 +269,7 @@ You must have these dependencies installed:
 
 1. Download the latest [FlavorMate-Server.jar](https://github.com/FlavorMate/flavormate-server/releases).
 2. Create a key pair and copy `publicKey.pem` and `privateKey.pem` into the right folder.
+
    ```bash
    # Generate the private key
    openssl genrsa -out rsaPrivateKey.pem 2048
@@ -273,7 +290,7 @@ You must have these dependencies installed:
 <details>
 <summary>Server</summary>
 
-| Key                    | Required | Description                                                                        | Example                    | Default |
+|          Key           | Required |                                    Description                                     |          Example           | Default |
 |------------------------|----------|------------------------------------------------------------------------------------|----------------------------|---------|
 | FLAVORMATE_SERVER_URL  | Yes      | The url the server is accessible                                                   | `http://flavormate.intern` | -       |
 | FLAVORMATE_SERVER_PATH | -        | The path the server uses. Useful when hosting frontend and backend on the same url | `/api`                     | `/`     |
@@ -284,7 +301,7 @@ You must have these dependencies installed:
 <details>
 <summary>General</summary>
 
-| Key                                            | Required | Description                                                 | Example             | Default |
+|                      Key                       | Required |                         Description                         |       Example       | Default |
 |------------------------------------------------|----------|-------------------------------------------------------------|---------------------|---------|
 | FLAVORMATE_GENERAL_ADMIN_DISPLAY_NAME          | Yes      | Admin accounts display name                                 | `Admin`             | -       |
 | FLAVORMATE_GENERAL_ADMIN_USERNAME              | Yes      | Admin accounts username                                     | `admin`             | -       |
@@ -297,7 +314,7 @@ You must have these dependencies installed:
 <details>
 <summary>Database</summary>
 
-| Key                    | Required | Description            | Example      | Default |
+|          Key           | Required |      Description       |   Example    | Default |
 |------------------------|----------|------------------------|--------------|---------|
 | FLAVORMATE_DB_HOST     | Yes      | Database host          | `localhost`  | -       |
 | FLAVORMATE_DB_DATABASE | Yes      | Database database name | `flavormate` | -       |
@@ -310,7 +327,7 @@ You must have these dependencies installed:
 <details >
 <summary>Paths</summary>
 
-| Key                        | Required | Description                                       | Example                         | Default                         |
+|            Key             | Required |                    Description                    |             Example             |             Default             |
 |----------------------------|----------|---------------------------------------------------|---------------------------------|---------------------------------|
 | FLAVORMATE_PATHS_FILES     | -        | Path where files (e.g. recipe pictures) are saved | `${HOME}/.flavormate/files`     | `${HOME}/.flavormate/files`     |
 | FLAVORMATE_PATHS_PROVIDERS | -        | Path where OIDC images are saved                  | `${HOME}/.flavormate/providers` | `${HOME}/.flavormate/providers` |
@@ -320,8 +337,9 @@ You must have these dependencies installed:
 <details>
 <summary>Features</summary>
 
-| Key                                | Required | Description                                                                | Example | Default |
+|                Key                 | Required |                                Description                                 | Example | Default |
 |------------------------------------|----------|----------------------------------------------------------------------------|---------|---------|
+| FLAVORMATE_FEATURE_RATINGS         | -        | Enables recipe ratings                                                     | `true`  | `false` |
 | FLAVORMATE_FEATURE_REGISTRATION    | -        | Enables the registration                                                   | `true`  | `false` |
 | FLAVORMATE_FEATURE_RECOVERY        | -        | Enables the password recovery feature !!! Mail config is required!!!       | `true`  | `false` |
 | FLAVORMATE_FEATURE_STORY           | -        | Enables the story feature                                                  | `true`  | `false` |
@@ -334,7 +352,7 @@ You must have these dependencies installed:
 <details>
 <summary>Auth - JWT</summary>
 
-| Key                         | Required | Description                               | Example          | Default |
+|             Key             | Required |                Description                |     Example      | Default |
 |-----------------------------|----------|-------------------------------------------|------------------|---------|
 | FLAVORMATE_AUTH_PUBLIC_KEY  | Yes      | The path where the public key is located  | `publicKey.pem`  | -       |
 | FLAVORMATE_AUTH_PRIVATE_KEY | Yes      | The path where the private key is located | `privateKey.pem` | -       |
@@ -347,7 +365,7 @@ You must have these dependencies installed:
 All values have to be in ISO 8601 Duration format.
 Only days, hours, minutes, and seconds are supported.
 
-| Key                                    | Required | Description                        | Example | Default  |
+|                  Key                   | Required |            Description             | Example | Default  |
 |----------------------------------------|----------|------------------------------------|---------|----------|
 | FLAVORMATE_AUTH_REFRESH_TOKEN_DURATION | -        | The duration the refresh token has | `PT1M`  | `P30D`   |
 | FLAVORMATE_AUTH_ACCESS_TOKEN_DURATION  | -        | The duration the access token has  | `PT1M`  | `PT5M`   |
@@ -363,7 +381,7 @@ Only days, hours, minutes, and seconds are supported.
 
 This section represent an array. Please change the index inside the `[]` - starting at 0
 
-| Key                                | Required | Description                                                                         | Example                                         | Default |
+|                Key                 | Required |                                     Description                                     |                     Example                     | Default |
 |------------------------------------|----------|-------------------------------------------------------------------------------------|-------------------------------------------------|---------|
 | FLAVORMATE_AUTH_OIDC[0]\_NAME      | -        | The name the Provider should have                                                   | `Authentik`                                     | -       |
 | FLAVORMATE_AUTH_OIDC[0]\_ID        | -        | The id the Provider should have                                                     | `authentik`                                     | -       |
@@ -376,7 +394,7 @@ This section represent an array. Please change the index inside the `[]` - start
 <details>
 <summary>Mail</summary>
 
-| Key                         | Required | Description                          | Example                              | Default     |
+|             Key             | Required |             Description              |               Example                |   Default   |
 |-----------------------------|----------|--------------------------------------|--------------------------------------|-------------|
 | FLAVORMATE_MAILER_FROM      | -        | E-Mail From header                   | `FlavorMate<noreply@example.de>`     | -           |
 | FLAVORMATE_MAILER_HOST      | -        | E-Mail host                          | `smtp.example.com`                   | `localhost` |
@@ -387,3 +405,4 @@ This section represent an array. Please change the index inside the `[]` - start
 | FLAVORMATE_MAILER_PASSWORD  | -        | E-Mail password                      | `Passw0rd!`                          | -           |
 
 </details>
+

@@ -1,11 +1,11 @@
 /* Licensed under AGPLv3 2024 - 2025 */
-package de.flavormate.features.recipe.daos.models.rating
+package de.flavormate.extensions.ratings.daos
 
 import jakarta.persistence.Embeddable
 import java.util.*
 
 @Embeddable
-class RatingId {
+class RatingEntityId {
   private lateinit var accountId: String
 
   private lateinit var recipeId: String
@@ -19,5 +19,14 @@ class RatingId {
     if (other == null) return false
     if (javaClass != other.javaClass) return false
     return Objects.hash(accountId, recipeId) == other.hashCode()
+  }
+
+  companion object {
+    fun create(accountId: String, recipeId: String): RatingEntityId {
+      return RatingEntityId().apply {
+        this.accountId = accountId
+        this.recipeId = recipeId
+      }
+    }
   }
 }

@@ -9,4 +9,5 @@ enum class FeatureType {
   Registration,
   Share,
   Story,
+  Ratings,
 }
