@@ -2,6 +2,7 @@
 package de.flavormate.features.recipe.daos.models
 
 import de.flavormate.extensions.openFoodFacts.dao.models.OFFProductEntity
+import de.flavormate.features.recipe.daos.models.ingredient.IngredientEntity
 import de.flavormate.shared.models.entities.CoreEntity
 import jakarta.persistence.*
 
@@ -29,4 +30,6 @@ class NutritionEntity : CoreEntity() {
   var salt: Double? = null
 
   var sodium: Double? = null
+
+  @OneToOne(mappedBy = "nutrition") var ingredient: IngredientEntity? = null
 }

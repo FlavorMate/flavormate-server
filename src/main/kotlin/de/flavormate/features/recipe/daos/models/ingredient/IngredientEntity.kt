@@ -25,7 +25,7 @@ class IngredientEntity : CoreEntity() {
   @JoinColumn(name = "unit", referencedColumnName = "id")
   var unit: UnitLocalizedEntity? = null
 
-  @ManyToOne(cascade = [CascadeType.ALL])
+  @OneToOne(cascade = [CascadeType.ALL])
   @JoinColumn(name = "nutrition_id", referencedColumnName = "id")
   var nutrition: NutritionEntity? = null
 
