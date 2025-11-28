@@ -48,7 +48,7 @@ class TagCron(private val tagRepository: TagRepository) {
         tag.label = tag.label.toKebabCase()
         tagRepository.persist(tag)
 
-        Log.info("Tag $originalLabel was unoptimized and was optimized: $cleanedLabel")
+        Log.info("Tag '$originalLabel' was unoptimized and was optimized: '$cleanedLabel'")
       }
     }
   }
