@@ -68,11 +68,10 @@ class SharedRecipeMapper(
     val path =
       UriBuilder.fromResource(ShareController::class.java)
         .path(ShareController::class.java, ShareController::shareFile.name)
-        .queryParam("resolution", quality)
         .build(token, id)
         .toString()
 
-    return URIBuilder(server).appendPath(path).toString()
+    return URIBuilder(server).appendPath(path).addParameter("resolution", quality).toString()
   }
 
   private fun mapDuration(input: Duration): String {
