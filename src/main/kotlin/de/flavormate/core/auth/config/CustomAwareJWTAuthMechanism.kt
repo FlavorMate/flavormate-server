@@ -105,7 +105,9 @@ class CustomAwareJWTAuthMechanism(
    * @param context The routing context representing the incoming HTTP request and associated data.
    */
   fun addTokenToContext(context: RoutingContext) {
-    val pathParts = context.request().path().split("/")
+    val pathParts = extractPathSegments(context)
+
+    if (pathParts.size < 3) return
 
     val token =
       when (pathParts[2]) {
@@ -117,5 +119,11 @@ class CustomAwareJWTAuthMechanism(
       }
 
     token?.let { context.request().headers().add("Authorization", "Bearer $it") }
+  }
+
+  private fun extractPathSegments(context: RoutingContext): List<String> {
+    val requestPath = context.request().path()
+    val serverPrefix = flavorMateProperties.server().path().takeUnless { it == "/" } ?: ""
+    return requestPath.removePrefix(serverPrefix).split("/")
   }
 }
