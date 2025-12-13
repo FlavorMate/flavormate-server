@@ -2,12 +2,15 @@
 package de.flavormate.core.cron
 
 import de.flavormate.features.account.repositories.AccountFileRepository
+import de.flavormate.features.recipe.daos.models.RecipeFileEntity
 import de.flavormate.features.recipe.repositories.RecipeFileRepository
+import de.flavormate.features.recipeDraft.daos.models.RecipeDraftFileEntity
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.shared.enums.FilePath
 import de.flavormate.shared.interfaces.CRepository
 import de.flavormate.shared.services.FileService
 import de.flavormate.utils.DatabaseUtils
+import de.flavormate.utils.ImageUtils
 import io.quarkus.logging.Log
 import io.quarkus.runtime.Startup
 import io.quarkus.scheduler.Scheduled
@@ -46,6 +49,12 @@ class FileCron(
     cleanAvatarTable(FilePath.AccountAvatar, fileAccountRepository)
 
     Log.info("Finished deleting missing db entries")
+
+    Log.info("Start generating missing thumbnails")
+
+    createMissingThumbnails()
+
+    Log.info("Finished generating missing thumbnails")
   }
 
   @Transactional
@@ -92,7 +101,7 @@ class FileCron(
 
   @Transactional
   fun cleanAvatarTable(prefix: FilePath, repository: AccountFileRepository) {
-    DatabaseUtils.batchedRun(query = repository.findAll()) { items ->
+    DatabaseUtils.batchedRun(query = repository.findAll()) { items, _ ->
       items.forEach { data ->
         // Check filesystem existence outside the main logic if possible
         val path = fileService.readPath(prefix, data.id)
@@ -108,6 +117,46 @@ class FileCron(
           repository.deleteById(data.id)
         }
       }
+    }
+  }
+
+  fun createMissingThumbnails() {
+    var count = fileRecipeRepository.findBySchema(1).count()
+    DatabaseUtils.batchedRunSingle(query = fileRecipeRepository.findBySchema(1)) {
+      item,
+      currentIndex ->
+      Log.info("Creating missing recipe thumbnails ($currentIndex/$count)")
+      createMissingRecipeThumbnail(item)
+    }
+
+    count = fileRecipeDraftRepository.findBySchema(1).count()
+    DatabaseUtils.batchedRunSingle(query = fileRecipeDraftRepository.findBySchema(1)) {
+      item,
+      currentIndex ->
+      Log.info("Creating missing recipe draft thumbnails ($currentIndex/$count)")
+      createMissingRecipeDraftThumbnail(item)
+    }
+  }
+
+  fun createMissingRecipeThumbnail(item: RecipeFileEntity) {
+    val file = fileRecipeRepository.findById(item.id) ?: return
+    val path = fileService.readPath(prefix = FilePath.Recipe, uuid = file.id)
+    val inputFile = path.resolve("original.webp")
+
+    if (file.schema < 2) {
+      ImageUtils.createDynamicImage(inputFile = inputFile, outputDir = path, newFile = false)
+      file.schema = 2
+    }
+  }
+
+  fun createMissingRecipeDraftThumbnail(item: RecipeDraftFileEntity) {
+    val file = fileRecipeDraftRepository.findById(item.id) ?: return
+    val path = fileService.readPath(prefix = FilePath.RecipeDraft, uuid = file.id)
+    val inputFile = path.resolve("original.webp")
+
+    if (file.schema < 2) {
+      ImageUtils.createDynamicImage(inputFile = inputFile, outputDir = path, newFile = false)
+      file.schema = 2
     }
   }
 }
