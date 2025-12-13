@@ -4,7 +4,7 @@ package de.flavormate.features.recipeDraft.controllers
 import de.flavormate.features.recipeDraft.dtos.models.update.RecipeDraftUpdateDto
 import de.flavormate.features.recipeDraft.services.RecipeDraftService
 import de.flavormate.features.recipeDraft.services.file.RecipeDraftFileService
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.models.api.Pagination
 import de.flavormate.utils.MimeTypes
 import jakarta.validation.constraints.NotBlank
@@ -58,7 +58,7 @@ class RecipeDraftController(
   fun getRecipeDraftsIdFilesFile(
     @RestPath @NotBlank id: String,
     @RestPath @NotBlank file: String,
-    @RestQuery @NotNull resolution: ImageWideResolution,
+    @RestQuery @NotNull resolution: ImageResolution,
   ) = fileService.getRecipeDraftsIdFilesFile(id = id, file = file, resolution = resolution)
 
   @DELETE

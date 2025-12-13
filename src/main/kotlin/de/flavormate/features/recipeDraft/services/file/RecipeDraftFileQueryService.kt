@@ -9,19 +9,17 @@ import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftRepository
 import de.flavormate.shared.constants.AllowedSorts
 import de.flavormate.shared.enums.FilePath
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.models.api.PageableDto
 import de.flavormate.shared.models.api.Pagination
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
-import de.flavormate.shared.services.TransactionService
 import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.core.StreamingOutput
 
 @RequestScoped
 class RecipeDraftFileQueryService(
   private val authorizationDetails: AuthorizationDetails,
-  private val transactionService: TransactionService,
   private val draftRepository: RecipeDraftRepository,
   private val fileRepository: RecipeDraftFileRepository,
   private val fileService: FileService,
@@ -31,7 +29,7 @@ class RecipeDraftFileQueryService(
   fun getRecipeDraftsIdFilesFile(
     id: String,
     file: String,
-    resolution: ImageWideResolution,
+    resolution: ImageResolution,
   ): StreamingOutput {
     val draftEntity =
       draftRepository.findById(id = id) ?: throw FNotFoundException(message = "Recipe not found")
@@ -45,7 +43,7 @@ class RecipeDraftFileQueryService(
     return fileService.streamFile(
       prefix = FilePath.RecipeDraft,
       uuid = fileEntity.id,
-      fileName = resolution.fileName,
+      fileName = resolution.path,
     )
   }
 

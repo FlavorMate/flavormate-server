@@ -1,16 +1,19 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.core.cron
 
+import de.flavormate.features.account.dao.models.AccountFileEntity
 import de.flavormate.features.account.repositories.AccountFileRepository
 import de.flavormate.features.recipe.daos.models.RecipeFileEntity
 import de.flavormate.features.recipe.repositories.RecipeFileRepository
 import de.flavormate.features.recipeDraft.daos.models.RecipeDraftFileEntity
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.shared.enums.FilePath
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.interfaces.CRepository
 import de.flavormate.shared.services.FileService
 import de.flavormate.utils.DatabaseUtils
 import de.flavormate.utils.ImageUtils
+import de.flavormate.utils.MimeTypes
 import io.quarkus.logging.Log
 import io.quarkus.runtime.Startup
 import io.quarkus.scheduler.Scheduled
@@ -18,9 +21,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.createDirectories
-import kotlin.io.path.exists
+import kotlin.io.path.*
 import org.apache.commons.io.FileUtils
 
 @ApplicationScoped
@@ -121,7 +122,15 @@ class FileCron(
   }
 
   fun createMissingThumbnails() {
-    var count = fileRecipeRepository.findBySchema(1).count()
+    var count = fileAccountRepository.findBySchema(1).count()
+    DatabaseUtils.batchedRunSingle(query = fileAccountRepository.findBySchema(1)) {
+      item,
+      currentIndex ->
+      Log.info("Creating missing account thumbnails ($currentIndex/$count)")
+      createMissingAccountThumbnail(item)
+    }
+
+    count = fileRecipeRepository.findBySchema(1).count()
     DatabaseUtils.batchedRunSingle(query = fileRecipeRepository.findBySchema(1)) {
       item,
       currentIndex ->
@@ -138,13 +147,32 @@ class FileCron(
     }
   }
 
+  fun createMissingAccountThumbnail(item: AccountFileEntity) {
+    val file = fileAccountRepository.findById(item.id) ?: return
+    val path = fileService.readPath(prefix = FilePath.AccountAvatar, uuid = file.id)
+    val inputFile = path.resolve("Original${MimeTypes.WEBP_EXTENSION}")
+
+    if (file.schema < 2) {
+      ImageUtils.createPlaneImage(inputFile = inputFile, outputDir = path, newFile = true)
+      path
+        .listDirectoryEntries()
+        .filter { it.isRegularFile() && it.name != ImageResolution.Original.path.name }
+        .forEach { it.deleteExisting() }
+      file.schema = 2
+    }
+  }
+
   fun createMissingRecipeThumbnail(item: RecipeFileEntity) {
     val file = fileRecipeRepository.findById(item.id) ?: return
     val path = fileService.readPath(prefix = FilePath.Recipe, uuid = file.id)
-    val inputFile = path.resolve("original.webp")
+    val inputFile = path.resolve(ImageResolution.Original.path)
 
     if (file.schema < 2) {
       ImageUtils.createDynamicImage(inputFile = inputFile, outputDir = path, newFile = false)
+      path
+        .listDirectoryEntries()
+        .filter { it.isRegularFile() && it.name != ImageResolution.Original.path.name }
+        .forEach { it.deleteExisting() }
       file.schema = 2
     }
   }
@@ -152,10 +180,14 @@ class FileCron(
   fun createMissingRecipeDraftThumbnail(item: RecipeDraftFileEntity) {
     val file = fileRecipeDraftRepository.findById(item.id) ?: return
     val path = fileService.readPath(prefix = FilePath.RecipeDraft, uuid = file.id)
-    val inputFile = path.resolve("original.webp")
+    val inputFile = path.resolve(ImageResolution.Original.path)
 
     if (file.schema < 2) {
       ImageUtils.createDynamicImage(inputFile = inputFile, outputDir = path, newFile = false)
+      path
+        .listDirectoryEntries()
+        .filter { it.isRegularFile() && it.name != ImageResolution.Original.path.name }
+        .forEach { it.deleteExisting() }
       file.schema = 2
     }
   }

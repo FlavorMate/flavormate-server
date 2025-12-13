@@ -4,7 +4,7 @@ package de.flavormate.extensions.bring.controllers
 import de.flavormate.extensions.bring.services.BringService
 import de.flavormate.extensions.share.services.ShareService
 import de.flavormate.features.role.enums.RoleTypes
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.utils.MimeTypes
 import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
@@ -35,6 +35,6 @@ class BringController(val bringService: BringService, private val shareService: 
   fun shareFile(
     @RestPath token: String,
     @RestPath id: String,
-    @RestQuery resolution: ImageWideResolution?,
+    @RestQuery resolution: ImageResolution?,
   ) = shareService.shareFile(id = id, resolution = resolution)
 }

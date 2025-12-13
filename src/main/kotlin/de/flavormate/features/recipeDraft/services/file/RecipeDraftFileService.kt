@@ -1,7 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.features.recipeDraft.services.file
 
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.models.api.Pagination
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
@@ -17,7 +17,7 @@ class RecipeDraftFileService(
   fun getRecipeDraftsIdFiles(id: String, pagination: Pagination) =
     queryService.getRecipeDraftsIdFiles(id = id, pagination = pagination)
 
-  fun getRecipeDraftsIdFilesFile(id: String, file: String, resolution: ImageWideResolution) =
+  fun getRecipeDraftsIdFilesFile(id: String, file: String, resolution: ImageResolution) =
     queryService.getRecipeDraftsIdFilesFile(id = id, file = file, resolution = resolution)
 
   // Mutations

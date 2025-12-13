@@ -1,7 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.features.account.services.file
 
-import de.flavormate.shared.enums.ImageSquareResolution
+import de.flavormate.shared.enums.ImageResolution
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import java.io.File
@@ -12,7 +12,7 @@ class AccountFileService(
   private val queryService: AccountFileQueryService,
 ) {
   // GET
-  fun getAccountsIdFile(id: String, resolution: ImageSquareResolution) =
+  fun getAccountsIdFile(id: String, resolution: ImageResolution) =
     queryService.getAccountsIdFile(id = id, resolution = resolution)
 
   // POST

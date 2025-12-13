@@ -3,7 +3,7 @@ package de.flavormate.core.cron
 
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.shared.enums.FilePath
-import de.flavormate.shared.enums.ImageSquareResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.FileService
 import de.flavormate.utils.ImageUtils
 import de.flavormate.utils.MimeTypes
@@ -56,7 +56,7 @@ class OIDCCron(
 
       if (!sourcePath.exists()) continue
 
-      ImageUtils.scaleMagick(sourcePath, targetPath, ImageSquareResolution.P256.resolution)
+      ImageUtils.scaleMagick(sourcePath, targetPath, ImageResolution.P256.resolution)
     }
   }
 }

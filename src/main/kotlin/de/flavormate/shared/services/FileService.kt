@@ -33,7 +33,7 @@ class FileService(private val flavorMateProperties: FlavorMateProperties) {
       .resolve(uuid)
   }
 
-  fun streamFile(prefix: FilePath, uuid: String, fileName: String): StreamingOutput {
+  fun streamFile(prefix: FilePath, uuid: String, fileName: Path): StreamingOutput {
     val file = readPath(prefix, uuid).resolve(fileName)
 
     if (!file.exists()) throw FNotFoundException(message = "File not found")

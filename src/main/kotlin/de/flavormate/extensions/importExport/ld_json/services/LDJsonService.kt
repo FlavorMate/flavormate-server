@@ -13,7 +13,6 @@ import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftRepository
 import de.flavormate.shared.enums.Diet
 import de.flavormate.shared.enums.FilePath
-import de.flavormate.shared.enums.ImageWideResolution
 import de.flavormate.shared.extensions.toKebabCase
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
@@ -172,20 +171,7 @@ class LDJsonService(
 
         val destination = fileService.createPath(FilePath.RecipeDraft, entity.id)
 
-        for (entry in ImageWideResolution.entries) {
-          if (entry == ImageWideResolution.Original)
-            ImageUtils.scaleMagick(
-              tmpFile.toPath(),
-              destination.resolve(entry.fileName),
-              entry.resolution,
-            )
-          else
-            ImageUtils.resizeMagick(
-              tmpFile.toPath(),
-              destination.resolve(entry.fileName),
-              entry.resolution,
-            )
-        }
+        ImageUtils.createDynamicImage(inputFile = tmpFile.toPath(), outputDir = destination)
       } catch (e: Exception) {
         Log.error("Failed to download image $image", e)
       } finally {

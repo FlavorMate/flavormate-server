@@ -117,6 +117,8 @@ flavormate:
       enabled: ${FLAVORMATE_FEATURE_STORY:false}
     bring:
       enabled: ${FLAVORMATE_FEATURE_BRING:false}
+    enhanced-resolutions:
+      enabled: true
     open-food-facts:
       enabled: ${FLAVORMATE_FEATURE_OPEN_FOOD_FACTS:false}
     share:

@@ -14,7 +14,7 @@ import de.flavormate.shared.constants.AllowedSorts
 import de.flavormate.shared.enums.Course
 import de.flavormate.shared.enums.Diet
 import de.flavormate.shared.enums.FilePath
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.models.api.PageableDto
 import de.flavormate.shared.models.api.Pagination
 import de.flavormate.shared.services.FileService
@@ -37,7 +37,7 @@ class RecipeQueryService(
     )
   }
 
-  fun streamCover(id: String, resolution: ImageWideResolution): StreamingOutput {
+  fun streamCover(id: String, resolution: ImageResolution): StreamingOutput {
     val recipe =
       repository.findById(id = id) ?: throw FNotFoundException(message = "Recipe not found")
 
@@ -46,11 +46,11 @@ class RecipeQueryService(
     return fileService.streamFile(
       prefix = FilePath.Recipe,
       uuid = cover.id,
-      fileName = resolution.fileName,
+      fileName = resolution.path,
     )
   }
 
-  fun streamFile(id: String, file: String, resolution: ImageWideResolution): StreamingOutput {
+  fun streamFile(id: String, file: String, resolution: ImageResolution): StreamingOutput {
     repository.findById(id = id) ?: throw FNotFoundException(message = "Recipe not found")
 
     val fileEntity =
@@ -59,7 +59,7 @@ class RecipeQueryService(
     return fileService.streamFile(
       prefix = FilePath.Recipe,
       uuid = fileEntity.id,
-      fileName = resolution.fileName,
+      fileName = resolution.path,
     )
   }
 

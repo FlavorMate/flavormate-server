@@ -13,7 +13,7 @@ import de.flavormate.features.recipe.dtos.mappers.RecipeDtoFullMapper
 import de.flavormate.features.recipe.dtos.models.RecipeDtoFull
 import de.flavormate.features.recipe.repositories.RecipeRepository
 import de.flavormate.shared.enums.FilePath
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
 import de.flavormate.shared.services.TemplateService
@@ -60,7 +60,7 @@ class ShareService(
     return shortenerService.generateUrl(path)
   }
 
-  fun shareFile(id: String, resolution: ImageWideResolution?): StreamingOutput {
+  fun shareFile(id: String, resolution: ImageResolution?): StreamingOutput {
     if (!authTokenService.validateAccess(authorizationDetails.token, id))
       throw FForbiddenException(message = "Token is invalid")
 
@@ -72,7 +72,7 @@ class ShareService(
     return fileService.streamFile(
       prefix = FilePath.Recipe,
       uuid = recipe.coverFile!!.id,
-      fileName = resolution?.fileName ?: ImageWideResolution.Original.fileName,
+      fileName = resolution?.path ?: ImageResolution.Original.path,
     )
   }
 
@@ -86,7 +86,7 @@ class ShareService(
     val imagePath =
       UriBuilder.fromResource(ShareController::class.java)
         .path(ShareController::class.java, ShareController::shareFile.name)
-        .queryParam("resolution", ImageWideResolution.Original.name)
+        .queryParam("resolution", ImageResolution.Original.name)
         .build(authorizationDetails.token, id)
         .toString()
 

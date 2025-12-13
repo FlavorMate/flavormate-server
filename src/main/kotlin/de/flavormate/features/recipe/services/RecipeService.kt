@@ -4,7 +4,7 @@ package de.flavormate.features.recipe.services
 import de.flavormate.features.recipe.dtos.models.RecipeTransferDto
 import de.flavormate.shared.enums.Course
 import de.flavormate.shared.enums.Diet
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.models.api.Pagination
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
@@ -16,10 +16,10 @@ class RecipeService(
 ) {
   fun getRecipes(pagination: Pagination) = queryService.getRecipes(pagination = pagination)
 
-  fun streamCover(id: String, resolution: ImageWideResolution) =
+  fun streamCover(id: String, resolution: ImageResolution) =
     queryService.streamCover(id = id, resolution = resolution)
 
-  fun streamFile(id: String, file: String, resolution: ImageWideResolution) =
+  fun streamFile(id: String, file: String, resolution: ImageResolution) =
     queryService.streamFile(id = id, file = file, resolution = resolution)
 
   fun getRecipe(id: String, language: String) = queryService.getRecipe(id = id, language = language)
