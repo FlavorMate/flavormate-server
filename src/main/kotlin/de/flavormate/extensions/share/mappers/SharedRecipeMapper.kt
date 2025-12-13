@@ -14,7 +14,7 @@ import de.flavormate.features.recipe.daos.models.ingredient.IngredientGroupEntit
 import de.flavormate.features.recipe.daos.models.instruction.InstructionGroupEntity
 import de.flavormate.shared.enums.Course
 import de.flavormate.shared.enums.Diet
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.interfaces.BasicMapper
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.TemplateService
@@ -63,7 +63,7 @@ class SharedRecipeMapper(
 
   private fun mapCover(id: String): String {
     val token = authorizationDetails.token
-    val quality = ImageWideResolution.W1280.name
+    val quality = ImageResolution.W1280.name
 
     val path =
       UriBuilder.fromResource(ShareController::class.java)

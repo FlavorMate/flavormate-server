@@ -6,7 +6,7 @@ import de.flavormate.features.account.dtos.models.AccountUpdateDto
 import de.flavormate.features.account.services.AccountService
 import de.flavormate.features.account.services.file.AccountFileService
 import de.flavormate.features.account.services.id.AccountIdService
-import de.flavormate.shared.enums.ImageSquareResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.models.api.Pagination
 import de.flavormate.utils.MimeTypes
 import jakarta.enterprise.context.RequestScoped
@@ -68,7 +68,7 @@ class AccountController(
   @Path("/{id}/avatar/{file}")
   fun getAccountsAvatar(
     @RestPath @NotBlank id: String,
-    @RestQuery @NotNull resolution: ImageSquareResolution,
+    @RestQuery @NotNull resolution: ImageResolution,
   ): Response {
     val stream = accountFileService.getAccountsIdFile(id = id, resolution = resolution)
 

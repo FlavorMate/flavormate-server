@@ -3,7 +3,7 @@ package de.flavormate.extensions.share.controllers
 
 import de.flavormate.extensions.share.services.ShareService
 import de.flavormate.features.role.enums.RoleTypes
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.utils.MimeTypes
 import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
@@ -43,7 +43,7 @@ class ShareController(val service: ShareService) {
   fun shareFile(
     @RestPath token: String,
     @RestPath id: String,
-    @RestQuery resolution: ImageWideResolution?,
+    @RestQuery resolution: ImageResolution?,
   ) = service.shareFile(id = id, resolution = resolution)
 
   @Path("/{token}/{id}/in-app")

@@ -12,6 +12,8 @@ import jakarta.persistence.Table
 class AccountFileEntity : OwnedEntity() {
   @Column(name = "mime_type") lateinit var mimeType: String
 
+  var schema: Int = 2
+
   companion object {
     fun create(account: AccountEntity): AccountFileEntity {
       return AccountFileEntity().apply {

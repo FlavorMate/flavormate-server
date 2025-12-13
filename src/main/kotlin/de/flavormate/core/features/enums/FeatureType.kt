@@ -5,6 +5,7 @@ enum class FeatureType {
   Bring,
   ImportExport,
   OpenFoodFacts,
+  EnhancedResolutions,
   Recovery,
   Registration,
   Share,

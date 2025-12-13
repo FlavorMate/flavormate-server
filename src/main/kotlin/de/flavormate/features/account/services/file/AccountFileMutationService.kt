@@ -73,6 +73,6 @@ class AccountFileMutationService(
     val inputFile = Paths.get(file.path)
     val outputDir = fileService.createPath(prefix = FilePath.AccountAvatar, uuid = avatarEntity.id)
 
-    ImageUtils.generateSquareImage(inputFile = inputFile, outputDir = outputDir)
+    ImageUtils.createPlaneImage(inputFile = inputFile, outputDir = outputDir)
   }
 }

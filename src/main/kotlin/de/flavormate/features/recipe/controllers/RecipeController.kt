@@ -5,7 +5,7 @@ import de.flavormate.features.recipe.dtos.models.RecipeTransferDto
 import de.flavormate.features.recipe.services.RecipeService
 import de.flavormate.shared.enums.Course
 import de.flavormate.shared.enums.Diet
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.models.api.Pagination
 import de.flavormate.utils.MimeTypes
 import jakarta.enterprise.context.RequestScoped
@@ -52,7 +52,7 @@ class RecipeController(private val service: RecipeService) {
   @GET
   @Produces(MimeTypes.WEBP_MIME)
   @Path("/{id}/cover")
-  fun getRecipeCover(@RestPath id: String, @RestQuery resolution: ImageWideResolution) =
+  fun getRecipeCover(@RestPath id: String, @RestQuery resolution: ImageResolution) =
     service.streamCover(id = id, resolution = resolution)
 
   @GET
@@ -66,7 +66,7 @@ class RecipeController(private val service: RecipeService) {
   fun getRecipesFilesId(
     @RestPath id: String,
     @RestPath file: String,
-    @RestQuery resolution: ImageWideResolution,
+    @RestQuery resolution: ImageResolution,
   ) = service.streamFile(id = id, file = file, resolution = resolution)
 
   @PUT

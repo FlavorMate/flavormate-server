@@ -41,7 +41,7 @@ class RecipeCron(
 
   @Transactional
   fun cleanRecipeDescriptions() =
-    DatabaseUtils.batchedRun(query = repository.findAllWithDescription()) { items ->
+    DatabaseUtils.batchedRun(query = repository.findAllWithDescription()) { items, _ ->
       items.forEach(::cleanRecipeDescription)
     }
 
@@ -60,7 +60,7 @@ class RecipeCron(
 
   @Transactional
   fun cleanRecipeUrls() =
-    DatabaseUtils.batchedRun(query = repository.findAllWithUrl()) { items ->
+    DatabaseUtils.batchedRun(query = repository.findAllWithUrl()) { items, _ ->
       items.forEach(::cleanRecipeUrl)
     }
 

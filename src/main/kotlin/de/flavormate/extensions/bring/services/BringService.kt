@@ -8,7 +8,7 @@ import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.bring.controllers.BringController
 import de.flavormate.extensions.importExport.ld_json.mappers.LDRecipeRecipeEntityMapper
 import de.flavormate.features.recipe.repositories.RecipeRepository
-import de.flavormate.shared.enums.ImageWideResolution
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.TemplateService
 import de.flavormate.utils.JSONUtils
@@ -60,7 +60,7 @@ class BringService(
     val imagePath =
       UriBuilder.fromResource(BringController::class.java)
         .path(BringController::class.java, BringController::shareFile.name)
-        .queryParam("resolution", ImageWideResolution.Original.name)
+        .queryParam("resolution", ImageResolution.Original.name)
         .build(authorizationDetails.token, id)
         .toString()
 

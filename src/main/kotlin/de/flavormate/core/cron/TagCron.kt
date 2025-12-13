@@ -38,7 +38,7 @@ class TagCron(private val tagRepository: TagRepository) {
 
   @Transactional
   fun cleanTagLabels() {
-    DatabaseUtils.batchedRun(query = tagRepository.findAll()) { items ->
+    DatabaseUtils.batchedRun(query = tagRepository.findAll()) { items, _ ->
       for (tag in items) {
         val originalLabel = tag.label
         val cleanedLabel = originalLabel.toKebabCase()
