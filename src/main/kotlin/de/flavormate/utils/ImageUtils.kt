@@ -1,10 +1,13 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.utils
 
+import de.flavormate.shared.enums.ImageOriginalResolution
+import de.flavormate.shared.enums.ImageScaledResolution
 import de.flavormate.shared.enums.ImageSquareResolution
 import de.flavormate.shared.enums.ImageWideResolution
 import java.io.IOException
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
 
 object ImageUtils {
 
@@ -21,15 +24,42 @@ object ImageUtils {
     }
   }
 
-  fun generateWideImage(inputFile: Path, outputDir: Path) {
+  /**
+   * Creates multiple thumbnail images for the given images. The following images are created:
+   * - Original => a scaled version of the original image if it's bigger than the max resolution
+   * - 16/9 => a set of different resolutions with a blurred background if the original image is not
+   *   16/9
+   * - Scaled => a set of different resolutions keeping the original aspect ratio
+   */
+  fun createDynamicImage(inputFile: Path, outputDir: Path, newFile: Boolean = true) {
+    outputDir.resolve(ImageWideResolution.folder).also { it.createDirectories() }
+    outputDir.resolve(ImageScaledResolution.folder).also { it.createDirectories() }
+
+    if (newFile) {
+      // Create full image
+      for (entry in ImageOriginalResolution.entries) {
+        val outputFile = outputDir.resolve(entry.path)
+        scaleMagick(input = inputFile, output = outputFile, dimensions = entry.resolution)
+      }
+    }
+
+    // Create 16/9 images
     for (entry in ImageWideResolution.entries) {
-      val outputFile = outputDir.resolve(entry.fileName)
+      val outputFile = outputDir.resolve(entry.path)
 
       when (entry) {
-        ImageWideResolution.Original ->
-          scaleMagick(input = inputFile, output = outputFile, dimensions = entry.resolution)
-
+        ImageWideResolution.Original -> continue
         else -> resizeMagick(input = inputFile, output = outputFile, dimensions = entry.resolution)
+      }
+    }
+
+    // Create scaled images
+    for (entry in ImageScaledResolution.entries) {
+      val outputFile = outputDir.resolve(entry.path)
+
+      when (entry) {
+        ImageScaledResolution.Original -> continue
+        else -> scaleMagick(input = inputFile, output = outputFile, dimensions = entry.resolution)
       }
     }
   }

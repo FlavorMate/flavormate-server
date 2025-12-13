@@ -7,7 +7,6 @@ import de.flavormate.features.recipeDraft.daos.models.RecipeDraftFileEntity
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftRepository
 import de.flavormate.shared.enums.FilePath
-import de.flavormate.shared.enums.ImageWideResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
 import de.flavormate.shared.services.TransactionService
@@ -65,21 +64,6 @@ class RecipeDraftFileMutationService(
 
     val inputFile = Paths.get(file.path)
 
-    for (entry in ImageWideResolution.entries) {
-      val outputFile = path.resolve(entry.fileName)
-
-      if (entry == ImageWideResolution.Original)
-        ImageUtils.scaleMagick(
-          input = inputFile,
-          output = outputFile,
-          dimensions = entry.resolution,
-        )
-      else
-        ImageUtils.resizeMagick(
-          input = inputFile,
-          output = outputFile,
-          dimensions = entry.resolution,
-        )
-    }
+    ImageUtils.createDynamicImage(inputFile = inputFile, outputDir = path)
   }
 }

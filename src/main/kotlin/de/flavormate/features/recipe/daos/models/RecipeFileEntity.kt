@@ -16,6 +16,8 @@ class RecipeFileEntity : OwnedEntity() {
   @JoinColumn(name = "recipe_id", referencedColumnName = "id")
   lateinit var recipe: RecipeEntity
 
+  var schema: Int = 2
+
   companion object {
     fun create(
       account: AccountEntity,

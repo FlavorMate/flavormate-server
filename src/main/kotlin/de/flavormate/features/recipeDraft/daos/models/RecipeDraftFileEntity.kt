@@ -15,6 +15,8 @@ class RecipeDraftFileEntity : OwnedEntity() {
 
   @Column(name = "origin_id") var originId: String? = null
 
+  var schema: Int = 2
+
   @JsonIgnore
   @ManyToOne
   @JoinColumn(name = "recipe_draft_id", referencedColumnName = "id")
