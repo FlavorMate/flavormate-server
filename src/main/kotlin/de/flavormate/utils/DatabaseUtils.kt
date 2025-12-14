@@ -2,6 +2,7 @@
 package de.flavormate.utils
 
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheQuery
+import io.quarkus.logging.Log
 import io.quarkus.narayana.jta.QuarkusTransaction
 
 object DatabaseUtils {
@@ -40,7 +41,10 @@ object DatabaseUtils {
       if (items.isEmpty()) break
 
       for (item in items) {
-        QuarkusTransaction.requiringNew().run { run(item, processedCount.toInt()) }
+        runCatching {
+            QuarkusTransaction.requiringNew().timeout(300).run { run(item, processedCount.toInt()) }
+          }
+          .onFailure { Log.error("Could not process item $processedCount: ${it.message}") }
         processedCount++
       }
     }
