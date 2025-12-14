@@ -20,6 +20,21 @@ tailored just for you.
 ## Migration Guides
 
 <details>
+<summary>3.2.1</summary>
+
+### Environment Changes:
+
+The following properties have been added:
+
+**Server**
+
+|               new property               | required |                 note                  |
+|------------------------------------------|----------|---------------------------------------|
+| `FLAVORMATE_SERVER_CORS_ALLOWED_ORIGINS` | no       | a list of allowed origins, `*`for all |
+
+</details>
+
+<details>
 <summary>v3.0.* to 3.1.*</summary>
 
 ### Environment Changes:
@@ -290,11 +305,12 @@ You must have these dependencies installed:
 <details>
 <summary>Server</summary>
 
-|          Key           | Required |                                    Description                                     |          Example           | Default |
-|------------------------|----------|------------------------------------------------------------------------------------|----------------------------|---------|
-| FLAVORMATE_SERVER_URL  | Yes      | The url the server is accessible                                                   | `http://flavormate.intern` | -       |
-| FLAVORMATE_SERVER_PATH | -        | The path the server uses. Useful when hosting frontend and backend on the same url | `/api`                     | `/`     |
-| FLAVORMATE_SERVER_PORT | -        | The port the server uses                                                           | `8095`                     | `8080`  |
+|                  Key                   | Required |                                    Description                                     |          Example           | Default |
+|----------------------------------------|----------|------------------------------------------------------------------------------------|----------------------------|---------|
+| FLAVORMATE_SERVER_URL                  | Yes      | The url the server is accessible                                                   | `http://flavormate.intern` | -       |
+| FLAVORMATE_SERVER_PATH                 | -        | The path the server uses. Useful when hosting frontend and backend on the same url | `/api`                     | `/`     |
+| FLAVORMATE_SERVER_PORT                 | -        | The port the server uses                                                           | `8095`                     | `8080`  |
+| FLAVORMATE_SERVER_CORS_ALLOWED_ORIGINS | -        | Comma separated list of allowed origins                                            | `http://localhost:3000`    | -       |
 
 </details>
 
