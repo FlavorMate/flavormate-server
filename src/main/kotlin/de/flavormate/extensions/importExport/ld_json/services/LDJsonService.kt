@@ -19,6 +19,7 @@ import de.flavormate.shared.services.FileService
 import de.flavormate.utils.ImageUtils
 import de.flavormate.utils.MimeTypes
 import io.quarkus.logging.Log
+import io.quarkus.runtime.configuration.MemorySize
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import java.io.File
@@ -27,17 +28,21 @@ import java.net.URI
 import kotlin.io.path.createTempFile
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
+import org.eclipse.microprofile.config.inject.ConfigProperty
 
 @RequestScoped
 class LDJsonService(
-  val authorizationDetails: AuthorizationDetails,
-  val categoryRepository: CategoryRepository,
-  val fileRecipeDraftRepository: RecipeDraftFileRepository,
-  val fileService: FileService,
-  val recipeDraftRepository: RecipeDraftRepository,
-  val instructionService: LDJsonInstructionService,
-  val ingredientService: LDJsonIngredientService,
+  private val authorizationDetails: AuthorizationDetails,
+  private val categoryRepository: CategoryRepository,
+  private val fileRecipeDraftRepository: RecipeDraftFileRepository,
+  private val fileService: FileService,
+  private val recipeDraftRepository: RecipeDraftRepository,
+  private val instructionService: LDJsonInstructionService,
+  private val ingredientService: LDJsonIngredientService,
 ) {
+
+  @ConfigProperty(name = "quarkus.http.limits.max-body-size")
+  private lateinit var maxBodySize: MemorySize
 
   @Transactional
   fun ldJsonRecipeToRecipeDraftEntity(input: LDJsonRecipe, language: String): RecipeDraftEntity {
@@ -133,8 +138,7 @@ class LDJsonService(
 
         // 4. Check content length before downloading
         val contentLength = connection.contentLengthLong
-        val maxSize = 10 * 1024 * 1024 // 10MB limit
-        if (contentLength > maxSize) {
+        if (contentLength > maxBodySize.asLongValue()) {
           Log.info("Image scraping aborted for $image: File too large ($contentLength bytes)")
           connection.disconnect()
           continue
@@ -150,7 +154,7 @@ class LDJsonService(
 
             while (input.read(buffer).also { bytesRead = it } != -1) {
               totalRead += bytesRead
-              if (totalRead > maxSize) {
+              if (totalRead > maxBodySize.asLongValue()) {
                 throw FBadRequestException(message = "File exceeds maximum size limit")
               }
               output.write(buffer, 0, bytesRead)
