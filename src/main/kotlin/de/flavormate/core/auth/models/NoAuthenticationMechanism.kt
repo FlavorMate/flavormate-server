@@ -24,7 +24,7 @@ class NoAuthenticationMechanism internal constructor() : HttpAuthenticationMecha
 
   override fun getChallenge(context: RoutingContext): Uni<ChallengeData> {
     val challengeData =
-      ChallengeData(HttpResponseStatus.FORBIDDEN.code(), null as CharSequence?, null as String?)
+      ChallengeData(HttpResponseStatus.UNAUTHORIZED.code(), null as CharSequence?, null as String?)
     return Uni.createFrom().item(challengeData)
   }
 

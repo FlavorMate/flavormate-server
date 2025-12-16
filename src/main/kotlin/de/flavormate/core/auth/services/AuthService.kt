@@ -3,12 +3,12 @@ package de.flavormate.core.auth.services
 
 import de.flavormate.core.auth.models.LoginForm
 import de.flavormate.core.auth.models.TokenResponseDao
-import de.flavormate.exceptions.FBadRequestException
 import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.exceptions.FUnauthorizedException
 import de.flavormate.features.account.dao.models.AccountEntity
 import de.flavormate.features.account.repositories.AccountRepository
 import io.quarkus.elytron.security.common.BcryptUtil
+import io.quarkus.security.UnauthorizedException
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
 
@@ -50,7 +50,7 @@ class AuthService(val accountRepository: AccountRepository, val tokenService: Au
   fun renewRefreshToken(account: AccountEntity, oldJWT: String): TokenResponseDao {
     val isStillValid = tokenService.isValidToken(oldJWT, account.id)
 
-    if (!isStillValid) throw FBadRequestException(message = "Invalid refresh token")
+    if (!isStillValid) throw UnauthorizedException()
 
     // Revoke old refresh token
     tokenService.revokeJWT(oldJWT)
