@@ -3,7 +3,6 @@ package de.flavormate.features.book.services.id
 
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
-import de.flavormate.exceptions.FUnauthorizedException
 import de.flavormate.features.book.dtos.models.BookUpdateDto
 import de.flavormate.features.book.repositories.BookRepository
 import de.flavormate.features.recipe.repositories.RecipeRepository
@@ -50,7 +49,7 @@ class BookIdMutationService(
     val book = bookRepository.findById(id) ?: throw FNotFoundException(message = "Book not found!")
 
     if (!authorizationDetails.isAdminOrOwner(book))
-      throw FUnauthorizedException(message = "You are not allowed to delete this book!")
+      throw FForbiddenException(message = "You are not allowed to delete this book!")
 
     return bookRepository.deleteById(id)
   }

@@ -3,17 +3,20 @@ package de.flavormate.features.recipe.controllers
 
 import de.flavormate.features.recipe.dtos.models.RecipeTransferDto
 import de.flavormate.features.recipe.services.RecipeService
+import de.flavormate.features.role.enums.RoleTypes
 import de.flavormate.shared.enums.Course
 import de.flavormate.shared.enums.Diet
 import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.models.api.Pagination
 import de.flavormate.utils.MimeTypes
+import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.*
 import org.jboss.resteasy.reactive.RestPath
 import org.jboss.resteasy.reactive.RestQuery
 
 @RequestScoped
+@RolesAllowed(RoleTypes.USER_VALUE)
 @Path("/v3/recipes")
 class RecipeController(private val service: RecipeService) {
 

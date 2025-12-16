@@ -1,8 +1,10 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.features.tag.controllers
 
+import de.flavormate.features.role.enums.RoleTypes
 import de.flavormate.features.tag.services.TagService
 import de.flavormate.shared.models.api.Pagination
+import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
 import jakarta.validation.constraints.NotBlank
 import jakarta.ws.rs.BeanParam
@@ -12,6 +14,7 @@ import org.jboss.resteasy.reactive.RestPath
 import org.jboss.resteasy.reactive.RestQuery
 
 @RequestScoped
+@RolesAllowed(RoleTypes.USER_VALUE)
 @Path("/v3/tags")
 class TagController(private val service: TagService) {
 

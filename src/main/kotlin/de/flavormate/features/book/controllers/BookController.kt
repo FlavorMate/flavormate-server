@@ -5,7 +5,9 @@ import de.flavormate.features.book.dtos.models.BookCreateDto
 import de.flavormate.features.book.dtos.models.BookUpdateDto
 import de.flavormate.features.book.services.BookService
 import de.flavormate.features.book.services.id.BookIdService
+import de.flavormate.features.role.enums.RoleTypes
 import de.flavormate.shared.models.api.Pagination
+import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -14,6 +16,7 @@ import org.jboss.resteasy.reactive.RestPath
 import org.jboss.resteasy.reactive.RestQuery
 
 @RequestScoped
+@RolesAllowed(RoleTypes.USER_VALUE)
 @Path("/v3/books")
 class BookController(
   private val bookService: BookService,

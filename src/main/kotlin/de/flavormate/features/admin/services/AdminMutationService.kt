@@ -1,8 +1,8 @@
 /* Licensed under AGPLv3 2024 - 2025 */
 package de.flavormate.features.admin.services
 
+import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
-import de.flavormate.exceptions.FUnauthorizedException
 import de.flavormate.features.account.repositories.AccountRepository
 import de.flavormate.shared.services.AccountCreateService
 import de.flavormate.shared.services.AuthorizationDetails
@@ -21,7 +21,7 @@ class AdminMutationService(
       accountRepository.findById(id) ?: throw FNotFoundException(message = "Account not found!")
 
     if (!authorizationDetails.isAdmin())
-      throw FUnauthorizedException(
+      throw FForbiddenException(
         message = "You are not allowed to update the password of this account!"
       )
 
@@ -35,7 +35,7 @@ class AdminMutationService(
       accountRepository.findById(id) ?: throw FNotFoundException(message = "Account not found!")
 
     if (!authorizationDetails.isAdmin())
-      throw FUnauthorizedException(
+      throw FForbiddenException(
         message = "You are not allowed to update the state of this account!"
       )
 
@@ -46,14 +46,14 @@ class AdminMutationService(
 
   fun deleteAccount(id: String) {
     if (!authorizationDetails.isAdmin())
-      throw FUnauthorizedException(message = "You are not allowed to delete this account!")
+      throw FForbiddenException(message = "You are not allowed to delete this account!")
 
     accountRepository.deleteById(id)
   }
 
   fun createAccount(displayName: String, username: String, password: String, email: String) {
     if (!authorizationDetails.isAdmin())
-      throw FUnauthorizedException(message = "You are not allowed to create an account!")
+      throw FForbiddenException(message = "You are not allowed to create an account!")
 
     accountCreateService.createAccount(
       username = username,

@@ -6,9 +6,11 @@ import de.flavormate.features.account.dtos.models.AccountUpdateDto
 import de.flavormate.features.account.services.AccountService
 import de.flavormate.features.account.services.file.AccountFileService
 import de.flavormate.features.account.services.id.AccountIdService
+import de.flavormate.features.role.enums.RoleTypes
 import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.models.api.Pagination
 import de.flavormate.utils.MimeTypes
+import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -20,6 +22,7 @@ import org.jboss.resteasy.reactive.RestPath
 import org.jboss.resteasy.reactive.RestQuery
 
 @RequestScoped
+@RolesAllowed(RoleTypes.USER_VALUE)
 @Path("/v3/accounts")
 class AccountController(
   private val service: AccountService,

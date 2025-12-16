@@ -3,7 +3,6 @@ package de.flavormate.features.recipe.services
 
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
-import de.flavormate.exceptions.FUnauthorizedException
 import de.flavormate.features.account.repositories.AccountRepository
 import de.flavormate.features.category.repositories.CategoryRepository
 import de.flavormate.features.recipe.dtos.models.RecipeTransferDto
@@ -37,7 +36,7 @@ class RecipeMutationService(
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found!")
 
     if (!authorizationDetails.isAdminOrOwner(recipe))
-      throw FUnauthorizedException(message = "You are not allowed to delete this recipe!")
+      throw FForbiddenException(message = "You are not allowed to delete this recipe!")
 
     recipe.files.forEach {
       transactionService.pendingOperations.add {
@@ -53,7 +52,7 @@ class RecipeMutationService(
       recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found!")
 
     if (!authorizationDetails.isAdmin())
-      throw FUnauthorizedException(message = "You are not allowed to transfer this recipe!")
+      throw FForbiddenException(message = "You are not allowed to transfer this recipe!")
 
     val account =
       accountRepository.findById(ownerId)
