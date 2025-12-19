@@ -34,7 +34,7 @@ class ExceptionHandler : ExceptionMapper<Throwable> {
         .entity(data)
         .build()
 
-    Log.info("An error occurred: ", exception)
+    Log.debug("An error occurred: ", exception)
 
     return response
   }
