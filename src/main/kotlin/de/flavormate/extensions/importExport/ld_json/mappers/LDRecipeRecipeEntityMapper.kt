@@ -1,4 +1,4 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.importExport.ld_json.mappers
 
 import de.flavormate.extensions.importExport.ld_json.models.LDJsonRecipe

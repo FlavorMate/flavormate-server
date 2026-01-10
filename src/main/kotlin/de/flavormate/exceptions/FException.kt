@@ -1,4 +1,4 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.exceptions
 
 import jakarta.ws.rs.core.Response
@@ -11,7 +11,7 @@ abstract class FException(
 ) : Exception(message), Serializable
 
 class FBadRequestException(message: String, id: String = "") :
-    FException(status = Response.Status.BAD_REQUEST, message = message, id = id)
+  FException(status = Response.Status.BAD_REQUEST, message = message, id = id)
 
 class FConflictException(message: String, id: String = "") :
   FException(status = Response.Status.CONFLICT, message = message, id = id)

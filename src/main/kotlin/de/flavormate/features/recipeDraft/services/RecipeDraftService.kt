@@ -1,4 +1,4 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.features.recipeDraft.services
 
 import de.flavormate.features.recipeDraft.dtos.models.update.RecipeDraftUpdateDto
@@ -16,9 +16,10 @@ class RecipeDraftService(
   fun getRecipeDrafts(pagination: Pagination) =
     queryService.getRecipeDrafts(pagination = pagination)
 
-    fun getRecipeDraftsId(id: String, language: String) = queryService.getRecipeDraftsId(id = id, language = language)
+  fun getRecipeDraftsId(id: String, language: String) =
+    queryService.getRecipeDraftsId(id = id, language = language)
 
-    // POST
+  // POST
   @Transactional fun postRecipeDrafts(): String = mutationService.initializeDraft()
 
   @Transactional

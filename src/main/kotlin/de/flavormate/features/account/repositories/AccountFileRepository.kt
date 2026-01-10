@@ -1,4 +1,4 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.features.account.repositories
 
 import de.flavormate.features.account.dao.models.AccountFileEntity

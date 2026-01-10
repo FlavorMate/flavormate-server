@@ -1,4 +1,4 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.features.recipeDraft.dtos.mappers
 
 import de.flavormate.features.account.dtos.mappers.AccountPreviewDtoMapper
@@ -15,7 +15,7 @@ import de.flavormate.features.unit.dtos.mappers.UnitLocalizedDtoMapper
 import de.flavormate.shared.interfaces.L10nMapper
 
 object RecipeDraftDtoFullMapper : L10nMapper<RecipeDraftEntity, RecipeDraftDtoFull>() {
-    override fun mapNotNullL10n(input: RecipeDraftEntity, language: String) =
+  override fun mapNotNullL10n(input: RecipeDraftEntity, language: String) =
     RecipeDraftDtoFull(
       id = input.id,
       version = input.version,
@@ -31,7 +31,7 @@ object RecipeDraftDtoFullMapper : L10nMapper<RecipeDraftEntity, RecipeDraftDtoFu
       ingredientGroups = input.ingredientGroups.map(::mapIngredientGroup),
       instructionGroups = input.instructionGroups.map(::mapInstructionGroup),
       categories =
-          input.categories.map { CategoryDtoMapper.mapNotNullL10n(input = it, language = language) },
+        input.categories.map { CategoryDtoMapper.mapNotNullL10n(input = it, language = language) },
       tags = input.tags,
       course = input.course,
       diet = input.diet,
@@ -58,7 +58,7 @@ object RecipeDraftDtoFullMapper : L10nMapper<RecipeDraftEntity, RecipeDraftDtoFu
       index = input.index,
       amount = input.amount,
       unit = UnitLocalizedDtoMapper.mapBasic(input.unit),
-        nutrition = input.nutrition.let(::mapNutrition),
+      nutrition = input.nutrition.let(::mapNutrition),
     )
 
   private fun mapNutrition(input: RecipeDraftIngredientGroupItemNutritionEntity) =
