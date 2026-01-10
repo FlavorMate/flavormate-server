@@ -1,8 +1,8 @@
 [versions]
 versions = "0.53.0"
 spotless = "8.0.0"
-kotlin = "2.2.21"
-quarkus = "3.30.3"
+kotlin = "2.3.0"
+quarkus = "3.30.6"
 commons-io = "2.21.0"
 commons-lang3 = "3.20.0"
 jackson = "2.20.1"
@@ -10,7 +10,7 @@ nanoid = "1.0.1"
 ksoup = "0.2.5"
 google-java-format = "1.31.0"
 assertj = "3.27.6"
-http-client5 = "5.5.1"
+http-client5 = "5.6"
 
 [libraries]
 quarkus-platform = { group = "io.quarkus.platform", name = "quarkus-bom", version.ref = "quarkus" }
