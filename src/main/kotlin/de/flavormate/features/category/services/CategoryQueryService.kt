@@ -1,4 +1,4 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.features.category.services
 
 import de.flavormate.exceptions.FNotFoundException
@@ -17,7 +17,10 @@ class CategoryQueryService(private val categoryRepository: CategoryRepository) {
 
   fun getCategories(language: String, pagination: Pagination): PageableDto<CategoryDto> {
     val dataQuery =
-        categoryRepository.findAll(sort = pagination.sortRequest(map = AllowedSorts.categories), language = language)
+      categoryRepository.findAll(
+        sort = pagination.sortRequest(map = AllowedSorts.categories),
+        language = language,
+      )
 
     return PageableDto.fromQuery(
       dataQuery = dataQuery,

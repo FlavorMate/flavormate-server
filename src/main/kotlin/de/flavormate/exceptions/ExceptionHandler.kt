@@ -1,4 +1,4 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.exceptions
 
 import io.quarkus.logging.Log
@@ -34,7 +34,7 @@ class ExceptionHandler : ExceptionMapper<Throwable> {
         .entity(data)
         .build()
 
-    Log.info("An error occurred: ", exception)
+    Log.debug("An error occurred: ", exception)
 
     return response
   }

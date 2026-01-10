@@ -1,4 +1,4 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.auth.oidc.services
 
 import de.flavormate.configuration.properties.FlavorMateProperties

@@ -1,10 +1,10 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.auth.oidc.dto.models
 
 data class OIDCProviderDto(
-    val url: String,
-    val clientId: String,
-    val name: String,
-    val id: String,
-    val iconPath: String?
+  val url: String,
+  val clientId: String,
+  val name: String,
+  val id: String,
+  val iconPath: String?,
 )

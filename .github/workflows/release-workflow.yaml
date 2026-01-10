@@ -118,7 +118,6 @@ jobs:
       attestations: write
 
     steps:
-
       - name: Download JAR File
         uses: actions/download-artifact@v4
         with:

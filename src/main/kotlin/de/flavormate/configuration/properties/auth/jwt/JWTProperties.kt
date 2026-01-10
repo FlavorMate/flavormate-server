@@ -1,4 +1,4 @@
-/* Licensed under AGPLv3 2024 - 2025 */
+/* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.configuration.properties.auth.jwt
 
 import de.flavormate.configuration.properties.auth.jwt.tokens.TokenProperties
@@ -8,17 +8,17 @@ import jakarta.enterprise.context.ApplicationScoped
 @ApplicationScoped
 @ConfigMapping(prefix = "flavormate.auth.jwt")
 interface JWTProperties {
-    fun issuer(): String
+  fun issuer(): String
 
-    fun refreshToken(): TokenProperties
+  fun refreshToken(): TokenProperties
 
-    fun accessToken(): TokenProperties
+  fun accessToken(): TokenProperties
 
-    fun resetToken(): TokenProperties
+  fun resetToken(): TokenProperties
 
-    fun verifyToken(): TokenProperties
+  fun verifyToken(): TokenProperties
 
-    fun bringToken(): TokenProperties
+  fun bringToken(): TokenProperties
 
-    fun shareToken(): TokenProperties
+  fun shareToken(): TokenProperties
 }
