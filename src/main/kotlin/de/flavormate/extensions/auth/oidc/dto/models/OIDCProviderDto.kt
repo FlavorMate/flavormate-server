@@ -6,5 +6,6 @@ data class OIDCProviderDto(
   val clientId: String,
   val name: String,
   val id: String,
+  val redirectUri: String,
   val iconPath: String?,
 )

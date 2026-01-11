@@ -20,6 +20,22 @@ tailored just for you.
 ## Migration Guides
 
 <details>
+<summary>3.3.0</summary>
+
+### Environment Changes:
+
+The following properties have been added:
+
+**Auth - JWT - OIDC**
+
+|                  new property                   | required |                                                       note                                                       |
+|-------------------------------------------------|----------|------------------------------------------------------------------------------------------------------------------|
+| `FLAVORMATE_AUTH_OIDC[*]_CLIENT_SECRET`         | no       | Adds a secret for the given oidc provider                                                                        |
+| `FLAVORMATE_AUTH_OIDC[*]_REDIRECT_URI_OVERRIDE` | no       | Replaces the oauth callback address `flavormate://oauth` with `${FLAVORMATE_SERVER_URL}/v3/oidc/mobile-redirect` |
+
+</details>
+
+<details>
 <summary>3.2.1</summary>
 
 ### Environment Changes:
@@ -395,15 +411,21 @@ Only days, hours, minutes, and seconds are supported.
 <details>
 <summary>Auth - JWT - OIDC</summary>
 
-This section represent an array. Please change the index inside the `[]` - starting at 0
+Please note that only OIDC Providers with the PKCE flow are supported.
 
-|                Key                 | Required |                                     Description                                     |                     Example                     | Default |
-|------------------------------------|----------|-------------------------------------------------------------------------------------|-------------------------------------------------|---------|
-| FLAVORMATE_AUTH_OIDC[0]\_NAME      | -        | The name the Provider should have                                                   | `Authentik`                                     | -       |
-| FLAVORMATE_AUTH_OIDC[0]\_ID        | -        | The id the Provider should have                                                     | `authentik`                                     | -       |
-| FLAVORMATE_AUTH_OIDC[0]\_URL       | -        | The provided openid url                                                             | `https://example.com/application/o/flavormate/` | -       |
-| FLAVORMATE_AUTH_OIDC[0]\_CLIENT_ID | -        | The provided client id                                                              | -                                               | -       |
-| FLAVORMATE_AUTH_OIDC[0]\_ICON      | -        | The icon that should be displayed. Path is relative to `FLAVORMATE_PATHS_PROVIDERS` | `authentik.png`                                 | -       |
+Some providers (e.g. Google) require redirect uri override set to `true`, because they only support `http(s)` scheme.
+
+This section represents an array. Please change the index inside the `[]` - starting at 0
+
+|                      Key                      | Required |                                                                   Description                                                                   |                     Example                     | Default |
+|-----------------------------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|---------|
+| FLAVORMATE_AUTH_OIDC[0]_NAME                  | -        | The name the Provider should have                                                                                                               | `Authentik`                                     | -       |
+| FLAVORMATE_AUTH_OIDC[0]_ID                    | -        | The id the Provider should have                                                                                                                 | `authentik`                                     | -       |
+| FLAVORMATE_AUTH_OIDC[0]_URL                   | -        | The provided openid url                                                                                                                         | `https://example.com/application/o/flavormate/` | -       |
+| FLAVORMATE_AUTH_OIDC[0]_CLIENT_ID             | -        | The provided client id                                                                                                                          | `foo-client-id`                                 | -       |
+| FLAVORMATE_AUTH_OIDC[0]_CLIENT_SECRET         | -        | The provided client secret                                                                                                                      | `bar-client-secret`                             | -       |
+| FLAVORMATE_AUTH_OIDC[0]_ICON                  | -        | The icon that should be displayed. Path is relative to `FLAVORMATE_PATHS_PROVIDERS`                                                             | `authentik.png`                                 | -       |
+| FLAVORMATE_AUTH_OIDC[0]_REDIRECT_URI_OVERRIDE | -        | Replaces the oauth callback address `flavormate://oauth` with `${FLAVORMATE_SERVER_URL}/v3/oidc/mobile-redirect` </br> (needed for e.g. Google) | `true`                                          | `false` |
 
 </details>
 

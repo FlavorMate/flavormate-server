@@ -10,7 +10,11 @@ interface OIDCProperties {
 
   fun clientId(): String
 
+  fun clientSecret(): Optional<String>
+
   fun id(): String
+
+  fun redirectUriOverride(): Optional<Boolean>
 
   fun icon(): Optional<String>
 }

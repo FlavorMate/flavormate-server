@@ -162,5 +162,6 @@ flavormate:
   #        client-id:
   #        id: authentik
   #        icon: authentik.png
+  #        redirect-uri-override:
 
   # Paths

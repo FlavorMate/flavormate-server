@@ -36,6 +36,7 @@ dependencies {
   implementation("io.quarkus:quarkus-oidc")
   implementation("io.quarkus:quarkus-qute")
   implementation("io.quarkus:quarkus-mailer")
+  implementation("io.quarkus:quarkus-oidc-client")
   implementation(libs.kotlin.stdlib.jdk8)
   implementation(libs.apache.commons.io)
   implementation(libs.apache.commons.lang3)
@@ -54,7 +55,7 @@ dependencies {
 
 group = "de.flavormate"
 
-version = "3.2.4"
+version = "3.3.0"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_21

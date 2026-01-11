@@ -7,6 +7,7 @@ import io.quarkus.oidc.Oidc
 import io.quarkus.oidc.OidcTenantConfig
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.event.Observes
+import kotlin.jvm.optionals.getOrNull
 
 @ApplicationScoped
 class OIDCProviderConfig(private val flavorMateProperties: FlavorMateProperties) {
@@ -18,6 +19,7 @@ class OIDCProviderConfig(private val flavorMateProperties: FlavorMateProperties)
         OidcTenantConfig.authServerUrl(provider.url())
           .tenantId(provider.id())
           .clientId(provider.clientId())
+          .credentials(provider.clientSecret().getOrNull())
           .tenantEnabled(true)
           .build()
 

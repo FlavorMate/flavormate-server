@@ -6,8 +6,10 @@ import de.flavormate.core.auth.models.LoginForm
 import de.flavormate.core.auth.models.TokenResponseDao
 import de.flavormate.core.auth.services.AuthService
 import de.flavormate.exceptions.FNotFoundException
+import de.flavormate.extensions.auth.oidc.config.OIDCClients
 import de.flavormate.extensions.auth.oidc.controllers.OIDCController
 import de.flavormate.extensions.auth.oidc.dao.models.OIDCMappingEntity
+import de.flavormate.extensions.auth.oidc.dto.models.OIDCExchangeForm
 import de.flavormate.extensions.auth.oidc.dto.models.OIDCProviderDto
 import de.flavormate.extensions.auth.oidc.repositories.OIDCMappingRepository
 import de.flavormate.features.account.repositories.AccountRepository
@@ -20,6 +22,7 @@ import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.StreamingOutput
 import jakarta.ws.rs.core.UriBuilder
 import java.nio.file.Paths
+import java.time.Duration
 import kotlin.jvm.optionals.getOrNull
 import org.apache.commons.io.FilenameUtils
 
@@ -30,6 +33,7 @@ class OIDCServices(
   private val authorizationDetails: AuthorizationDetails,
   private val flavorMateProperties: FlavorMateProperties,
   private val oidcMappingRepository: OIDCMappingRepository,
+  private val oidcClients: OIDCClients,
 ) {
   fun login(): TokenResponseDao? {
     val issuer = authorizationDetails.issuer
@@ -42,18 +46,29 @@ class OIDCServices(
 
   fun getProviders(): List<OIDCProviderDto> {
     return flavorMateProperties.auth().oidc().map {
+      val redirectUriOverride =
+        UriBuilder.fromUri(flavorMateProperties.server().url())
+          .path(OIDCController::class.java)
+          .path(OIDCController::class.java, OIDCController::mobileRedirect.name)
+          .build()
+
       val path =
         UriBuilder.fromResource(OIDCController::class.java)
           .path(OIDCController::class.java, OIDCController::getIcon.name)
           .build(it.id())
           .toString()
 
+      val redirectUri =
+        if (it.redirectUriOverride().getOrNull() == true) redirectUriOverride.toString()
+        else "flavormate://oauth"
+
       OIDCProviderDto(
-        url = it.url(),
+        url = it.url() + ".well-known/openid-configuration",
         clientId = it.clientId(),
         name = it.name(),
         id = it.id(),
         iconPath = path,
+        redirectUri = redirectUri,
       )
     }
   }
@@ -92,5 +107,23 @@ class OIDCServices(
       .also { oidcMappingRepository.persist(it) }
 
     return token
+  }
+
+  fun exchangeToken(form: OIDCExchangeForm): String {
+    val client =
+      oidcClients.getClient(form.providerId)
+        ?: throw FNotFoundException(message = "Provider with id ${form.providerId} not found")
+
+    val grantParameters =
+      mutableMapOf(
+        "grant_type" to "authorization_code",
+        "code" to form.code,
+        "code_verifier" to form.codeVerifier,
+        "redirect_uri" to form.redirectUri,
+      )
+
+    val tokens = client.getTokens(grantParameters).await().atMost(Duration.ofMinutes(1))
+
+    return tokens.get("id_token")
   }
 }
