@@ -24,6 +24,8 @@ object AllowedSorts {
 
   val highlights = mapOf(SearchOrderBy.CreatedOn to "h.date")
 
+  val oidc = mapOf(SearchOrderBy.CreatedOn to "m.createdOn", SearchOrderBy.Label to "p.label")
+
   val recipes = mapOf(SearchOrderBy.Label to "r.label", SearchOrderBy.CreatedOn to "r.createdOn")
 
   val recipeDrafts =

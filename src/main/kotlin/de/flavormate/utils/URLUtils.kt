@@ -20,7 +20,7 @@ object URLUtils {
       val nonTrackingParams = builder.queryParams.filter { !it.name.startsWith("utm_") }
       builder.setParameters(nonTrackingParams)
 
-      return builder.toString()
+      return builder.optimize().toString()
     } catch (_: Exception) {
       throw FBadRequestException(message = "Invalid url")
     }

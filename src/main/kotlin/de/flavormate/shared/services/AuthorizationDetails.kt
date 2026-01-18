@@ -32,6 +32,15 @@ class AuthorizationDetails(
   val issuer: String
     get() = jwt.issuer
 
+  val audiences: Set<String>
+    get() = jwt.audience
+
+  val name: String?
+    get() = jwt.getClaim<String>("name")
+
+  val email: String?
+    get() = jwt.getClaim<String>("email")
+
   private fun getAccount(): AccountEntity {
     if (self == null) {
       self =
