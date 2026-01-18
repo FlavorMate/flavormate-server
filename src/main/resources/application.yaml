@@ -105,6 +105,7 @@ flavormate:
     host: ${FLAVORMATE_DB_HOST}
     port: ${FLAVORMATE_DB_PORT:5432}
     database: ${FLAVORMATE_DB_DATABASE}
+    encryption-key: ${FLAVORMATE_DB_ENCRYPTION_KEY}
 
   paths:
     files: ${FLAVORMATE_PATHS_FILES:${HOME}/.flavormate/files}
