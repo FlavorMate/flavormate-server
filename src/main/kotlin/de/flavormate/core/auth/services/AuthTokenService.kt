@@ -24,6 +24,14 @@ class AuthTokenService(
   val jwtProperties: JWTProperties,
 ) {
 
+  companion object {
+    fun hashJWT(token: String): String {
+      return MessageDigest.getInstance("SHA-256").digest(token.toByteArray()).joinToString("") {
+        "%02x".format(it)
+      }
+    }
+  }
+
   // Token creation functions
   fun createTokenPair(account: AccountEntity): TokenResponseDao {
     val accessToken = createAccessToken(account)
@@ -140,12 +148,6 @@ class AuthTokenService(
     val hashedJWT = hashJWT(jwt)
     return TokenEntity.create(hashedJWT, type, securedResource, issuer, duration).also {
       tokenRepository.persist(it)
-    }
-  }
-
-  private fun hashJWT(token: String): String {
-    return MessageDigest.getInstance("SHA-256").digest(token.toByteArray()).joinToString("") {
-      "%02x".format(it)
     }
   }
 }
