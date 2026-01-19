@@ -20,9 +20,26 @@ tailored just for you.
 ## Migration Guides
 
 <details>
-<summary>3.3.0</summary>
+<summary>3.4.0</summary>
 
 ### Environment Changes:
+
+The following properties have been added:
+
+**Database**
+
+|          new property          | required |                         note                          |
+|--------------------------------|----------|-------------------------------------------------------|
+| `FLAVORMATE_DB_ENCRYPTION_KEY` | yes      | 256 AES Key (base64) used to encrypt database entries |
+
+> Create the `FLAVORMATE_DB_ENCRYPTION_KEY` with `openssl rand -base64 32`
+>
+> </details>
+>
+> <details>
+> <summary>3.3.0</summary>
+>
+  ### Environment Changes:
 
 The following properties have been added:
 
@@ -286,6 +303,7 @@ review. Recipes will continue to function as usual, even if units are not migrat
    ```
 4. Download the [.env.template](./example/.env.template) file and rename it to `.env`.
 5. Enter your details into the `.env` file
+   - Create the `FLAVORMATE_DB_ENCRYPTION_KEY` with `openssl rand -base64 32`
 6. Start your container with `docker compose up -d --remove-orphans`
 
 </details>
@@ -295,8 +313,9 @@ review. Recipes will continue to function as usual, even if units are not migrat
 
 You must have these dependencies installed:
 
-- Postgresql
+- PostgreSQL
 - Java 21
+- ImageMagick 7+ (with WEBP and other used formats plugins)
 
 1. Download the latest [FlavorMate-Server.jar](https://github.com/FlavorMate/flavormate-server/releases).
 2. Create a key pair and copy `publicKey.pem` and `privateKey.pem` into the right folder.
@@ -311,6 +330,7 @@ You must have these dependencies installed:
    ```
 3. Download the [.env.template](./examples/.env.template) file and rename it to `.env`.
 4. Enter your details in the `.env` file
+   - Create the `FLAVORMATE_DB_ENCRYPTION_KEY` with `openssl rand -base64 32`
 5. Export your `.env` file
 6. Start the backend with `java -jar FlavorMate-Server.jar`.
 
@@ -346,13 +366,14 @@ You must have these dependencies installed:
 <details>
 <summary>Database</summary>
 
-|          Key           | Required |      Description       |   Example    | Default |
-|------------------------|----------|------------------------|--------------|---------|
-| FLAVORMATE_DB_HOST     | Yes      | Database host          | `localhost`  | -       |
-| FLAVORMATE_DB_DATABASE | Yes      | Database database name | `flavormate` | -       |
-| FLAVORMATE_DB_PORT     | -        | Database port          | `5432`       | `5432`  |
-| FLAVORMATE_DB_USER     | Yes      | Database user          | `flavormate` | -       |
-| FLAVORMATE_DB_PASSWORD | Yes      | Database user password | `Passw0rd!`  | -       |
+|             Key              | Required |                     Description                      |   Example    | Default |
+|------------------------------|----------|------------------------------------------------------|--------------|---------|
+| FLAVORMATE_DB_HOST           | Yes      | Database host                                        | `localhost`  | -       |
+| FLAVORMATE_DB_DATABASE       | Yes      | Database database name                               | `flavormate` | -       |
+| FLAVORMATE_DB_PORT           | -        | Database port                                        | `5432`       | `5432`  |
+| FLAVORMATE_DB_USER           | Yes      | Database user                                        | `flavormate` | -       |
+| FLAVORMATE_DB_PASSWORD       | Yes      | Database user password                               | `Passw0rd!`  | -       |
+| FLAVORMATE_DB_ENCRYPTION_KEY | Yes      | 256 AES Key (base64) used to encrypt database values |              | -       |
 
 </details>
 
