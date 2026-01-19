@@ -3,9 +3,10 @@ package de.flavormate.extensions.auth.oidc.dto.models
 
 data class OIDCProviderDto(
   val url: String,
-  val clientId: String,
-  val name: String,
   val id: String,
+  val issuer: String,
+  val clientId: String,
+  val label: String,
   val redirectUri: String,
-  val iconPath: String?,
+  val icon: ByteArray? = null,
 )

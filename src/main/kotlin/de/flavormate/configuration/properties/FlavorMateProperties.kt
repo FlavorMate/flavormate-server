@@ -2,6 +2,7 @@
 package de.flavormate.configuration.properties
 
 import de.flavormate.configuration.properties.auth.AuthProperties
+import de.flavormate.configuration.properties.database.DatabaseProperties
 import de.flavormate.configuration.properties.features.FeatureProperties
 import de.flavormate.configuration.properties.general.GeneralProperties
 import de.flavormate.configuration.properties.paths.PathsProperties
@@ -14,6 +15,8 @@ import jakarta.enterprise.context.ApplicationScoped
 @ConfigMapping(prefix = "flavormate")
 interface FlavorMateProperties {
   fun auth(): AuthProperties
+
+  fun database(): DatabaseProperties
 
   fun paths(): PathsProperties
 

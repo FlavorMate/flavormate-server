@@ -3,6 +3,7 @@ package de.flavormate.core.auth.config
 
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.models.NoAuthenticationMechanism
+import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.shared.extensions.trimToNull
 import io.quarkus.oidc.runtime.OidcAuthenticationMechanism
 import io.quarkus.security.identity.IdentityProviderManager
@@ -80,7 +81,9 @@ class CustomAwareJWTAuthMechanism(
 
       val token = authHeader.substring("Bearer ".length)
 
-      if (jwtBlockList.contains(token)) return NoAuthenticationMechanism()
+      val hashedToken = AuthTokenService.hashJWT(token)
+
+      if (jwtBlockList.contains(hashedToken)) return NoAuthenticationMechanism()
 
       val jwt = jwtParser.parseOnly(token)
       val iss = jwt.issuer
