@@ -9,6 +9,7 @@ import de.flavormate.extensions.recovery.controllers.RecoveryController
 import de.flavormate.extensions.registration.controllers.RegistrationController
 import de.flavormate.extensions.share.controllers.ShareController
 import de.flavormate.features.story.controllers.StoryController
+import jakarta.annotation.Priority
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.container.ContainerRequestContext
@@ -16,10 +17,10 @@ import jakarta.ws.rs.container.ContainerRequestFilter
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.ext.Provider
 
+@Priority(1)
 @Provider
 @ApplicationScoped
-class FeatureRequestFilter(private val flavorMateProperties: FlavorMateProperties) :
-  ContainerRequestFilter {
+class FeatureRequestFilter(flavorMateProperties: FlavorMateProperties) : ContainerRequestFilter {
   private val bringEnabled = flavorMateProperties.features()[FeatureType.Bring]!!.enabled()
   private val bringPath = BringController::class.java.getAnnotation(Path::class.java).value
 

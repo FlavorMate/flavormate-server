@@ -3,8 +3,6 @@ package de.flavormate.core.auth.config
 
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.models.NoAuthenticationMechanism
-import de.flavormate.core.auth.services.AuthTokenService
-import de.flavormate.shared.extensions.trimToNull
 import io.quarkus.oidc.runtime.OidcAuthenticationMechanism
 import io.quarkus.security.identity.IdentityProviderManager
 import io.quarkus.security.identity.SecurityIdentity
@@ -29,23 +27,20 @@ class CustomAwareJWTAuthMechanism(
   private val jwtMechanism: JWTAuthMechanism,
   private val oidcMechanism: OidcAuthenticationMechanism,
   private val jwtParser: JWTParser,
-  private val jwtBlockList: JwtBlockList,
   private val flavorMateProperties: FlavorMateProperties,
 ) : HttpAuthenticationMechanism {
 
-  val issuer
-    get(): String = flavorMateProperties.auth().jwt().issuer()
+  companion object {
+    private const val BEARER_PREFIX = "Bearer "
+  }
+
+  private val issuer by lazy { flavorMateProperties.auth().jwt().issuer() }
 
   override fun authenticate(
     context: RoutingContext,
     identityProviderManager: IdentityProviderManager,
-  ): Uni<SecurityIdentity> {
-    val hasAuthHeader = context.request().getHeader("Authorization").trimToNull() != null
-
-    if (!hasAuthHeader) addTokenToContext(context)
-
-    return selectBetweenJwtAndOidc(context).authenticate(context, identityProviderManager)
-  }
+  ): Uni<SecurityIdentity> =
+    selectBetweenJwtAndOidc(context).authenticate(context, identityProviderManager)
 
   override fun getChallenge(context: RoutingContext): Uni<ChallengeData> {
     return selectBetweenJwtAndOidc(context).getChallenge(context)
@@ -66,8 +61,7 @@ class CustomAwareJWTAuthMechanism(
    * Determines the appropriate `HttpAuthenticationMechanism` to use based on the provided routing
    * context. It evaluates the "Authorization" header in the request to check for a JWT token's
    * presence, validates the issuer, and decides whether to use the JWT mechanism or the OIDC
-   * mechanism. If the JWT token is blocked or the "Authorization" header is missing, a
-   * `NoAuthenticationMechanism` is returned.
+   * mechanism. If the "Authorization" header is missing, a `NoAuthenticationMechanism` is returned.
    *
    * @param context The routing context representing the incoming HTTP request and associated data.
    * @return An `HttpAuthenticationMechanism` representing the selected authentication mechanism.
@@ -77,13 +71,9 @@ class CustomAwareJWTAuthMechanism(
       val authHeader =
         context.request().getHeader(HttpHeaders.AUTHORIZATION) ?: return NoAuthenticationMechanism()
 
-      if (!authHeader.startsWith("Bearer ")) return NoAuthenticationMechanism()
+      if (!authHeader.startsWith(BEARER_PREFIX)) return NoAuthenticationMechanism()
 
-      val token = authHeader.substring("Bearer ".length)
-
-      val hashedToken = AuthTokenService.hashJWT(token)
-
-      if (jwtBlockList.contains(hashedToken)) return NoAuthenticationMechanism()
+      val token = authHeader.substring(BEARER_PREFIX.length)
 
       val jwt = jwtParser.parseOnly(token)
       val iss = jwt.issuer
@@ -95,38 +85,5 @@ class CustomAwareJWTAuthMechanism(
     } catch (_: Exception) {
       return NoAuthenticationMechanism()
     }
-  }
-
-  /**
-   * Adds a token to the request headers as an "Authorization" header if the routing context's path
-   * matches specific conditions.
-   *
-   * The method checks if the path contains more than 5 parts and if the third segment equals
-   * "share". If these conditions are met, the token, extracted from the fourth segment of the path,
-   * is added to the "Authorization" header with the "Bearer" prefix.
-   *
-   * @param context The routing context representing the incoming HTTP request and associated data.
-   */
-  fun addTokenToContext(context: RoutingContext) {
-    val pathParts = extractPathSegments(context)
-
-    if (pathParts.size < 3) return
-
-    val token =
-      when (pathParts[2]) {
-        "bring" -> pathParts.getOrNull(3)
-        "recovery" -> pathParts.getOrNull(5)
-        "registration" -> pathParts.getOrNull(4)
-        "share" -> pathParts.getOrNull(3)
-        else -> null
-      }
-
-    token?.let { context.request().headers().add("Authorization", "Bearer $it") }
-  }
-
-  private fun extractPathSegments(context: RoutingContext): List<String> {
-    val requestPath = context.request().path()
-    val serverPrefix = flavorMateProperties.server().path().takeUnless { it == "/" } ?: ""
-    return requestPath.removePrefix(serverPrefix).split("/")
   }
 }
