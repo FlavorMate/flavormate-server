@@ -30,4 +30,10 @@ class AccountSessionRepository : PanacheRepositoryBase<SessionEntity, String> {
     val response = delete(query = "tokenHash = :tokenHash", params = params)
     return response > 0
   }
+
+  fun deleteByAccountId(accountId: String): Boolean {
+    val params = mapOf("accountId" to accountId)
+    val response = delete(query = "accountId = :accountId", params = params)
+    return response > 0
+  }
 }

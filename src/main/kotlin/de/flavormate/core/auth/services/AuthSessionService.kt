@@ -122,6 +122,10 @@ class AuthSessionService(
     return accountSessionRepository.deleteByTokenHash(hash)
   }
 
+  fun logoutAll(): Boolean {
+    return accountSessionRepository.deleteByAccountId(accountId = authorizationDetails.subject)
+  }
+
   fun deleteSession(id: String): Boolean {
     return accountSessionRepository.deleteByAccountIdAndId(
       accountId = authorizationDetails.subject,

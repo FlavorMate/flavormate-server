@@ -52,6 +52,8 @@ class AuthService(
 
   @Transactional fun logout() = sessionService.logout()
 
+  @Transactional fun logoutAll() = sessionService.logoutAll()
+
   @Transactional
   fun renewRefreshToken(): TokenResponseDao {
     val account = authorizationDetails.getSelf()

@@ -57,6 +57,11 @@ class AuthController(val authService: AuthService) {
 
   @RolesAllowed(RoleTypes.REFRESH_VALUE) @Path("/logout") @POST fun logout() = authService.logout()
 
+  @RolesAllowed(RoleTypes.REFRESH_VALUE)
+  @Path("/logout/all")
+  @POST
+  fun logoutAll() = authService.logoutAll()
+
   @RolesAllowed(RoleTypes.USER_VALUE)
   @Path("/sessions")
   @GET
