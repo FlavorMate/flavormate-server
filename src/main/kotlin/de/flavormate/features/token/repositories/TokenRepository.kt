@@ -65,7 +65,19 @@ class TokenRepository : PanacheRepositoryBase<TokenEntity, String> {
     return find("tokenType = :tokenType and issuer.id = :issuerId", sortBy, params)
   }
 
-  fun deleteAllRevokedAndExpired(): Long {
+  fun deleteAllExpired(): Long {
     return delete("expiredAt < current_timestamp")
+  }
+
+  fun findAllByOwner(sort: Sort, ownedById: String): PanacheQuery<TokenEntity> {
+    val params = mapOf("ownedById" to ownedById)
+
+    return find(query = "ownedById = :ownedById", sort = sort, params = params)
+  }
+
+  fun deleteByOwnedByIdAndId(ownedById: String, id: String): Boolean {
+    val params = mapOf("ownedById" to ownedById, "id" to id)
+    val response = delete(query = "ownedById = :ownedById and id = :id", params = params)
+    return response > 0
   }
 }

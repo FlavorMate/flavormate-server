@@ -31,12 +31,26 @@ object AllowedSorts {
   val recipeDrafts =
     mapOf(SearchOrderBy.CreatedOn to "r.createdOn", SearchOrderBy.Label to "r.label")
 
+  val sessions =
+    mapOf(
+      SearchOrderBy.CreatedOn to "createdOn",
+      SearchOrderBy.ExpiresAt to "expiredAt",
+      SearchOrderBy.Revoked to "revoked",
+    )
+
   val stories = mapOf(SearchOrderBy.Label to "s.label", SearchOrderBy.CreatedOn to "s.createdOn")
 
   val storyDrafts =
     mapOf(SearchOrderBy.CreatedOn to "s.createdOn", SearchOrderBy.Label to "s.label")
 
   val tags = mapOf(SearchOrderBy.Label to "t.label")
+
+  val tokens =
+    mapOf(
+      SearchOrderBy.CreatedOn to "issuedAt",
+      SearchOrderBy.ExpiresAt to "expiredAt",
+      SearchOrderBy.Revoked to "revoked",
+    )
 
   val units = mapOf(SearchOrderBy.Label to "u.labelSg")
 }

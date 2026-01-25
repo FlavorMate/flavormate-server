@@ -5,11 +5,10 @@ import de.flavormate.core.auth.models.LoginForm
 import de.flavormate.core.auth.models.TokenResponseDao
 import de.flavormate.core.auth.services.AuthService
 import de.flavormate.features.role.enums.RoleTypes
-import de.flavormate.shared.services.AuthorizationDetails
+import de.flavormate.shared.models.api.Pagination
 import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
-import jakarta.ws.rs.POST
-import jakarta.ws.rs.Path
+import jakarta.ws.rs.*
 
 /**
  * Controller class responsible for handling authentication-related HTTP requests.
@@ -25,7 +24,7 @@ import jakarta.ws.rs.Path
  */
 @Path("/v3/auth")
 @RequestScoped
-class AuthController(val authService: AuthService, val authorizationDetails: AuthorizationDetails) {
+class AuthController(val authService: AuthService) {
 
   /**
    * Authenticates a user based on the provided login details and generates a token pair.
@@ -40,9 +39,7 @@ class AuthController(val authService: AuthService, val authorizationDetails: Aut
    */
   @Path("/login")
   @POST
-  fun login(loginForm: LoginForm): TokenResponseDao {
-    return authService.login(loginForm)
-  }
+  fun login(loginForm: LoginForm): TokenResponseDao = authService.login(loginForm)
 
   /**
    * Refreshes the authentication tokens by generating a new pair of access token and refresh token.
@@ -56,7 +53,18 @@ class AuthController(val authService: AuthService, val authorizationDetails: Aut
   @Path("/refresh")
   @RolesAllowed(RoleTypes.REFRESH_VALUE)
   @POST
-  fun refresh(): TokenResponseDao {
-    return authService.renewRefreshToken(authorizationDetails.getSelf(), authorizationDetails.token)
-  }
+  fun refresh(): TokenResponseDao = authService.renewRefreshToken()
+
+  @RolesAllowed(RoleTypes.REFRESH_VALUE) @Path("/logout") @POST fun logout() = authService.logout()
+
+  @RolesAllowed(RoleTypes.USER_VALUE)
+  @Path("/sessions")
+  @GET
+  fun getAllSessions(@BeanParam pagination: Pagination) =
+    authService.getAllSessions(pagination = pagination)
+
+  @RolesAllowed(RoleTypes.USER_VALUE)
+  @Path("/sessions/{id}")
+  @DELETE
+  fun deleteSession(id: String) = authService.deleteSession(id = id)
 }

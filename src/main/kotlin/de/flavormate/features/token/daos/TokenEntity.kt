@@ -15,21 +15,20 @@ class TokenEntity : CoreEntity() {
 
   @Column(name = "expired_at") var expiredAt: LocalDateTime? = null
 
-  var uses: Long = 0
-
   var revoked: Boolean = false
 
   @Enumerated(EnumType.STRING) lateinit var type: TokenType
 
   /**
    * Stores the id of the resource it should protect Dependent on [type]
-   * - [TokenType.ACCOUNT]: account uuid
    * - [TokenType.BRING]: recipe uuid
    * - [TokenType.PASSWORD]: account uuid
    * - [TokenType.RESET]: account uuid
    * - [TokenType.SHARE]: recipe uuid
    */
   @Column(name = "secured_resource") lateinit var securedResource: String
+
+  @Column(name = "owned_by", insertable = false, updatable = false) lateinit var ownedById: String
 
   /** Stores the uuid of the issuer. If null, the backend issued the token (e.g. login token) */
   @ManyToOne(fetch = FetchType.LAZY)
