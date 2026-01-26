@@ -76,8 +76,6 @@ class AuthHeaderFilter(private val flavorMateProperties: FlavorMateProperties) {
     }
   }
 
-  private fun extractPathSegment(path: String, index: Int): String {
-    return path.removePrefix(serverPathPrefix).split("/").getOrNull(index)
-      ?: throw IllegalStateException("Path segment at index $index not found in path: $path")
-  }
+  private fun extractPathSegment(path: String, index: Int): String? =
+    path.removePrefix(serverPathPrefix).split("/").getOrNull(index)
 }
