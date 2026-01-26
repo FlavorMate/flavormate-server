@@ -72,4 +72,9 @@ class AuthController(val authService: AuthService) {
   @Path("/sessions/{id}")
   @DELETE
   fun deleteSession(id: String) = authService.deleteSession(id = id)
+
+  @RolesAllowed(RoleTypes.REFRESH_VALUE)
+  @Path("/sessions")
+  @DELETE
+  fun deleteAllSessionsButCurrent() = authService.deleteAllSessionsButCurrent()
 }

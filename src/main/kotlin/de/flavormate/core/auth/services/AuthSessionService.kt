@@ -103,7 +103,7 @@ class AuthSessionService(
   fun getAllSessions(pagination: Pagination): PageableDto<SessionDto> {
     val query =
       accountSessionRepository.findAllByOwner(
-        sort = pagination.sortRequest(AllowedSorts.accounts),
+        sort = pagination.sortRequest(AllowedSorts.sessions),
         accountId = authorizationDetails.subject,
       )
 
@@ -130,6 +130,16 @@ class AuthSessionService(
     return accountSessionRepository.deleteByAccountIdAndId(
       accountId = authorizationDetails.subject,
       id = id,
+    )
+  }
+
+  fun deleteAllSessionsButCurrent(): Boolean {
+    val token = authorizationDetails.token
+    val hash = JwtUtils.hashJWT(token)
+
+    return accountSessionRepository.deleteAllSessionsButCurrent(
+      accountId = authorizationDetails.subject,
+      tokenHash = hash,
     )
   }
 }

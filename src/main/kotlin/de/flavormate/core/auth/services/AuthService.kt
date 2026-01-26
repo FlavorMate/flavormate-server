@@ -66,4 +66,6 @@ class AuthService(
   fun getAllSessions(pagination: Pagination) = sessionService.getAllSessions(pagination)
 
   @Transactional fun deleteSession(id: String) = sessionService.deleteSession(id = id)
+
+  @Transactional fun deleteAllSessionsButCurrent() = sessionService.deleteAllSessionsButCurrent()
 }

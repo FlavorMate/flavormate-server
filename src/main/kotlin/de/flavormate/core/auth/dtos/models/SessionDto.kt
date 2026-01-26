@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 
 data class SessionDto(
   val id: String,
+  val tokenHash: String,
   val createdAt: LocalDateTime,
   val lastModifiedAt: LocalDateTime,
   val expiresAt: LocalDateTime,

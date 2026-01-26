@@ -36,4 +36,10 @@ class AccountSessionRepository : PanacheRepositoryBase<SessionEntity, String> {
     val response = delete(query = "accountId = :accountId", params = params)
     return response > 0
   }
+
+  fun deleteAllSessionsButCurrent(accountId: String, tokenHash: String): Boolean {
+    val params = mapOf("accountId" to accountId, "tokenHash" to tokenHash)
+    delete(query = "accountId = :accountId and tokenHash != :tokenHash", params = params)
+    return true
+  }
 }

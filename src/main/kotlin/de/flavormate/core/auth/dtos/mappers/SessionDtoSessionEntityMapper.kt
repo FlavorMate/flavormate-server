@@ -9,6 +9,7 @@ object SessionDtoSessionEntityMapper : BasicMapper<SessionEntity, SessionDto>() 
   override fun mapNotNullBasic(input: SessionEntity): SessionDto {
     return SessionDto(
       id = input.id,
+      tokenHash = input.tokenHash,
       createdAt = input.createdOn,
       lastModifiedAt = input.lastModifiedOn,
       expiresAt = input.expiresAt,

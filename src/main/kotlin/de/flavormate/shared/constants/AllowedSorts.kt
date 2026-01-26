@@ -34,7 +34,7 @@ object AllowedSorts {
   val sessions =
     mapOf(
       SearchOrderBy.CreatedOn to "createdOn",
-      SearchOrderBy.ExpiresAt to "expiredAt",
+      SearchOrderBy.ExpiresAt to "expiresAt",
       SearchOrderBy.Revoked to "revoked",
     )
 
