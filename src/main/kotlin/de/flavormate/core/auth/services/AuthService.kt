@@ -5,15 +5,19 @@ import de.flavormate.core.auth.models.LoginForm
 import de.flavormate.core.auth.models.TokenResponseDao
 import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.exceptions.FUnauthorizedException
-import de.flavormate.features.account.dao.models.AccountEntity
 import de.flavormate.features.account.repositories.AccountRepository
+import de.flavormate.shared.models.api.Pagination
+import de.flavormate.shared.services.AuthorizationDetails
 import io.quarkus.elytron.security.common.BcryptUtil
-import io.quarkus.security.UnauthorizedException
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
 
 @ApplicationScoped
-class AuthService(val accountRepository: AccountRepository, val tokenService: AuthTokenService) {
+class AuthService(
+  private val accountRepository: AccountRepository,
+  private val authorizationDetails: AuthorizationDetails,
+  private val sessionService: AuthSessionService,
+) {
   @Transactional
   fun login(loginForm: LoginForm): TokenResponseDao {
     val account =
@@ -29,7 +33,7 @@ class AuthService(val accountRepository: AccountRepository, val tokenService: Au
       throw FUnauthorizedException(message = "Invalid password")
     }
 
-    return tokenService.createTokenPair(account)
+    return sessionService.login(account)
   }
 
   @Transactional
@@ -43,19 +47,25 @@ class AuthService(val accountRepository: AccountRepository, val tokenService: Au
     if (!account.verified)
       throw FUnauthorizedException(message = "Account not validated. Please check your email")
 
-    return tokenService.createTokenPair(account)
+    return sessionService.login(account)
   }
+
+  @Transactional fun logout() = sessionService.logout()
+
+  @Transactional fun logoutAll() = sessionService.logoutAll()
 
   @Transactional
-  fun renewRefreshToken(account: AccountEntity, oldJWT: String): TokenResponseDao {
-    val isStillValid = tokenService.isValidToken(oldJWT, account.id)
+  fun renewRefreshToken(): TokenResponseDao {
+    val account = authorizationDetails.getSelf()
 
-    if (!isStillValid) throw UnauthorizedException()
-
-    // Revoke old refresh token
-    tokenService.revokeJWT(oldJWT)
-
+    val jwt = authorizationDetails.token
     // Generate new tokens
-    return tokenService.createTokenPair(account)
+    return sessionService.refreshToken(jwt, account)
   }
+
+  fun getAllSessions(pagination: Pagination) = sessionService.getAllSessions(pagination)
+
+  @Transactional fun deleteSession(id: String) = sessionService.deleteSession(id = id)
+
+  @Transactional fun deleteAllSessionsButCurrent() = sessionService.deleteAllSessionsButCurrent()
 }

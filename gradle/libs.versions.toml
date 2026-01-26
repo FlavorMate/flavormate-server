@@ -2,14 +2,14 @@
 versions = "0.53.0"
 spotless = "8.0.0"
 kotlin = "2.3.0"
-quarkus = "3.30.6"
+quarkus = "3.30.8"
 commons-io = "2.21.0"
 commons-lang3 = "3.20.0"
 jackson = "2.21.0"
 nanoid = "1.0.1"
 ksoup = "0.2.5"
 google-java-format = "1.31.0"
-assertj = "3.27.6"
+assertj = "3.27.7"
 http-client5 = "5.6"
 
 [libraries]

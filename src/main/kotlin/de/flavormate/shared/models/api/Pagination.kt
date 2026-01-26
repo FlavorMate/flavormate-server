@@ -21,7 +21,9 @@ data class Pagination(
       val column =
         when (orderBy) {
           SearchOrderBy.CreatedOn -> map[orderBy]!!
+          SearchOrderBy.ExpiresAt -> map[orderBy]!!
           SearchOrderBy.Visible -> map[orderBy]!!
+          SearchOrderBy.Revoked -> map[orderBy]!!
           else -> "lower(${map[orderBy]!!})"
         }
       return Sort.by(column, orderDirection ?: Sort.Direction.Ascending).disableEscaping()
