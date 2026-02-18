@@ -4,5 +4,6 @@ package de.flavormate.features.account.dtos.models
 interface AccountDto {
   val id: String
   val displayName: String
+  val username: String
   val avatar: AccountFileDto?
 }

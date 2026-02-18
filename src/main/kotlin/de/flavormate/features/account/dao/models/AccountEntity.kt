@@ -2,6 +2,7 @@
 package de.flavormate.features.account.dao.models
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import de.flavormate.core.auth.dao.models.SessionEntity
 import de.flavormate.features.book.daos.models.BookEntity
 import de.flavormate.features.recipe.daos.models.RecipeEntity
 import de.flavormate.features.role.models.RoleEntity
@@ -96,6 +97,9 @@ class AccountEntity : OwnedEntity() {
   @OneToMany(mappedBy = "ownedBy", fetch = FetchType.LAZY)
   @JsonIgnoreProperties("ownedBy")
   var stories: MutableSet<StoryEntity> = mutableSetOf()
+
+  @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+  var sessions: MutableSet<SessionEntity> = mutableSetOf()
 
   override fun hashCode(): Int {
     return Objects.hash(id, displayName, username, password, enabled, diet, email, firstLogin)

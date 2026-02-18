@@ -121,16 +121,10 @@ flavormate:
       enabled: ${FLAVORMATE_FEATURE_STORY:false}
     bring:
       enabled: ${FLAVORMATE_FEATURE_BRING:false}
-    enhanced-resolutions:
-      enabled: true
-    oidc2:
-      enabled: true
     open-food-facts:
       enabled: ${FLAVORMATE_FEATURE_OPEN_FOOD_FACTS:false}
     share:
       enabled: ${FLAVORMATE_FEATURE_SHARE:false}
-    token:
-      enabled: true
 
   mailer:
     from: ${FLAVORMATE_MAILER_FROM}

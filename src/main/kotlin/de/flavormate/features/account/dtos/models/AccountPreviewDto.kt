@@ -4,5 +4,6 @@ package de.flavormate.features.account.dtos.models
 data class AccountPreviewDto(
   override val id: String,
   override val displayName: String,
+  override val username: String,
   override val avatar: AccountFileDto? = null,
 ) : AccountDto

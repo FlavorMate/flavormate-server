@@ -3,14 +3,11 @@ package de.flavormate.core.features.enums
 
 enum class FeatureType {
   Bring,
-  EnhancedResolutions,
   ImportExport,
-  Oidc2,
   OpenFoodFacts,
   Recovery,
   Registration,
   Share,
   Story,
-  Token,
   Ratings,
 }

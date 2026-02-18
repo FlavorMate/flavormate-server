@@ -18,6 +18,7 @@ object AccountFullDtoMapper : BasicMapper<AccountEntity, AccountFullDto>() {
       verified = input.verified,
       firstLogin = input.firstLogin,
       createdOn = input.createdOn,
+      lastActivity = input.sessions.maxByOrNull { it.lastModifiedOn }?.lastModifiedOn,
       roles = input.roles.map { it.role.name },
     )
 }
