@@ -11,6 +11,14 @@ object AllowedSorts {
       SearchOrderBy.Username to "a.username",
     )
 
+  val adminAccounts =
+    mapOf(
+      SearchOrderBy.CreatedOn to "a.createdOn",
+      SearchOrderBy.DisplayName to "a.displayName",
+      SearchOrderBy.Username to "a.username",
+      SearchOrderBy.LastActivity to "lastModifiedOn",
+    )
+
   val books =
     mapOf(
       SearchOrderBy.Label to "b.label",

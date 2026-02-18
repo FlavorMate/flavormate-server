@@ -22,6 +22,7 @@ data class Pagination(
         when (orderBy) {
           SearchOrderBy.CreatedOn -> map[orderBy]!!
           SearchOrderBy.ExpiresAt -> map[orderBy]!!
+          SearchOrderBy.LastActivity -> map[orderBy]!!
           SearchOrderBy.Visible -> map[orderBy]!!
           SearchOrderBy.Revoked -> map[orderBy]!!
           else -> "lower(${map[orderBy]!!})"

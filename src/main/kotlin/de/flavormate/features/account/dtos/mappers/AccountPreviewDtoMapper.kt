@@ -10,6 +10,7 @@ object AccountPreviewDtoMapper : BasicMapper<AccountEntity, AccountPreviewDto>()
     AccountPreviewDto(
       id = input.id,
       displayName = input.displayName,
+      username = input.username,
       avatar = input.avatar?.let { AccountFileDtoMapper.mapBasic(input = it) },
     )
 }

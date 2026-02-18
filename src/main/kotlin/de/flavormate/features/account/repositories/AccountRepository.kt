@@ -4,6 +4,8 @@ package de.flavormate.features.account.repositories
 import de.flavormate.features.account.dao.models.AccountEntity
 import de.flavormate.features.recipe.daos.models.RecipeEntity
 import de.flavormate.features.story.daos.models.StoryEntity
+import de.flavormate.shared.constants.AllowedSorts
+import de.flavormate.shared.enums.SearchOrderBy
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheQuery
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepositoryBase
 import io.quarkus.panache.common.Sort
@@ -12,7 +14,19 @@ import jakarta.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class AccountRepository : PanacheRepositoryBase<AccountEntity, String> {
   override fun findAll(sort: Sort): PanacheQuery<AccountEntity> {
-    return find(query = "select a from AccountEntity a", sort = sort)
+    val sortColumn = sort.columns.firstOrNull()
+
+    if (sortColumn?.name == AllowedSorts.adminAccounts.getValue(SearchOrderBy.LastActivity)) {
+
+      val aggregateFn = if (sortColumn.direction == Sort.Direction.Ascending) "min" else "max"
+
+      return find(
+        query =
+          "from AccountEntity a order by (select $aggregateFn(s.lastModifiedOn) from SessionEntity s where s.account = a)"
+      )
+    }
+
+    return find(query = "select a from AccountEntity a left join fetch a.sessions s", sort = sort)
   }
 
   fun findByUsername(username: String): AccountEntity? {

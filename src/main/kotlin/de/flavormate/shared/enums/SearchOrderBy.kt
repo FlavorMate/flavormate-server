@@ -12,6 +12,9 @@ enum class SearchOrderBy {
   DisplayName,
   Username,
 
+  // Only used for AccountEntity (Admin view)
+  LastActivity,
+
   // Only used for TokenEntity
   ExpiresAt,
   Revoked,
