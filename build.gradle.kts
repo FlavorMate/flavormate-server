@@ -47,8 +47,8 @@ dependencies {
   implementation(libs.ksoup.network)
   implementation(libs.apache.http.client5)
 
-  testImplementation("io.quarkus:quarkus-junit5")
-  testImplementation("io.quarkus:quarkus-junit5-mockito")
+  testImplementation("io.quarkus:quarkus-junit")
+  testImplementation("io.quarkus:quarkus-junit-mockito")
   testImplementation("io.rest-assured:rest-assured")
   testImplementation(libs.assertj)
 }
