@@ -9,7 +9,7 @@
 #
 # docker build -f src/main/docker/Dockerfile.jvm -t quarkus/flavormate-jvm .
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
  
 RUN apk add --no-cache \
     # Used for health check
