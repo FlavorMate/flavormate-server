@@ -26,9 +26,9 @@ import org.jboss.resteasy.reactive.server.jaxrs.ContainerRequestContextImpl
  */
 abstract class PublicFilter(private val tokenService: AuthTokenService) : ContainerRequestFilter {
 
-  @Context private lateinit var resourceInfo: ResourceInfo
+  @Context protected lateinit var resourceInfo: ResourceInfo
 
-  @Context private lateinit var uriInfo: UriInfo
+  @Context protected lateinit var uriInfo: UriInfo
 
   protected abstract val securedClass: Class<*>
   protected abstract val securedMethods: List<Method?>

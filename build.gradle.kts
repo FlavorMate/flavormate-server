@@ -47,19 +47,19 @@ dependencies {
   implementation(libs.ksoup.network)
   implementation(libs.apache.http.client5)
 
-  testImplementation("io.quarkus:quarkus-junit5")
-  testImplementation("io.quarkus:quarkus-junit5-mockito")
+  testImplementation("io.quarkus:quarkus-junit")
+  testImplementation("io.quarkus:quarkus-junit-mockito")
   testImplementation("io.rest-assured:rest-assured")
   testImplementation(libs.assertj)
 }
 
 group = "de.flavormate"
 
-version = "4.0.0"
+version = "4.0.1"
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_21
-  targetCompatibility = JavaVersion.VERSION_21
+  sourceCompatibility = JavaVersion.VERSION_25
+  targetCompatibility = JavaVersion.VERSION_25
 }
 
 tasks.withType<Test> {
@@ -75,7 +75,7 @@ allOpen {
 
 kotlin {
   compilerOptions {
-    jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+    jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
     javaParameters = true
   }
 }
