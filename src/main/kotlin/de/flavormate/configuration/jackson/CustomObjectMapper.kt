@@ -19,27 +19,30 @@ import jakarta.ws.rs.Produces
  * The class is designed to work with dependency injection frameworks and provides a `@Produces`
  * method to supply a properly configured and customized [ObjectMapper] instance.
  */
-object CustomObjectMapper {
-  /**
-   * Singleton instance of the [ObjectMapper] that is lazily initialized in a thread-safe manner.
-   * The configuration and creation of the ObjectMapper are encapsulated within the companion
-   * object.
-   *
-   * The lazily initialized instance ensures efficient resource usage and guarantees a single
-   * instance throughout the application's lifecycle.
-   */
-  val instance: ObjectMapper by lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createObjectMapper() }
+class CustomObjectMapper {
+  companion object {
 
-  private fun createObjectMapper(): ObjectMapper {
-    val om = ObjectMapper().findAndRegisterModules()
+    /**
+     * Singleton instance of the [ObjectMapper] that is lazily initialized in a thread-safe manner.
+     * The configuration and creation of the ObjectMapper are encapsulated within the companion
+     * object.
+     *
+     * The lazily initialized instance ensures efficient resource usage and guarantees a single
+     * instance throughout the application's lifecycle.
+     */
+    val instance: ObjectMapper by lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createObjectMapper() }
 
-    om.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
+    private fun createObjectMapper(): ObjectMapper {
+      val om = ObjectMapper().findAndRegisterModules()
 
-    om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    om.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-    om.configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false)
+      om.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
 
-    return om
+      om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      om.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      om.configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false)
+
+      return om
+    }
   }
 
   // Replaces the CDI producer for ObjectMapper built into Quarkus
