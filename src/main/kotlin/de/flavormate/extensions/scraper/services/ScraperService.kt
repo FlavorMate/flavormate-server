@@ -9,12 +9,12 @@ import com.fleeksoft.ksoup.nodes.Document
 import com.fleeksoft.ksoup.select.Elements
 import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.exceptions.FNotFoundException
-import de.flavormate.extensions.importExport.ld_json.models.LDJsonRecipe
-import de.flavormate.extensions.importExport.ld_json.services.LDJsonService
 import de.flavormate.shared.extensions.stripHTMLTags
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.utils.URLUtils
 import jakarta.enterprise.context.RequestScoped
+import org.schema.models.LDJsonRecipe
+import org.schema.services.LDJsonService
 
 @RequestScoped
 class ScraperService(

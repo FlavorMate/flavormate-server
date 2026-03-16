@@ -27,4 +27,11 @@ class UnitLocalizedEntity : CoreEntity() {
 
     return labelSgAbrv ?: labelSg
   }
+
+  @Transient
+  fun getLongLabel(amount: Double?): String {
+    if (amount != null && amount != 1.0) return labelPl ?: labelSg
+
+    return labelSgAbrv ?: labelSg
+  }
 }

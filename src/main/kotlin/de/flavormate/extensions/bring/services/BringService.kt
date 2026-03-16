@@ -6,7 +6,6 @@ import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.bring.controllers.BringController
-import de.flavormate.extensions.importExport.ld_json.mappers.LDRecipeRecipeEntityMapper
 import de.flavormate.features.recipe.repositories.RecipeRepository
 import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
@@ -18,6 +17,7 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.UriBuilder
 import org.apache.hc.core5.net.URIBuilder
+import org.schema.mappers.LDRecipeRecipeEntityMapper
 
 @RequestScoped
 class BringService(

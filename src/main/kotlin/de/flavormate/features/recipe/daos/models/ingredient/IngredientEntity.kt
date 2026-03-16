@@ -39,6 +39,16 @@ class IngredientEntity : CoreEntity() {
       .joinToString(" ")
   }
 
+  fun toJsonString(): String {
+    val amountLabel: String? = amount?.let { NumberUtils.beautify(it) }
+
+    val unitLabel = unit?.getLongLabel(amount)
+
+    return listOfNotNull(amountLabel, unitLabel, label)
+      .filter(StringUtils::isNotBlank)
+      .joinToString(" ")
+  }
+
   fun requestServing(factor: Double): String {
     val requestedAmount = amount?.times(factor) ?: 1.0
 
