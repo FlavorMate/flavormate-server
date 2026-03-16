@@ -2,6 +2,7 @@
 package de.flavormate.extensions.scraper.services
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.network.parseGetRequestBlocking
@@ -13,6 +14,7 @@ import de.flavormate.shared.extensions.stripHTMLTags
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.utils.URLUtils
 import jakarta.enterprise.context.RequestScoped
+import java.io.File
 import org.schema.models.LDJsonRecipe
 import org.schema.services.LDJsonService
 
@@ -37,6 +39,11 @@ class ScraperService(
 
     val ldJson = processHTML(html, cleanedUrl)
     return ldJsonService.ldJsonRecipeToRecipeDraftEntity(ldJson, language).id
+  }
+
+  fun importLDJson(file: File, language: String): String {
+    val input = mapper.readValue<LDJsonRecipe>(file)
+    return ldJsonService.ldJsonRecipeToRecipeDraftEntity(input, language).id
   }
 
   private fun fetchHTML(url: String) = Ksoup.parseGetRequestBlocking(url)

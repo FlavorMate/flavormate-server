@@ -6,9 +6,13 @@ import de.flavormate.features.role.enums.RoleTypes
 import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
+import java.io.File
 import java.net.URLDecoder
 import java.util.*
+import org.jboss.resteasy.reactive.RestForm
+import org.jboss.resteasy.reactive.RestQuery
 
 @RequestScoped
 @Path("/v3/scraper")
@@ -22,5 +26,11 @@ class ScraperController(val service: ScraperService) {
     val url = URLDecoder.decode(uri, Charsets.UTF_8)
 
     return service.scrape(url = url)
+  }
+
+  @POST
+  @Path("/ld+json")
+  fun importLDJson(@RestQuery language: String, @RestForm file: File): String {
+    return service.importLDJson(file = file, language = language)
   }
 }
