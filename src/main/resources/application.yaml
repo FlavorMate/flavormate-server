@@ -117,6 +117,8 @@ flavormate:
       enabled: ${FLAVORMATE_FEATURE_REGISTRATION:false}
     recovery:
       enabled: ${FLAVORMATE_FEATURE_RECOVERY:false}
+    scraper-import:
+      enabled: true
     story:
       enabled: ${FLAVORMATE_FEATURE_STORY:false}
     bring:

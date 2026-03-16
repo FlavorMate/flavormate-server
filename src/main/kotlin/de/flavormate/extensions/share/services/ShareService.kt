@@ -5,7 +5,6 @@ import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
-import de.flavormate.extensions.importExport.ld_json.mappers.LDRecipeRecipeEntityMapper
 import de.flavormate.extensions.share.controllers.ShareController
 import de.flavormate.extensions.share.mappers.SharedRecipeMapper
 import de.flavormate.extensions.urlShortener.services.ShortenerService
@@ -25,6 +24,7 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.StreamingOutput
 import jakarta.ws.rs.core.UriBuilder
+import org.schema.mappers.LDRecipeRecipeEntityMapper
 
 @RequestScoped
 class ShareService(
