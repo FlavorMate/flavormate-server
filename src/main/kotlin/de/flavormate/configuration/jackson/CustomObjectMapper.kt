@@ -2,6 +2,8 @@
 package de.flavormate.configuration.jackson
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -37,6 +39,7 @@ class CustomObjectMapper {
 
       om.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
 
+      om.setDefaultSetterInfo(JsonSetter.Value.forValueNulls(Nulls.SKIP, Nulls.SKIP))
       om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
       om.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
       om.configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false)
