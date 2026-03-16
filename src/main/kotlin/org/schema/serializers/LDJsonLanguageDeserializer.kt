@@ -9,7 +9,7 @@ import org.schema.models.types.LDJsonSchema
 class LDJsonLanguageDeserializer : LDJsonDeserializer<String>() {
 
   override fun handleArray(node: JsonNode): String? {
-    return node.asSequence().mapNotNull(::handleNode).firstOrNull()
+    return node.firstNotNullOfOrNull(::handleNode)
   }
 
   override fun handleObject(node: JsonNode): String? {
