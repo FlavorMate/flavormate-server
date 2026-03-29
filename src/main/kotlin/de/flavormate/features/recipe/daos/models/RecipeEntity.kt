@@ -26,7 +26,7 @@ class RecipeEntity : OwnedEntity() {
   @OneToMany(cascade = [CascadeType.ALL], mappedBy = "recipe", fetch = FetchType.LAZY)
   lateinit var files: MutableList<RecipeFileEntity>
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   @JoinColumn(name = "cover_file", referencedColumnName = "id")
   var coverFile: RecipeFileEntity? = null
 
