@@ -10,7 +10,10 @@ import jakarta.enterprise.inject.Instance
 import java.io.OutputStream
 
 @ApplicationScoped
-class IEPluginManager(private val plugins: Instance<IEPlugin>) {
+class IEPluginManager(
+  private val plugins: Instance<IEPlugin>,
+  private val currentContextProvider: IEPluginContextProvider,
+) {
   fun getAllPlugins(): List<IEPlugin> = plugins.toList()
 
   fun getImportPlugins(): List<IEPlugin> = plugins.filter { it.metadata.import }
@@ -30,24 +33,29 @@ class IEPluginManager(private val plugins: Instance<IEPlugin>) {
         it.metadata.supportedExtensions.contains(extension.lowercase().removePrefix("."))
     }
 
-  fun import(pluginId: String, input: IEInputSource, context: IEPluginContext): IERecipeDraft {
+  fun import(pluginId: String, input: IEInputSource): IERecipeDraft {
     val plugin =
       getPluginById(pluginId) ?: throw IllegalArgumentException("Plugin $pluginId not found")
     if (!plugin.metadata.import)
       throw IllegalArgumentException("Plugin $pluginId does not support import")
+
+    val context = createContext()
+
     return plugin.import(input, context)
   }
 
-  fun export(
-    pluginId: String,
-    draft: IERecipeDraft,
-    output: OutputStream,
-    context: IEPluginContext,
-  ) {
+  fun export(pluginId: String, draft: IERecipeDraft, output: OutputStream) {
     val plugin =
       getPluginById(pluginId) ?: throw IllegalArgumentException("Plugin $pluginId not found")
     if (!plugin.metadata.export)
       throw IllegalArgumentException("Plugin $pluginId does not support export")
-    plugin.export(draft, output, context)
+    plugin.export(draft, output, createContext())
   }
+
+  fun createContext() =
+    IEPluginContext(
+      currentUser = currentContextProvider.currentUser,
+      objectMapper = currentContextProvider.objectMapper,
+      maxImageSize = currentContextProvider.maxImageSize,
+    )
 }

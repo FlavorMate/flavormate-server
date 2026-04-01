@@ -12,6 +12,11 @@ sealed interface IEInputSource {
 data class StreamInputSource(val inputStream: InputStream, override val name: String? = null) :
   IEInputSource
 
-data class UrlInputSource(val url: URI, override val name: String = url.toString()) : IEInputSource
+data class UrlInputSource(val url: URI, override val name: String = url.toString()) :
+  IEInputSource {
+  companion object {
+    fun fromString(url: String) = UrlInputSource(URI.create(url))
+  }
+}
 
 data class FileInputSource(val file: File, override val name: String = file.name) : IEInputSource
