@@ -2,7 +2,6 @@
 package de.flavormate.extensions.importExport.plugins.ld_json.services
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import de.flavormate.exceptions.FBadRequestException
 import de.flavormate.extensions.importExport.interfaces.IEPlugin
 import de.flavormate.extensions.importExport.interfaces.IEPluginContext
 import de.flavormate.extensions.importExport.interfaces.IEPluginMetadata
@@ -17,8 +16,14 @@ import de.flavormate.extensions.importExport.plugins.ld_json.services.exporter.I
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonDownloader
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonImporter
 import de.flavormate.shared.enums.Language
+import de.flavormate.utils.FileUtils
+import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
 import java.nio.file.Path
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.io.path.copyTo
+import kotlin.io.path.createParentDirectories
 
 @ApplicationScoped
 class IEPluginLDJson : IEPlugin {
@@ -36,33 +41,57 @@ class IEPluginLDJson : IEPlugin {
       supportedExtensions = listOf("json", "jsonld"),
     )
 
-  override fun import(input: IEInputSource, context: IEPluginContext): IERecipeDraft {
-    if (metadata.import.none { it.isImportSupported(input) }) {
-      throw FBadRequestException(
-        message = "Unsupported import type ${input::class.simpleName} for ${metadata.name}"
-      )
-    }
-
+  override fun import(inputs: List<IEInputSource>, context: IEPluginContext): List<IERecipeDraft> {
     val downloader = IEPluginLDJsonDownloader(context)
-
-    val ldJsonRecipe =
-      when (input) {
-        is UrlInputSource -> downloader.download(input.name)
-        is FileInputSource -> context.objectMapper.readValue<LDJsonRecipe>(input.file)
-      }
-
     val mapper = IEPluginLDJsonImporter(context)
 
-    return mapper.import(ldJsonRecipe)
+    return inputs.mapNotNull { input ->
+      if (metadata.import.none { it.isImportSupported(input) }) {
+        Log.debug("Unsupported import type ${input::class.simpleName} for ${metadata.name}")
+        return@mapNotNull null
+      }
+
+      val ldJson =
+        when (input) {
+          is UrlInputSource -> downloader.download(input.name)
+          is FileInputSource -> context.objectMapper.readValue<LDJsonRecipe>(input.file)
+        }
+
+      mapper.import(ldJson)
+    }
   }
 
-  override fun export(input: IERecipe, workDirectory: Path, context: IEPluginContext): Path {
-    val exporter = IEPluginLDJsonExporter.export(input, language = Language.EN)
+  /**
+   * Creates a zip file containing the exported recipes.
+   *
+   * export.zip
+   * - recipe1.json
+   * - recipe2.json
+   */
+  override fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
+    val zipContent = workDirectory.resolve("zipContent")
 
-    val outputFile = workDirectory.resolve(input.label + ".json")
+    val files =
+      inputs.map { input ->
+        val exporter = IEPluginLDJsonExporter.export(input, language = Language.EN)
+        val outputFile = workDirectory.resolve("${input.label} (${input.id}).json")
 
-    context.objectMapper.writeValue(outputFile.toFile(), exporter)
+        context.objectMapper.writeValue(outputFile.toFile(), exporter)
 
-    return outputFile
+        outputFile
+      }
+
+    files.forEach { it.copyTo(zipContent.resolve(it.fileName).createParentDirectories()) }
+
+    val zipFile =
+      workDirectory.resolve(
+        "Export ${
+        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
+      }.zip"
+      )
+
+    FileUtils.zip(sourceDir = zipContent, zipFile = zipFile)
+
+    return zipFile
   }
 }
