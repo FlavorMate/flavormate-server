@@ -76,8 +76,8 @@ class IEPluginLDJson(private val languageDetectorService: LanguageDetectorServic
         val exporter = IEPluginLDJsonExporter(languageDetectorService)
         val outputFile = workDirectory.resolve("${input.label} (${input.id}).json")
 
-        exporter.export(input)
-        context.objectMapper.writeValue(outputFile.toFile(), exporter)
+        val export = exporter.export(input)
+        context.objectMapper.writeValue(outputFile.toFile(), export)
 
         outputFile
       }
