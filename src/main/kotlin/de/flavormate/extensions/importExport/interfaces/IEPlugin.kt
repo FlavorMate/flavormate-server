@@ -9,11 +9,11 @@ import java.nio.file.Path
 interface IEPlugin {
   val metadata: IEPluginMetadata
 
-  fun import(input: List<IEInputSource>, context: IEPluginContext): IERecipeDraft {
+  fun import(inputs: List<IEInputSource>, context: IEPluginContext): List<IERecipeDraft> {
     throw UnsupportedOperationException("Import not supported by plugin ${metadata.name}")
   }
 
-  fun export(input: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
+  fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
     throw UnsupportedOperationException("Export not supported by plugin ${metadata.name}")
   }
 }

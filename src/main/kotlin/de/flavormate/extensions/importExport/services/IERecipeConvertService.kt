@@ -40,6 +40,7 @@ class IERecipeConvertService(
     val r =
       IERecipe(
         language = language,
+        id = input.id,
         cookTime = input.cookTime,
         course = input.course,
         description = input.description,

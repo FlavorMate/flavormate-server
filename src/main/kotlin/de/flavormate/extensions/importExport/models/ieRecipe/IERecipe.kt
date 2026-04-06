@@ -11,6 +11,7 @@ import java.time.Instant
 
 data class IERecipe(
   val language: Language,
+  val id: String,
   val cookTime: Duration,
   val course: Course,
   var description: String?,

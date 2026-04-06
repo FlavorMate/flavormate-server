@@ -10,7 +10,6 @@ import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraft
 import de.flavormate.extensions.importExport.models.inputSource.IEInputSource
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Instance
-import java.nio.file.Files
 import java.nio.file.Path
 
 @ApplicationScoped
@@ -38,7 +37,7 @@ class IEPluginManager(
         it.metadata.supportedExtensions.contains(extension.lowercase().removePrefix("."))
     }
 
-  fun import(pluginId: String, input: List<IEInputSource>): IERecipeDraft {
+  fun import(pluginId: String, input: List<IEInputSource>): List<IERecipeDraft> {
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
@@ -50,14 +49,12 @@ class IEPluginManager(
     return plugin.import(input, context)
   }
 
-  fun export(pluginId: String, recipes: List<IERecipe>): Path {
+  fun export(pluginId: String, workDirectory: Path, recipes: List<IERecipe>): Path {
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
     if (!plugin.metadata.export)
       throw FBadRequestException("Plugin $pluginId does not support export")
-
-    val workDirectory = Files.createTempDirectory("ie-export-")
 
     return plugin.export(recipes, workDirectory, createContext())
   }
