@@ -2,15 +2,11 @@
 package de.flavormate.extensions.importExport.models.inputSource
 
 import java.io.File
-import java.io.InputStream
 import java.net.URI
 
 sealed interface IEInputSource {
   val name: String?
 }
-
-data class StreamInputSource(val inputStream: InputStream, override val name: String? = null) :
-  IEInputSource
 
 data class UrlInputSource(val url: URI, override val name: String = url.toString()) :
   IEInputSource {
@@ -20,3 +16,14 @@ data class UrlInputSource(val url: URI, override val name: String = url.toString
 }
 
 data class FileInputSource(val file: File, override val name: String = file.name) : IEInputSource
+
+enum class IEImportType {
+  FileImport,
+  UrlImport;
+
+  fun isImportSupported(inputSource: IEInputSource): Boolean =
+    when (this) {
+      FileImport -> inputSource is FileInputSource
+      UrlImport -> inputSource is UrlInputSource
+    }
+}

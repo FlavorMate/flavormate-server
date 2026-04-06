@@ -20,7 +20,7 @@ class IEPluginManager(
 ) {
   fun getAllPlugins(): List<IEPlugin> = plugins.toList()
 
-  fun getImportPlugins(): List<IEPlugin> = plugins.filter { it.metadata.import }
+  fun getImportPlugins(): List<IEPlugin> = plugins.filter { it.metadata.import.isNotEmpty() }
 
   fun getExportPlugins(): List<IEPlugin> = plugins.filter { it.metadata.export }
 
@@ -28,12 +28,13 @@ class IEPluginManager(
 
   fun findImportPluginByMimeType(mimeType: String): IEPlugin? =
     plugins.find {
-      it.metadata.import && it.metadata.supportedMimeTypes.contains(mimeType.lowercase())
+      it.metadata.import.isNotEmpty() &&
+        it.metadata.supportedMimeTypes.contains(mimeType.lowercase())
     }
 
   fun findImportPluginByExtension(extension: String): IEPlugin? =
     plugins.find {
-      it.metadata.import &&
+      it.metadata.import.isNotEmpty() &&
         it.metadata.supportedExtensions.contains(extension.lowercase().removePrefix("."))
     }
 
@@ -41,7 +42,7 @@ class IEPluginManager(
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
-    if (!plugin.metadata.import)
+    if (plugin.metadata.import.isEmpty())
       throw FBadRequestException("Plugin $pluginId does not support import")
 
     val context = createContext()

@@ -13,7 +13,7 @@ class IEPluginContextProvider(private val authorizationDetails: AuthorizationDet
   private lateinit var maxBodySize: MemorySize
 
   val currentUser
-    get() = authorizationDetails.getSelfNullable()
+    get() = authorizationDetails.account
 
   val maxImageSize
     get() = maxBodySize
