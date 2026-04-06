@@ -15,7 +15,7 @@ import de.flavormate.extensions.importExport.plugins.ld_json.models.LDJsonRecipe
 import de.flavormate.extensions.importExport.plugins.ld_json.services.exporter.IEPluginLDJsonExporter
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonDownloader
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonImporter
-import de.flavormate.shared.enums.Language
+import de.flavormate.shared.services.LanguageDetectorService
 import de.flavormate.utils.FileUtils
 import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
@@ -26,7 +26,7 @@ import kotlin.io.path.copyTo
 import kotlin.io.path.createParentDirectories
 
 @ApplicationScoped
-class IEPluginLDJson : IEPlugin {
+class IEPluginLDJson(private val languageDetectorService: LanguageDetectorService) : IEPlugin {
 
   override val metadata =
     IEPluginMetadata(
@@ -43,7 +43,7 @@ class IEPluginLDJson : IEPlugin {
 
   override fun import(inputs: List<IEInputSource>, context: IEPluginContext): List<IERecipeDraft> {
     val downloader = IEPluginLDJsonDownloader(context)
-    val mapper = IEPluginLDJsonImporter(context)
+    val mapper = IEPluginLDJsonImporter(context, languageDetectorService)
 
     return inputs.mapNotNull { input ->
       if (metadata.import.none { it.isImportSupported(input) }) {
@@ -73,9 +73,10 @@ class IEPluginLDJson : IEPlugin {
 
     val files =
       inputs.map { input ->
-        val exporter = IEPluginLDJsonExporter.export(input, language = Language.EN)
+        val exporter = IEPluginLDJsonExporter(languageDetectorService)
         val outputFile = workDirectory.resolve("${input.label} (${input.id}).json")
 
+        exporter.export(input)
         context.objectMapper.writeValue(outputFile.toFile(), exporter)
 
         outputFile

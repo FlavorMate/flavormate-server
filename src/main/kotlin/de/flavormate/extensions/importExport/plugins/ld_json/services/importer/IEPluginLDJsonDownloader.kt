@@ -22,19 +22,7 @@ class IEPluginLDJsonDownloader(private val context: IEPluginContext) {
 
     val html = fetchHTML(cleanedUrl)
 
-    val langAttr = html.selectFirst("html[lang]")?.attr("lang") ?: "en"
-    val language =
-      when {
-        langAttr.startsWith("de", ignoreCase = true) -> "de"
-        langAttr.startsWith("en", ignoreCase = true) -> "en"
-        else -> "en"
-      }
-
-    val obj = processHTML(html, cleanedUrl)
-
-    obj.inLanguage = obj.inLanguage ?: language
-
-    return obj
+    return processHTML(html, cleanedUrl)
   }
 
   private fun fetchHTML(url: String) = Ksoup.parseGetRequestBlocking(url)

@@ -4,6 +4,7 @@ package de.flavormate.extensions.importExport.plugins.ld_json.services.importer
 import de.flavormate.exceptions.FBadRequestException
 import de.flavormate.extensions.importExport.interfaces.IEPluginContext
 import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraft
+import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraftInstructionGroup
 import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraftServing
 import de.flavormate.extensions.importExport.plugins.ld_json.mappers.LDJsonIngredientMapper
 import de.flavormate.extensions.importExport.plugins.ld_json.mappers.LDJsonInstructionMapper
@@ -12,6 +13,7 @@ import de.flavormate.extensions.importExport.plugins.ld_json.models.types.LDJson
 import de.flavormate.shared.enums.Diet
 import de.flavormate.shared.enums.Language
 import de.flavormate.shared.extensions.toKebabCase
+import de.flavormate.shared.services.LanguageDetectorService
 import io.quarkus.logging.Log
 import java.io.File
 import java.net.HttpURLConnection
@@ -20,10 +22,17 @@ import kotlin.io.path.createTempFile
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 
-class IEPluginLDJsonImporter(private val context: IEPluginContext) {
+class IEPluginLDJsonImporter(
+  private val context: IEPluginContext,
+  private val languageDetectorService: LanguageDetectorService,
+) {
 
   fun import(input: LDJsonRecipe): IERecipeDraft {
-    val lang = input.inLanguage?.let { Language.from(it) } ?: Language.EN
+
+    val instructionGroups = LDJsonInstructionMapper.mapInstructionGroups(input.recipeInstructions)
+
+    val lang =
+      input.inLanguage?.let { Language.from(it) } ?: getLanguage(instructionGroups) ?: Language.EN
 
     return IERecipeDraft(
       cookTime = input.cookTime,
@@ -34,7 +43,7 @@ class IEPluginLDJsonImporter(private val context: IEPluginContext) {
       prepTime = input.prepTime,
       restTime = null,
       serving = mapServing(input.recipeYield ?: input.yield),
-      instructionGroups = LDJsonInstructionMapper.mapInstructionGroups(input.recipeInstructions),
+      instructionGroups = instructionGroups,
       ingredientGroups = LDJsonIngredientMapper.mapIngredientGroups(input.recipeIngredient),
       categories = input.recipeCategory.filter(StringUtils::isNotBlank),
       tags = input.keywords.filter(StringUtils::isNotBlank).map { it.toKebabCase() },
@@ -42,6 +51,12 @@ class IEPluginLDJsonImporter(private val context: IEPluginContext) {
       url = input.url,
       language = lang,
     )
+  }
+
+  private fun getLanguage(input: List<IERecipeDraftInstructionGroup>): Language? {
+    val text = input.flatMap { it.instructions }.mapNotNull { it.label }.joinToString("\n")
+
+    return languageDetectorService.getLanguage(text)
   }
 
   private fun mapDiet(input: LDJsonRestrictedDiet?): Diet? =

@@ -12,10 +12,13 @@ import de.flavormate.extensions.importExport.plugins.ld_json.models.types.LDJson
 import de.flavormate.extensions.importExport.plugins.ld_json.models.types.step.LDJsonHowToSection
 import de.flavormate.extensions.importExport.plugins.ld_json.models.types.step.LDJsonHowToStep
 import de.flavormate.shared.enums.Language
+import de.flavormate.shared.services.LanguageDetectorService
 import de.flavormate.utils.beautify
 
-object IEPluginLDJsonExporter {
-  fun export(input: IERecipe, language: Language): LDJsonRecipe {
+class IEPluginLDJsonExporter(private val languageDetectorService: LanguageDetectorService) {
+  fun export(input: IERecipe): LDJsonRecipe {
+    val language = getLanguage(input.instructionGroups) ?: Language.EN
+
     return LDJsonRecipe().apply {
       this.cookTime = input.cookTime
       this.nutrition = input.calculateNutrition()?.let { mapNutrition(it) }
@@ -39,6 +42,11 @@ object IEPluginLDJsonExporter {
       this.name = input.label
       this.url = input.url
     }
+  }
+
+  private fun getLanguage(input: List<IERecipeInstructionGroup>): Language? {
+    val text = input.flatMap { it.instructions }.joinToString("\n") { it.label }
+    return languageDetectorService.getLanguage(text)
   }
 
   private fun mapInstructionGroup(input: IERecipeInstructionGroup) =
