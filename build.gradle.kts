@@ -1,4 +1,5 @@
 import java.time.LocalDate
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -46,11 +47,15 @@ dependencies {
   implementation(libs.ksoup.general)
   implementation(libs.ksoup.network)
   implementation(libs.apache.http.client5)
+  implementation(libs.apache.tika.core)
+  implementation(libs.apache.tika.langdetect)
 
   testImplementation("io.quarkus:quarkus-junit")
   testImplementation("io.quarkus:quarkus-junit-mockito")
   testImplementation("io.rest-assured:rest-assured")
   testImplementation(libs.assertj)
+  testImplementation("io.quarkus:quarkus-jdbc-h2")
+  testImplementation("io.quarkus:quarkus-test-security-jwt")
 }
 
 group = "de.flavormate"
@@ -75,7 +80,7 @@ allOpen {
 
 kotlin {
   compilerOptions {
-    jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
+    jvmTarget = JvmTarget.JVM_25
     javaParameters = true
   }
 }
