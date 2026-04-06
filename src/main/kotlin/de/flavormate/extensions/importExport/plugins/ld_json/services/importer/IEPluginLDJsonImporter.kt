@@ -20,9 +20,9 @@ import kotlin.io.path.createTempFile
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 
-class IEPluginLDJsonMapper(private val context: IEPluginContext) {
+class IEPluginLDJsonImporter(private val context: IEPluginContext) {
 
-  fun map(input: LDJsonRecipe): IERecipeDraft {
+  fun import(input: LDJsonRecipe): IERecipeDraft {
     val lang = input.inLanguage?.let { Language.from(it) } ?: Language.EN
 
     return IERecipeDraft(

@@ -1,8 +1,8 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.importExport.plugins.ld_json.mappers
 
-import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeInstructionGroup
-import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeInstructionGroupItem
+import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraftInstructionGroup
+import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraftInstructionGroupItem
 import de.flavormate.extensions.importExport.plugins.ld_json.models.types.step.LDJsonHowToSection
 import de.flavormate.extensions.importExport.plugins.ld_json.models.types.step.LDJsonHowToStep
 import de.flavormate.extensions.importExport.plugins.ld_json.models.types.step.LDJsonStep
@@ -10,7 +10,7 @@ import de.flavormate.extensions.importExport.plugins.ld_json.models.types.step.L
 object LDJsonInstructionMapper {
 
   /**
-   * Maps a list of `LDJsonStep` elements to a list of `IERecipeInstructionGroup` objects by
+   * Maps a list of `LDJsonStep` elements to a list of `IERecipeDraftInstructionGroup` objects by
    * determining their grouping structure and applying the appropriate transformation.
    *
    * If the input does not contain any grouped elements, it creates a single instruction group. If
@@ -21,10 +21,10 @@ object LDJsonInstructionMapper {
    * @param input A list of `LDJsonStep` elements representing the instructional steps to be
    *   grouped. This list may contain elements of types such as `LDJsonHowToStep` and
    *   `LDJsonHowToSection`.
-   * @return A list of `IERecipeInstructionGroup` instances that represent the transformed and
+   * @return A list of `IERecipeDraftInstructionGroup` instances that represent the transformed and
    *   grouped instructions derived from the input steps.
    */
-  fun mapInstructionGroups(input: List<LDJsonStep>): List<IERecipeInstructionGroup> {
+  fun mapInstructionGroups(input: List<LDJsonStep>): List<IERecipeDraftInstructionGroup> {
     return when {
       !containsGroups(input) -> createSingleGroup(input)
       hasSingleInstructionGroups(input) -> createFlattenedGroup(flattenGroups(input))
@@ -79,11 +79,11 @@ object LDJsonInstructionMapper {
    *
    * @param steps A list of LDJsonStep instances that represent the steps to be included in the
    *   instruction group.
-   * @return A list containing a single IERecipeInstructionGroup, where the steps are mapped to
+   * @return A list containing a single IERecipeDraftInstructionGroup, where the steps are mapped to
    *   instruction items and indexed sequentially.
    */
-  private fun createSingleGroup(steps: List<LDJsonStep>): List<IERecipeInstructionGroup> =
-    IERecipeInstructionGroup(
+  private fun createSingleGroup(steps: List<LDJsonStep>): List<IERecipeDraftInstructionGroup> =
+    IERecipeDraftInstructionGroup(
         label = null,
         index = 0,
         instructions =
@@ -91,8 +91,8 @@ object LDJsonInstructionMapper {
       )
       .let { listOf(it) }
 
-  private fun createFlattenedGroup(steps: List<LDJsonStep>): List<IERecipeInstructionGroup> =
-    IERecipeInstructionGroup(
+  private fun createFlattenedGroup(steps: List<LDJsonStep>): List<IERecipeDraftInstructionGroup> =
+    IERecipeDraftInstructionGroup(
         label = null,
         index = 0,
         instructions =
@@ -108,18 +108,18 @@ object LDJsonInstructionMapper {
       .let { listOf(it) }
 
   /**
-   * Creates a list of `IERecipeInstructionGroup` from a list of `LDJsonStep` elements by processing
-   * each step and grouping related instructions into structured groups.
+   * Creates a list of `IERecipeDraftInstructionGroup` from a list of `LDJsonStep` elements by
+   * processing each step and grouping related instructions into structured groups.
    *
    * @param steps A list of `LDJsonStep` elements representing the steps to be converted into
    *   instruction groups.
-   * @return A list of `IERecipeInstructionGroup` where each group contains a label, index, and a
-   *   list of instructions.
+   * @return A list of `IERecipeDraftInstructionGroup` where each group contains a label, index, and
+   *   a list of instructions.
    */
-  private fun createMultipleGroups(steps: List<LDJsonStep>): List<IERecipeInstructionGroup> =
+  private fun createMultipleGroups(steps: List<LDJsonStep>): List<IERecipeDraftInstructionGroup> =
     steps.mapIndexedNotNull { index, step ->
       (step as? LDJsonHowToSection)?.let { section ->
-        IERecipeInstructionGroup(
+        IERecipeDraftInstructionGroup(
           label = section.name,
           index = index,
           instructions =
@@ -132,16 +132,17 @@ object LDJsonInstructionMapper {
 
   /**
    * Maps an `LDJsonHowToStep` object and its positional index to an instance of
-   * `IERecipeInstructionGroupItem`.
+   * `IERecipeDraftInstructionGroupItem`.
    *
    * @param input Represents an individual step or text data from LD+JSON (supports HowToStep or
    *   Text schema).
    * @param index Positional index of the step in the sequence.
-   * @return A new instance of `IERecipeInstructionGroupItem`, populated with the step's label and
-   *   index values.
+   * @return A new instance of `IERecipeDraftInstructionGroupItem`, populated with the step's label
+   *   and index values.
    */
   private fun mapInstructionGroupItem(
     input: LDJsonHowToStep,
     index: Int,
-  ): IERecipeInstructionGroupItem = IERecipeInstructionGroupItem(label = input.text, index = index)
+  ): IERecipeDraftInstructionGroupItem =
+    IERecipeDraftInstructionGroupItem(label = input.text, index = index)
 }
