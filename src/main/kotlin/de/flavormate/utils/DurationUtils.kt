@@ -24,3 +24,6 @@ object DurationUtils {
     }
   }
 }
+
+operator fun Duration?.plus(other: Duration?): Duration =
+  (this ?: Duration.ZERO) + (other ?: Duration.ZERO)
