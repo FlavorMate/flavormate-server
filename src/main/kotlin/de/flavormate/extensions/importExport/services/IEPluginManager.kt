@@ -1,13 +1,17 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.importExport.services
 
+import de.flavormate.exceptions.FBadRequestException
+import de.flavormate.exceptions.FInternalErrorException
 import de.flavormate.extensions.importExport.interfaces.IEPlugin
 import de.flavormate.extensions.importExport.interfaces.IEPluginContext
+import de.flavormate.extensions.importExport.models.ieRecipe.IERecipe
 import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraft
 import de.flavormate.extensions.importExport.models.inputSource.IEInputSource
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Instance
-import java.io.OutputStream
+import java.nio.file.Files
+import java.nio.file.Path
 
 @ApplicationScoped
 class IEPluginManager(
@@ -35,21 +39,26 @@ class IEPluginManager(
 
   fun import(pluginId: String, input: IEInputSource): IERecipeDraft {
     val plugin =
-      getPluginById(pluginId) ?: throw IllegalArgumentException("Plugin $pluginId not found")
+      getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
+
     if (!plugin.metadata.import)
-      throw IllegalArgumentException("Plugin $pluginId does not support import")
+      throw FBadRequestException("Plugin $pluginId does not support import")
 
     val context = createContext()
 
     return plugin.import(input, context)
   }
 
-  fun export(pluginId: String, draft: IERecipeDraft, output: OutputStream) {
+  fun export(pluginId: String, draft: IERecipe): Path {
     val plugin =
-      getPluginById(pluginId) ?: throw IllegalArgumentException("Plugin $pluginId not found")
+      getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
+
     if (!plugin.metadata.export)
-      throw IllegalArgumentException("Plugin $pluginId does not support export")
-    plugin.export(draft, output, createContext())
+      throw FBadRequestException("Plugin $pluginId does not support export")
+
+    val workDirectory = Files.createTempDirectory("ie-export-")
+
+    return plugin.export(draft, workDirectory, createContext())
   }
 
   fun createContext() =

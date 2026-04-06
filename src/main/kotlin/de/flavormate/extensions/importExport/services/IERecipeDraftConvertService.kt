@@ -1,6 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.importExport.services
 
+import de.flavormate.extensions.importExport.models.common.IENutrition
 import de.flavormate.extensions.importExport.models.ieRecipeDraft.*
 import de.flavormate.features.category.daos.models.CategoryEntity
 import de.flavormate.features.category.repositories.CategoryRepository
@@ -83,7 +84,7 @@ class IERecipeDraftConvertService(
   }
 
   private fun mapInstructionGroup(
-    input: IERecipeInstructionGroup,
+    input: IERecipeDraftInstructionGroup,
     recipe: RecipeDraftEntity,
   ): RecipeDraftInstructionGroupEntity {
     return RecipeDraftInstructionGroupEntity().apply {
@@ -95,7 +96,7 @@ class IERecipeDraftConvertService(
   }
 
   private fun mapInstruction(
-    input: IERecipeInstructionGroupItem,
+    input: IERecipeDraftInstructionGroupItem,
     group: RecipeDraftInstructionGroupEntity,
   ): RecipeDraftInstructionGroupItemEntity {
     return RecipeDraftInstructionGroupItemEntity.create(
@@ -106,7 +107,7 @@ class IERecipeDraftConvertService(
   }
 
   private fun mapIngredientGroup(
-    input: IERecipeIngredientGroup,
+    input: IERecipeDraftIngredientGroup,
     recipe: RecipeDraftEntity,
     language: String,
   ): RecipeDraftIngredientGroupEntity {
@@ -120,7 +121,7 @@ class IERecipeDraftConvertService(
   }
 
   private fun mapIngredient(
-    input: IERecipeIngredientGroupItem,
+    input: IERecipeDraftIngredientGroupItem,
     group: RecipeDraftIngredientGroupEntity,
     language: String,
   ): RecipeDraftIngredientGroupItemEntity? {
@@ -155,7 +156,7 @@ class IERecipeDraftConvertService(
   }
 
   private fun mapIngredientNutrition(
-    input: IERecipeIngredientGroupItemNutrition?
+    input: IENutrition?
   ): RecipeDraftIngredientGroupItemNutritionEntity {
     if (input == null) return RecipeDraftIngredientGroupItemNutritionEntity()
 
