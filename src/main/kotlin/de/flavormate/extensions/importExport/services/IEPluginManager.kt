@@ -38,7 +38,7 @@ class IEPluginManager(
         it.metadata.supportedExtensions.contains(extension.lowercase().removePrefix("."))
     }
 
-  fun import(pluginId: String, input: IEInputSource): IERecipeDraft {
+  fun import(pluginId: String, input: List<IEInputSource>): IERecipeDraft {
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
@@ -50,7 +50,7 @@ class IEPluginManager(
     return plugin.import(input, context)
   }
 
-  fun export(pluginId: String, draft: IERecipe): Path {
+  fun export(pluginId: String, recipes: List<IERecipe>): Path {
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
@@ -59,7 +59,7 @@ class IEPluginManager(
 
     val workDirectory = Files.createTempDirectory("ie-export-")
 
-    return plugin.export(draft, workDirectory, createContext())
+    return plugin.export(recipes, workDirectory, createContext())
   }
 
   fun createContext() =
