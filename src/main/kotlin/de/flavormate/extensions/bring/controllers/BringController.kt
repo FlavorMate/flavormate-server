@@ -29,12 +29,13 @@ class BringController(val bringService: BringService, private val shareService: 
   fun shareBring(@RestPath token: String, @RestPath id: String) = bringService.shareBring(id = id)
 
   @GET
-  @Path("/{token}/{id}/file")
+  @Path("/{token}/{id}/file/{fileId}")
   @RolesAllowed(RoleTypes.BRING_VALUE)
   @Produces(MimeTypes.WEBP_MIME)
-  fun shareFile(
+  fun shareFileId(
     @RestPath token: String,
     @RestPath id: String,
+    @RestPath fileId: String,
     @RestQuery resolution: ImageResolution?,
-  ) = shareService.shareFile(id = id, resolution = resolution)
+  ) = shareService.shareFileId(id = id, fileId = fileId, resolution = resolution)
 }

@@ -1,11 +1,15 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.bring.services
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.bring.controllers.BringController
+import de.flavormate.extensions.importExport.plugins.ld_json.models.LDJsonRecipe
+import de.flavormate.extensions.importExport.services.IEPluginManager
 import de.flavormate.features.recipe.repositories.RecipeRepository
 import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
@@ -17,7 +21,6 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.UriBuilder
 import org.apache.hc.core5.net.URIBuilder
-import org.schema.mappers.LDRecipeRecipeEntityMapper
 
 @RequestScoped
 class BringService(
@@ -27,6 +30,7 @@ class BringService(
   private val recipeRepository: RecipeRepository,
   private val tokenService: AuthTokenService,
   private val templateService: TemplateService,
+  private val pluginManager: IEPluginManager,
 ) {
 
   private val server
@@ -57,21 +61,29 @@ class BringService(
     val recipeEntity =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
 
-    val imagePath =
-      UriBuilder.fromResource(BringController::class.java)
-        .path(BringController::class.java, BringController::shareFile.name)
-        .queryParam("resolution", ImageResolution.Original.name)
-        .build(authorizationDetails.token, id)
-        .toString()
+    val images =
+      recipeEntity.files.map {
+        val path =
+          UriBuilder.fromResource(BringController::class.java)
+            .path(BringController::class.java, BringController::shareFileId.name)
+            .build(authorizationDetails.token, id, it.id)
+            .toString()
+        URIBuilder(server)
+          .appendPath(path)
+          .addParameter("resolution", ImageResolution.Original.name)
+          .toString()
+      }
 
-    val ldJson =
-      LDRecipeRecipeEntityMapper.mapNotNullWithToken(
-        input = recipeEntity,
-        server = server,
-        path = imagePath,
+    val ldJsonFile = pluginManager.exportSingle(pluginId = "ld_json", recipe = recipeEntity)
+
+    val ldJson = CustomObjectMapper.instance.readValue<LDJsonRecipe>(ldJsonFile.toFile())
+
+    ldJson.images = images
+
+    val data =
+      mutableMapOf<String, Any?>(
+        "json" to JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ldJson)
       )
-
-    val data = mutableMapOf<String, Any?>("json" to JSONUtils.mapper.writeValueAsString(ldJson))
 
     return templateService.handleTemplate(bringTemplate, data).render()
   }

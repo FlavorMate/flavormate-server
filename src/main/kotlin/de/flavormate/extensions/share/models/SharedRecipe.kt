@@ -5,6 +5,7 @@ data class SharedRecipe(
   val id: String,
   val label: String,
   val cover: String?,
+  val images: List<String>,
   val description: String?,
   val prepTime: String?,
   val cookTime: String?,
