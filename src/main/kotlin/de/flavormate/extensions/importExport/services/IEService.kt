@@ -2,6 +2,7 @@
 package de.flavormate.extensions.importExport.services
 
 import de.flavormate.exceptions.FBadRequestException
+import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.importExport.models.IEPluginMetadata
 import de.flavormate.extensions.importExport.models.inputSource.FileInputSource
 import de.flavormate.extensions.importExport.models.inputSource.IEInputSource
@@ -11,14 +12,13 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.StreamingOutput
 import java.io.File
-import java.nio.file.Files
-import org.apache.commons.io.FileUtils
+import java.nio.file.Path
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.inputStream
 
 @RequestScoped
 class IEService(
   private val iePluginManager: IEPluginManager,
-  private val ieRecipeDraftConvertService: IERecipeDraftConvertService,
-  private val ieRecipeConvertService: IERecipeConvertService,
   private val recipeRepository: RecipeRepository,
 ) {
 
@@ -48,24 +48,39 @@ class IEService(
     return drafts.map { it.id }
   }
 
-  fun export(pluginId: String, recipes: List<String>): Response {
-    if (recipes.isEmpty()) {
+  fun exportSingle(pluginId: String, recipeId: String): Response {
+    val recipe =
+      recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found")
+
+    val file = iePluginManager.exportSingle(pluginId, recipe)
+
+    return export(file)
+  }
+
+  fun exportMultiple(pluginId: String, recipeIds: List<String>): Response {
+    if (recipeIds.isEmpty()) {
       throw FBadRequestException("No recipes provided")
     }
 
-    val workDirectory = Files.createDirectories(Files.createTempDirectory("ie-export-"))
+    val recipes = recipeIds.mapNotNull { recipeRepository.findById(it) }
 
-    val files = recipes.mapNotNull { recipeRepository.findById(it) }
+    if (recipes.isEmpty()) {
+      throw FNotFoundException(message = "Recipes not found")
+    }
 
-    val zipFile = iePluginManager.export(pluginId, workDirectory, files)
+    val zipFile = iePluginManager.exportMultiple(pluginId, recipes)
 
+    return export(zipFile)
+  }
+
+  private fun export(input: Path): Response {
     val stream = StreamingOutput { output ->
-      Files.newInputStream(zipFile).use { input -> input.copyTo(output) }
-      FileUtils.deleteDirectory(workDirectory.toFile())
+      input.inputStream().use { input -> input.copyTo(output) }
+      input.deleteIfExists()
     }
 
     return Response.ok(stream)
-      .header("Content-Disposition", """attachment; filename="${zipFile.fileName}"""")
+      .header("Content-Disposition", """attachment; filename="${input.fileName}"""")
       .build()
   }
 }

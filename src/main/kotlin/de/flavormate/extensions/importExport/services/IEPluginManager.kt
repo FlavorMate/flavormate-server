@@ -89,7 +89,7 @@ class IEPluginManager(
     try {
       val outputFile = callback(plugin, workDirectory)
 
-      outputFile.copyTo(tmpFile)
+      outputFile.copyTo(tmpFile, overwrite = true)
       FileUtils.deleteDirectory(workDirectory.toFile())
 
       return tmpFile
