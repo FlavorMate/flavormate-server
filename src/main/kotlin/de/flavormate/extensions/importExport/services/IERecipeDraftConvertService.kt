@@ -40,7 +40,7 @@ class IERecipeDraftConvertService(
 ) {
 
   @Transactional
-  fun map(input: IERecipeDraft): RecipeDraftEntity {
+  fun convert(input: IERecipeDraft): RecipeDraftEntity {
     val language = input.language.value
     val recipe =
       RecipeDraftEntity.create(authorizationDetails.getSelf())

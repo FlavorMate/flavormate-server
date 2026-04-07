@@ -18,6 +18,7 @@ import de.flavormate.features.unit.repositories.UnitLocalizedRepository
 import de.flavormate.shared.enums.Language
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
+import de.flavormate.shared.services.LanguageDetectorService
 import de.flavormate.utils.beautify
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
@@ -32,34 +33,39 @@ class IERecipeConvertService(
   private val recipeDraftRepository: RecipeDraftRepository,
   private val fileRecipeDraftRepository: RecipeDraftFileRepository,
   private val fileService: FileService,
+  private val languageDetectorService: LanguageDetectorService,
 ) {
 
   @Transactional
-  fun map(input: RecipeEntity, language: Language): IERecipe {
+  fun convert(input: RecipeEntity): IERecipe {
+    val language = getLanguage(input.instructionGroups) ?: Language.EN
 
-    val r =
-      IERecipe(
-        language = language,
-        id = input.id,
-        cookTime = input.cookTime,
-        course = input.course,
-        description = input.description,
-        diet = input.diet,
-        label = input.label,
-        prepTime = input.prepTime,
-        restTime = input.restTime,
-        serving = mapServing(input.serving),
-        instructionGroups = input.instructionGroups.map { mapInstructionGroup(it) },
-        ingredientGroups = input.ingredientGroups.map { mapIngredientGroup(it) },
-        categories = input.categories.map { mapCategory(it, language) },
-        tags = input.tags.map { it.label },
-        files = listOf(), // input.files.map { mapFile(it, language) },
-        url = input.url,
-        author = input.ownedBy.displayName,
-        createdOn = input.createdOn.toInstant(ZoneOffset.UTC),
-        lastModifiedOn = input.lastModifiedOn.toInstant(ZoneOffset.UTC),
-      )
-    return r
+    return IERecipe(
+      language = language,
+      id = input.id,
+      cookTime = input.cookTime,
+      course = input.course,
+      description = input.description,
+      diet = input.diet,
+      label = input.label,
+      prepTime = input.prepTime,
+      restTime = input.restTime,
+      serving = mapServing(input.serving),
+      instructionGroups = input.instructionGroups.map { mapInstructionGroup(it) },
+      ingredientGroups = input.ingredientGroups.map { mapIngredientGroup(it) },
+      categories = input.categories.map { mapCategory(it, language) },
+      tags = input.tags.map { it.label },
+      files = listOf(), // input.files.map { mapFile(it, language) },
+      url = input.url,
+      author = input.ownedBy.displayName,
+      createdOn = input.createdOn.toInstant(ZoneOffset.UTC),
+      lastModifiedOn = input.lastModifiedOn.toInstant(ZoneOffset.UTC),
+    )
+  }
+
+  private fun getLanguage(input: List<InstructionGroupEntity>): Language? {
+    val text = input.flatMap { it.instructions }.joinToString("\n") { it.label }
+    return languageDetectorService.getLanguage(text)
   }
 
   private fun mapCategory(input: CategoryEntity, language: Language): String {

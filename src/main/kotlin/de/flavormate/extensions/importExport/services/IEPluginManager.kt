@@ -5,17 +5,20 @@ import de.flavormate.exceptions.FBadRequestException
 import de.flavormate.exceptions.FInternalErrorException
 import de.flavormate.extensions.importExport.interfaces.IEPlugin
 import de.flavormate.extensions.importExport.interfaces.IEPluginContext
-import de.flavormate.extensions.importExport.models.ieRecipe.IERecipe
-import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraft
 import de.flavormate.extensions.importExport.models.inputSource.IEInputSource
+import de.flavormate.features.recipe.daos.models.RecipeEntity
+import de.flavormate.features.recipeDraft.daos.models.RecipeDraftEntity
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Instance
+import jakarta.transaction.Transactional
 import java.nio.file.Path
 
 @ApplicationScoped
 class IEPluginManager(
   private val plugins: Instance<IEPlugin>,
   private val currentContextProvider: IEPluginContextProvider,
+  private val recipeConvertService: IERecipeConvertService,
+  private val recipeDraftConvertService: IERecipeDraftConvertService,
 ) {
   fun getAllPlugins(): List<IEPlugin> = plugins.toList()
 
@@ -37,7 +40,8 @@ class IEPluginManager(
         it.metadata.supportedExtensions.contains(extension.lowercase().removePrefix("."))
     }
 
-  fun import(pluginId: String, input: List<IEInputSource>): List<IERecipeDraft> {
+  @Transactional
+  fun import(pluginId: String, input: List<IEInputSource>): List<RecipeDraftEntity> {
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
@@ -46,17 +50,21 @@ class IEPluginManager(
 
     val context = createContext()
 
-    return plugin.import(input, context)
+    val normalized = plugin.import(input, context)
+
+    return normalized.map { recipeDraftConvertService.convert(it) }
   }
 
-  fun export(pluginId: String, workDirectory: Path, recipes: List<IERecipe>): Path {
+  fun export(pluginId: String, workDirectory: Path, recipes: List<RecipeEntity>): Path {
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
     if (!plugin.metadata.export)
       throw FBadRequestException("Plugin $pluginId does not support export")
 
-    return plugin.export(recipes, workDirectory, createContext())
+    val normalized = recipes.map { recipeConvertService.convert(it) }
+
+    return plugin.export(normalized, workDirectory, createContext())
   }
 
   fun createContext() =

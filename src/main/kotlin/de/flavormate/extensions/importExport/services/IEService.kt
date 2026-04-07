@@ -7,7 +7,6 @@ import de.flavormate.extensions.importExport.models.inputSource.FileInputSource
 import de.flavormate.extensions.importExport.models.inputSource.IEInputSource
 import de.flavormate.extensions.importExport.models.inputSource.UrlInputSource
 import de.flavormate.features.recipe.repositories.RecipeRepository
-import de.flavormate.shared.enums.Language
 import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.StreamingOutput
@@ -48,7 +47,7 @@ class IEService(
 
     val drafts =
       normalized.map {
-        val draft = ieRecipeDraftConvertService.map(it)
+        val draft = ieRecipeDraftConvertService.convert(it)
         draft.id
       }
 
@@ -62,12 +61,7 @@ class IEService(
 
     val workDirectory = Files.createDirectories(Files.createTempDirectory("ie-export-"))
 
-    val files =
-      recipes.mapNotNull {
-        val recipe = recipeRepository.findById(it) ?: return@mapNotNull null
-
-        ieRecipeConvertService.map(recipe, Language.EN)
-      }
+    val files = recipes.mapNotNull { recipeRepository.findById(it) }
 
     val zipFile = iePluginManager.export(pluginId, workDirectory, files)
 
