@@ -8,7 +8,7 @@ import com.fleeksoft.ksoup.network.parseGetRequestBlocking
 import com.fleeksoft.ksoup.nodes.Document
 import com.fleeksoft.ksoup.select.Elements
 import de.flavormate.exceptions.FNotFoundException
-import de.flavormate.extensions.importExport.interfaces.IEPluginContext
+import de.flavormate.extensions.importExport.models.IEPluginContext
 import de.flavormate.extensions.importExport.plugins.ld_json.models.LDJsonRecipe
 import de.flavormate.shared.extensions.stripHTMLTags
 import de.flavormate.utils.URLUtils

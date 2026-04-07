@@ -2,7 +2,7 @@
 package de.flavormate.extensions.importExport.services
 
 import de.flavormate.exceptions.FBadRequestException
-import de.flavormate.extensions.importExport.interfaces.IEPluginMetadata
+import de.flavormate.extensions.importExport.models.IEPluginMetadata
 import de.flavormate.extensions.importExport.models.inputSource.FileInputSource
 import de.flavormate.extensions.importExport.models.inputSource.IEInputSource
 import de.flavormate.extensions.importExport.models.inputSource.UrlInputSource
@@ -43,15 +43,9 @@ class IEService(
 
     if (inputs.isEmpty()) throw FBadRequestException("No file or url provided")
 
-    val normalized = iePluginManager.import(pluginId, input = inputs)
+    val drafts = iePluginManager.importMultiple(pluginId, input = inputs)
 
-    val drafts =
-      normalized.map {
-        val draft = ieRecipeDraftConvertService.convert(it)
-        draft.id
-      }
-
-    return drafts
+    return drafts.map { it.id }
   }
 
   fun export(pluginId: String, recipes: List<String>): Response {

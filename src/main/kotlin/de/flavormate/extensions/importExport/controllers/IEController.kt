@@ -1,7 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.importExport.controllers
 
-import de.flavormate.extensions.importExport.interfaces.IEPluginMetadata
+import de.flavormate.extensions.importExport.models.IEPluginMetadata
 import de.flavormate.extensions.importExport.services.IEService
 import de.flavormate.features.role.enums.RoleTypes
 import jakarta.annotation.security.RolesAllowed

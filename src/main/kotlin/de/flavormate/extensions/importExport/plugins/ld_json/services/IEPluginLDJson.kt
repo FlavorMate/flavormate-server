@@ -2,9 +2,10 @@
 package de.flavormate.extensions.importExport.plugins.ld_json.services
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import de.flavormate.exceptions.FBadRequestException
 import de.flavormate.extensions.importExport.interfaces.IEPlugin
-import de.flavormate.extensions.importExport.interfaces.IEPluginContext
-import de.flavormate.extensions.importExport.interfaces.IEPluginMetadata
+import de.flavormate.extensions.importExport.models.IEPluginContext
+import de.flavormate.extensions.importExport.models.IEPluginMetadata
 import de.flavormate.extensions.importExport.models.ieRecipe.IERecipe
 import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraft
 import de.flavormate.extensions.importExport.models.inputSource.FileInputSource
@@ -17,7 +18,6 @@ import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.I
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonImporter
 import de.flavormate.shared.services.LanguageDetectorService
 import de.flavormate.utils.FileUtils
-import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
 import java.nio.file.Path
 import java.time.LocalDateTime
@@ -41,54 +41,72 @@ class IEPluginLDJson(private val languageDetectorService: LanguageDetectorServic
       supportedExtensions = listOf("json", "jsonld"),
     )
 
-  override fun import(inputs: List<IEInputSource>, context: IEPluginContext): List<IERecipeDraft> {
+  override fun importSingle(input: IEInputSource, context: IEPluginContext): IERecipeDraft {
     val downloader = IEPluginLDJsonDownloader(context)
     val mapper = IEPluginLDJsonImporter(context, languageDetectorService)
 
-    return inputs.mapNotNull { input ->
-      if (metadata.import.none { it.isImportSupported(input) }) {
-        Log.debug("Unsupported import type ${input::class.simpleName} for ${metadata.name}")
-        return@mapNotNull null
+    if (metadata.import.none { it.isImportSupported(input) }) {
+      throw FBadRequestException(
+        message = "Unsupported import type ${input::class.simpleName} for ${metadata.name}"
+      )
+    }
+
+    val ldJson =
+      when (input) {
+        is UrlInputSource -> downloader.download(input.name)
+        is FileInputSource -> context.objectMapper.readValue<LDJsonRecipe>(input.file)
       }
 
-      val ldJson =
-        when (input) {
-          is UrlInputSource -> downloader.download(input.name)
-          is FileInputSource -> context.objectMapper.readValue<LDJsonRecipe>(input.file)
-        }
+    return mapper.import(ldJson)
+  }
 
-      mapper.import(ldJson)
+  override fun importMultiple(
+    inputs: List<IEInputSource>,
+    context: IEPluginContext,
+  ): List<IERecipeDraft> {
+    return inputs.mapNotNull {
+      try {
+        importSingle(it, context)
+      } catch (_: Exception) {
+        null
+      }
     }
   }
 
+  /** Creates a .json file containing the recipe */
+  override fun exportSingle(input: IERecipe, workDirectory: Path, context: IEPluginContext): Path {
+    val exporter = IEPluginLDJsonExporter()
+    val outputFile = workDirectory.resolve("${input.label} (${input.id}).json")
+
+    val ldJson = exporter.export(input)
+    context.objectMapper.writeValue(outputFile.toFile(), ldJson)
+
+    return outputFile
+  }
+
   /**
-   * Creates a zip file containing the exported recipes.
+   * Creates a .zip file containing the exported recipes.
    *
    * export.zip
    * - recipe1.json
    * - recipe2.json
    */
-  override fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
+  override fun exportMultiple(
+    inputs: List<IERecipe>,
+    workDirectory: Path,
+    context: IEPluginContext,
+  ): Path {
     val zipContent = workDirectory.resolve("zipContent")
 
-    val files =
-      inputs.map { input ->
-        val exporter = IEPluginLDJsonExporter()
-        val outputFile = workDirectory.resolve("${input.label} (${input.id}).json")
-
-        val export = exporter.export(input)
-        context.objectMapper.writeValue(outputFile.toFile(), export)
-
-        outputFile
-      }
+    val files = inputs.map { input -> exportSingle(input, workDirectory, context) }
 
     files.forEach { it.copyTo(zipContent.resolve(it.fileName).createParentDirectories()) }
 
     val zipFile =
       workDirectory.resolve(
         "Export ${
-        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
-      }.zip"
+          LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
+        }.zip"
       )
 
     FileUtils.zip(sourceDir = zipContent, zipFile = zipFile)

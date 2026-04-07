@@ -1,5 +1,5 @@
 /* Licensed under AGPLv3 2024 - 2026 */
-package de.flavormate.extensions.importExport.interfaces
+package de.flavormate.extensions.importExport.models
 
 import de.flavormate.extensions.importExport.models.inputSource.IEImportType
 

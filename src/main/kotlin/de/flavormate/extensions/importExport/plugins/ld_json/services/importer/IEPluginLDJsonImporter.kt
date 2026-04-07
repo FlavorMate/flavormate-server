@@ -2,7 +2,7 @@
 package de.flavormate.extensions.importExport.plugins.ld_json.services.importer
 
 import de.flavormate.exceptions.FBadRequestException
-import de.flavormate.extensions.importExport.interfaces.IEPluginContext
+import de.flavormate.extensions.importExport.models.IEPluginContext
 import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraft
 import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraftInstructionGroup
 import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraftServing
