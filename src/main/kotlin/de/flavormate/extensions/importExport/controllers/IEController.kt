@@ -30,7 +30,7 @@ class IEController(private val service: IEService) {
   fun getAvailableExporters(): List<IEPluginMetadata> = service.getAvailableExporters()
 
   @POST
-  @Path("import/{pluginId}")
+  @Path("/import/{pluginId}")
   fun import(
     @RestPath @NotBlank pluginId: String,
     @RestForm("file") files: List<File>?,
@@ -39,7 +39,7 @@ class IEController(private val service: IEService) {
 
   @POST
   @Produces("application/zip")
-  @Path("export/single/{pluginId}")
+  @Path("/export/single/{pluginId}")
   fun exportSingle(
     @RestPath @NotBlank pluginId: String,
     @RestForm("recipe") recipe: String,
@@ -47,7 +47,7 @@ class IEController(private val service: IEService) {
 
   @POST
   @Produces("application/zip")
-  @Path("export/multiple/{pluginId}")
+  @Path("/export/multiple/{pluginId}")
   fun exportMultiple(
     @RestPath @NotBlank pluginId: String,
     @RestForm("recipe") recipes: List<String>,
