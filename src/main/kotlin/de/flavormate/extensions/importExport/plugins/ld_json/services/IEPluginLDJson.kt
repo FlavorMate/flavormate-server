@@ -41,7 +41,11 @@ class IEPluginLDJson(private val languageDetectorService: LanguageDetectorServic
       supportedExtensions = listOf("json", "jsonld"),
     )
 
-  override fun importSingle(input: IEInputSource, context: IEPluginContext): IERecipeDraft {
+  override fun importSingle(
+    input: IEInputSource,
+    workDirectory: Path,
+    context: IEPluginContext,
+  ): IERecipeDraft {
     val downloader = IEPluginLDJsonDownloader(context)
     val mapper = IEPluginLDJsonImporter(context, languageDetectorService)
 
@@ -62,11 +66,12 @@ class IEPluginLDJson(private val languageDetectorService: LanguageDetectorServic
 
   override fun importMultiple(
     inputs: List<IEInputSource>,
+    workDirectory: Path,
     context: IEPluginContext,
   ): List<IERecipeDraft> {
     return inputs.mapNotNull {
       try {
-        importSingle(it, context)
+        importSingle(it, workDirectory, context)
       } catch (_: Exception) {
         null
       }
