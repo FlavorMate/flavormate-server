@@ -41,6 +41,7 @@ dependencies {
   implementation(libs.kotlin.stdlib.jdk8)
   implementation(libs.apache.commons.io)
   implementation(libs.apache.commons.lang3)
+  implementation(libs.apache.commons.compress)
   implementation(libs.jackson.datatype.jsr310)
   implementation(libs.jackson.module.kotlin)
   implementation(libs.nanoid)
