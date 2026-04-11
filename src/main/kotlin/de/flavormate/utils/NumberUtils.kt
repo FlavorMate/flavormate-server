@@ -3,6 +3,8 @@ package de.flavormate.utils
 
 import de.flavormate.utils.NumberUtils.isInteger
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
 import java.util.regex.Pattern
 import kotlin.math.floor
 
@@ -75,5 +77,5 @@ val Double.beautify
     when {
       isInteger(this) -> this.toInt().toString()
       this < 0 -> null
-      else -> DecimalFormat("0.00").format(this)
+      else -> DecimalFormat("0.00", DecimalFormatSymbols(Locale.ENGLISH)).format(this)
     }
