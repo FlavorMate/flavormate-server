@@ -16,6 +16,7 @@ import de.flavormate.extensions.importExport.plugins.ld_json.models.LDJsonRecipe
 import de.flavormate.extensions.importExport.plugins.ld_json.services.exporter.IEPluginLDJsonExporter
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonDownloader
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonImporter
+import de.flavormate.shared.enums.Language
 import de.flavormate.shared.services.LanguageDetectorService
 import de.flavormate.utils.FileUtils
 import jakarta.enterprise.context.ApplicationScoped
@@ -31,10 +32,14 @@ class IEPluginLDJson(private val languageDetectorService: LanguageDetectorServic
   override val metadata =
     IEPluginMetadata(
       id = "ld_json",
-      name = "LD-JSON Plugin",
+      name = mapOf(Language.EN to "LD-JSON Plugin", Language.DE to "LD-JSON Plugin"),
       version = "1.0.0",
       author = "FlavorMate",
-      description = "Import and Export JSON-LD structured recipe data",
+      description =
+        mapOf(
+          Language.EN to "Import and Export JSON-LD structured recipe data",
+          Language.DE to "Import und Export von JSON-LD-Strukturierten Rezeptdaten",
+        ),
       import = listOf(IEImportType.FileImport, IEImportType.UrlImport),
       export = true, // Export not yet implemented
       supportedMimeTypes = listOf("application/ld+json", "application/json"),
