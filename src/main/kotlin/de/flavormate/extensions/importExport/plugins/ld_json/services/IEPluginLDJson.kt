@@ -18,7 +18,7 @@ import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.I
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonImporter
 import de.flavormate.shared.enums.Language
 import de.flavormate.shared.services.LanguageDetectorService
-import de.flavormate.utils.FileUtils
+import de.flavormate.utils.ZipUtils
 import jakarta.enterprise.context.ApplicationScoped
 import java.nio.file.Path
 import java.time.LocalDateTime
@@ -119,7 +119,7 @@ class IEPluginLDJson(private val languageDetectorService: LanguageDetectorServic
         }.zip"
       )
 
-    FileUtils.zip(sourceDir = zipContent, zipFile = zipFile)
+    ZipUtils.zipFile(sourceDir = zipContent, zipFile = zipFile)
 
     return zipFile
   }

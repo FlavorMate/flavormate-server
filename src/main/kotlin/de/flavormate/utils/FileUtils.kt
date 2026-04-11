@@ -6,8 +6,6 @@ import java.io.IOException
 import java.io.OutputStream
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 import kotlin.io.path.exists
 
 object FileUtils {
@@ -22,30 +20,6 @@ object FileUtils {
           output!!.write(buffer, 0, bytesRead)
         }
         output!!.flush()
-      }
-    }
-  }
-
-  fun zip(sourceDir: Path, zipFile: Path) {
-    Files.newOutputStream(zipFile).use { os ->
-      ZipOutputStream(os).use { zipOut ->
-        Files.walk(sourceDir).use { paths ->
-          paths.forEach { path ->
-            val relative = sourceDir.relativize(path).toString().replace('\\', '/')
-            if (relative.isEmpty()) return@forEach
-
-            val entryName = if (Files.isDirectory(path)) "$relative/" else relative
-            val entry = ZipEntry(entryName)
-
-            zipOut.putNextEntry(entry)
-
-            if (Files.isRegularFile(path)) {
-              Files.newInputStream(path).use { input -> input.copyTo(zipOut) }
-            }
-
-            zipOut.closeEntry()
-          }
-        }
       }
     }
   }
