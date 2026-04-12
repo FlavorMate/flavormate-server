@@ -8,7 +8,7 @@ sealed interface IEInputSource {
   val name: String?
 }
 
-data class UrlInputSource(val url: URI, override val name: String = url.toString()) :
+data class UrlInputSource(val uri: URI, override val name: String = uri.toString()) :
   IEInputSource {
   companion object {
     fun fromString(url: String) = UrlInputSource(URI.create(url))

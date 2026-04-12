@@ -12,22 +12,24 @@ import de.flavormate.extensions.importExport.models.IEPluginContext
 import de.flavormate.extensions.importExport.plugins.ld_json.models.LDJsonRecipe
 import de.flavormate.shared.extensions.stripHTMLTags
 import de.flavormate.utils.URLUtils
+import org.apache.hc.core5.net.URIBuilder
 
 class IEPluginLDJsonDownloader(private val context: IEPluginContext) {
   private val objectMapper
     get() = context.objectMapper
 
   fun download(url: String): LDJsonRecipe {
-    val cleanedUrl = URLUtils.cleanURL(url)
+    val uriBuilder = URLUtils.cleanURL(url)
 
-    val html = fetchHTML(cleanedUrl)
+    val html = fetchHTML(uriBuilder)
 
-    return processHTML(html, cleanedUrl)
+    return processHTML(html, uriBuilder)
   }
 
-  private fun fetchHTML(url: String) = Ksoup.parseGetRequestBlocking(url)
+  private fun fetchHTML(uriBuilder: URIBuilder) =
+    Ksoup.parseGetRequestBlocking(uriBuilder.toString())
 
-  private fun processHTML(html: Document, url: String): LDJsonRecipe {
+  private fun processHTML(html: Document, uriBuilder: URIBuilder): LDJsonRecipe {
     // Extract all <script> tags containing ld+json data
     val jsonLdElements: Elements = html.select("script[type=application/ld+json]")
 
@@ -43,7 +45,9 @@ class IEPluginLDJsonDownloader(private val context: IEPluginContext) {
       val recipeNode: JsonNode? = findRecipeNode(rootNode)
 
       if (recipeNode != null) {
-        return objectMapper.treeToValue<LDJsonRecipe>(recipeNode).apply { this.url = url }
+        return objectMapper.treeToValue<LDJsonRecipe>(recipeNode).apply {
+          this.url = uriBuilder.toString()
+        }
       }
     }
     throw FNotFoundException(message = "Not Found")

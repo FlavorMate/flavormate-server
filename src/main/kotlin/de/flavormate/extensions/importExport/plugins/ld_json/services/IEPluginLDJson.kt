@@ -17,6 +17,7 @@ import de.flavormate.extensions.importExport.plugins.ld_json.services.exporter.I
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonDownloader
 import de.flavormate.extensions.importExport.plugins.ld_json.services.importer.IEPluginLDJsonImporter
 import de.flavormate.shared.enums.Language
+import de.flavormate.shared.services.DownloadService
 import de.flavormate.shared.services.LanguageDetectorService
 import de.flavormate.utils.ZipUtils
 import jakarta.enterprise.context.ApplicationScoped
@@ -27,7 +28,10 @@ import kotlin.io.path.copyTo
 import kotlin.io.path.createParentDirectories
 
 @ApplicationScoped
-class IEPluginLDJson(private val languageDetectorService: LanguageDetectorService) : IEPlugin {
+class IEPluginLDJson(
+  private val languageDetectorService: LanguageDetectorService,
+  private val downloadService: DownloadService,
+) : IEPlugin {
 
   override val metadata =
     IEPluginMetadata(
@@ -52,7 +56,7 @@ class IEPluginLDJson(private val languageDetectorService: LanguageDetectorServic
     context: IEPluginContext,
   ): IERecipeDraft {
     val downloader = IEPluginLDJsonDownloader(context)
-    val mapper = IEPluginLDJsonImporter(context, languageDetectorService)
+    val mapper = IEPluginLDJsonImporter(context, languageDetectorService, downloadService)
 
     if (metadata.import.none { it.isImportSupported(input) }) {
       throw FBadRequestException(

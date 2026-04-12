@@ -35,6 +35,7 @@ dependencies {
   implementation("io.quarkus:quarkus-elytron-security-common")
   implementation("io.quarkus:quarkus-flyway")
   implementation("io.quarkus:quarkus-oidc")
+  implementation("io.quarkus:quarkus-info")
   implementation("io.quarkus:quarkus-qute")
   implementation("io.quarkus:quarkus-mailer")
   implementation("io.quarkus:quarkus-oidc-client")
