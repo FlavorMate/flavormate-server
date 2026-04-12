@@ -67,7 +67,7 @@ class RecipeCron(
   private fun cleanRecipeUrl(recipe: RecipeEntity) {
     val origUrl = recipe.url ?: return
 
-    val cleanUrl = runCatching { URLUtils.cleanURL(origUrl) }.getOrNull()
+    val cleanUrl = runCatching { URLUtils.cleanURL(origUrl).toString() }.getOrNull()
 
     if (cleanUrl == origUrl) return
 
