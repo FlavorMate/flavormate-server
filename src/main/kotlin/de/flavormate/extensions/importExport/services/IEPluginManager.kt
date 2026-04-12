@@ -10,7 +10,6 @@ import de.flavormate.features.recipe.daos.models.RecipeEntity
 import de.flavormate.features.recipeDraft.daos.models.RecipeDraftEntity
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Instance
-import jakarta.transaction.Transactional
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.copyTo
@@ -43,7 +42,6 @@ class IEPluginManager(
         it.metadata.supportedExtensions.contains(extension.lowercase().removePrefix("."))
     }
 
-  @Transactional
   fun importSingle(pluginId: String, input: IEInputSource): RecipeDraftEntity =
     prepareImportSingle(pluginId) { plugin, workDirectory ->
       val normalized = plugin.importSingle(input, workDirectory, createContext())
@@ -51,7 +49,6 @@ class IEPluginManager(
       recipeDraftConvertService.convert(normalized)
     }
 
-  @Transactional
   fun importMultiple(pluginId: String, input: List<IEInputSource>): List<RecipeDraftEntity> {
     return prepareImportMultiple(pluginId) { plugin, workDirectory ->
       val normalized = plugin.importMultiple(input, workDirectory, createContext())
