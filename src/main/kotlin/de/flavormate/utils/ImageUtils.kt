@@ -92,6 +92,7 @@ object ImageUtils {
         "-strip",
         output.toString(),
       )
+
     val result =
       ProcessBuilder(command)
         .redirectOutput(ProcessBuilder.Redirect.INHERIT)
@@ -109,11 +110,10 @@ object ImageUtils {
       listOf(
         "magick",
         input.toString(),
-        "-resize",
+        "-thumbnail",
         "${dimensions}>",
         "-quality",
         "80",
-        "-strip",
         output.toString(),
       )
     val result =
