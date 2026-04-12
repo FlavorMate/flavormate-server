@@ -2,6 +2,7 @@
 package de.flavormate.extensions.importExport.plugins.nextcloud_cookbook.services
 
 import de.flavormate.exceptions.FBadRequestException
+import de.flavormate.exceptions.FInternalErrorException
 import de.flavormate.extensions.importExport.interfaces.IEPlugin
 import de.flavormate.extensions.importExport.models.IEPluginContext
 import de.flavormate.extensions.importExport.models.IEPluginMetadata
@@ -10,23 +11,31 @@ import de.flavormate.extensions.importExport.models.ieRecipeDraft.IERecipeDraft
 import de.flavormate.extensions.importExport.models.inputSource.FileInputSource
 import de.flavormate.extensions.importExport.models.inputSource.IEImportType
 import de.flavormate.extensions.importExport.models.inputSource.IEInputSource
+import de.flavormate.extensions.importExport.models.inputSource.UrlInputSource
 import de.flavormate.extensions.importExport.plugins.ld_json.models.LDJsonRecipe
 import de.flavormate.extensions.importExport.plugins.nextcloud_cookbook.services.exporter.IEPluginLDNextcloudCookbookExporter
+import de.flavormate.extensions.importExport.plugins.nextcloud_cookbook.services.importer.IEPluginNextcloudCookbookDownloader
 import de.flavormate.extensions.importExport.plugins.nextcloud_cookbook.services.importer.IEPluginNextcloudCookbookImporter
 import de.flavormate.shared.enums.Language
+import de.flavormate.shared.services.DownloadService
 import de.flavormate.shared.services.LanguageDetectorService
 import de.flavormate.utils.ZipUtils
 import jakarta.enterprise.context.ApplicationScoped
+import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.streams.asSequence
 
 @ApplicationScoped
-class IEPluginNextcloudCookbook(private val languageDetectorService: LanguageDetectorService) :
-  IEPlugin {
+class IEPluginNextcloudCookbook(
+  private val languageDetectorService: LanguageDetectorService,
+  private val downloadService: DownloadService,
+) : IEPlugin {
 
   override val metadata =
     IEPluginMetadata(
@@ -39,7 +48,7 @@ class IEPluginNextcloudCookbook(private val languageDetectorService: LanguageDet
           Language.EN to "Import and Export recipes from the Nextcloud Cookbook App",
           Language.DE to "Import und Export von Rezepten aus der Nextcloud Kochbuch App",
         ),
-      import = listOf(IEImportType.FileImport),
+      import = listOf(IEImportType.FileImport, IEImportType.UrlImport),
       export = true,
       supportedMimeTypes = listOf("application/zip"),
       supportedExtensions = listOf("zip"),
@@ -58,6 +67,8 @@ class IEPluginNextcloudCookbook(private val languageDetectorService: LanguageDet
     workDirectory: Path,
     context: IEPluginContext,
   ): List<IERecipeDraft> {
+    val downloader = IEPluginNextcloudCookbookDownloader(context, downloadService)
+
     return inputs.flatMap { input ->
       if (metadata.import.none { it.isImportSupported(input) }) {
         throw FBadRequestException(
@@ -67,10 +78,9 @@ class IEPluginNextcloudCookbook(private val languageDetectorService: LanguageDet
       val zipFile =
         when (input) {
           is FileInputSource -> input.file.toPath()
-          else ->
-            throw FBadRequestException(
-              "Unsupported import type ${input::class.simpleName} for ${metadata.name}"
-            )
+          is UrlInputSource ->
+            downloader.download(input.name)
+              ?: throw FInternalErrorException("Download failed for ${input.name}")
         }
 
       handleZipFile(zipFile, workDirectory, context)
@@ -86,7 +96,22 @@ class IEPluginNextcloudCookbook(private val languageDetectorService: LanguageDet
 
     ZipUtils.unzipDir(zipFile, zipContent)
 
-    val recipeFolders = zipContent.listDirectoryEntries().first().listDirectoryEntries()
+    val rootDirectory =
+      Files.find(
+          zipContent,
+          3,
+          { path, attrs ->
+            attrs.isRegularFile && path.name.equals("recipe.json", ignoreCase = true)
+          },
+        )
+        .use { stream -> stream.asSequence().firstOrNull()?.parent?.parent }
+        ?: throw FBadRequestException("No recipes found in zip file")
+
+    if (!rootDirectory.normalize().startsWith(zipContent.normalize())) {
+      throw FBadRequestException("Invalid zip file structure: path traversal detected")
+    }
+
+    val recipeFolders = rootDirectory.listDirectoryEntries()
 
     val importer = IEPluginNextcloudCookbookImporter(languageDetectorService)
 
