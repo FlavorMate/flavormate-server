@@ -24,3 +24,6 @@ class FNotFoundException(message: String, id: String = "") :
 
 class FUnauthorizedException(message: String, id: String = "") :
   FException(status = Response.Status.UNAUTHORIZED, message = message, id = id)
+
+class FInternalErrorException(message: String, id: String = "") :
+  FException(status = Response.Status.INTERNAL_SERVER_ERROR, message = message, id = id)

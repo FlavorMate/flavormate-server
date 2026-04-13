@@ -1,4 +1,5 @@
 import java.time.LocalDate
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -34,28 +35,34 @@ dependencies {
   implementation("io.quarkus:quarkus-elytron-security-common")
   implementation("io.quarkus:quarkus-flyway")
   implementation("io.quarkus:quarkus-oidc")
+  implementation("io.quarkus:quarkus-info")
   implementation("io.quarkus:quarkus-qute")
   implementation("io.quarkus:quarkus-mailer")
   implementation("io.quarkus:quarkus-oidc-client")
   implementation(libs.kotlin.stdlib.jdk8)
   implementation(libs.apache.commons.io)
   implementation(libs.apache.commons.lang3)
+  implementation(libs.apache.commons.compress)
   implementation(libs.jackson.datatype.jsr310)
   implementation(libs.jackson.module.kotlin)
   implementation(libs.nanoid)
   implementation(libs.ksoup.general)
   implementation(libs.ksoup.network)
   implementation(libs.apache.http.client5)
+  implementation(libs.apache.tika.core)
+  implementation(libs.apache.tika.langdetect)
 
   testImplementation("io.quarkus:quarkus-junit")
   testImplementation("io.quarkus:quarkus-junit-mockito")
   testImplementation("io.rest-assured:rest-assured")
   testImplementation(libs.assertj)
+  testImplementation("io.quarkus:quarkus-jdbc-h2")
+  testImplementation("io.quarkus:quarkus-test-security-jwt")
 }
 
 group = "de.flavormate"
 
-version = "4.1.1"
+version = "5.0.0"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_25
@@ -75,7 +82,7 @@ allOpen {
 
 kotlin {
   compilerOptions {
-    jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
+    jvmTarget = JvmTarget.JVM_25
     javaParameters = true
   }
 }

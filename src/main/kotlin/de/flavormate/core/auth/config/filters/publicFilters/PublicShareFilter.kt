@@ -17,7 +17,7 @@ class PublicShareFilter(tokenService: AuthTokenService) : PublicFilter(tokenServ
   override val securedMethods by lazy {
     listOf(
       ShareController::shareWeb.javaMethod,
-      ShareController::shareFile.javaMethod,
+      ShareController::shareFileId.javaMethod,
       ShareController::openInApp.javaMethod,
     )
   }

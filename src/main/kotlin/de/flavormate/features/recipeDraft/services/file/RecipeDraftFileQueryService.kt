@@ -43,7 +43,7 @@ class RecipeDraftFileQueryService(
     return fileService.streamFile(
       prefix = FilePath.RecipeDraft,
       uuid = fileEntity.id,
-      fileName = resolution.path,
+      fileName = if (fileEntity.isTemporary) ImageResolution.Original.path else resolution.path,
     )
   }
 

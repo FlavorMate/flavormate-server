@@ -42,6 +42,8 @@ quarkus:
     cors:
       enabled: true
       origins: ${flavormate.server.cors-allowed-origins}
+    limits:
+      max-body-size: ${flavormate.server.max-body-size}
 
   devservices:
     enabled: false
@@ -87,6 +89,7 @@ flavormate:
     path: ${FLAVORMATE_SERVER_PATH:/}
     port: ${FLAVORMATE_SERVER_PORT:8080}
     cors-allowed-origins: ${FLAVORMATE_SERVER_CORS_ALLOWED_ORIGINS}
+    max-body-size: ${FLAVORMATE_SERVER_MAX_BODY_SIZE:1G}
 
   general:
     admin:
@@ -117,8 +120,6 @@ flavormate:
       enabled: ${FLAVORMATE_FEATURE_REGISTRATION:false}
     recovery:
       enabled: ${FLAVORMATE_FEATURE_RECOVERY:false}
-    scraper-import:
-      enabled: true
     story:
       enabled: ${FLAVORMATE_FEATURE_STORY:false}
     bring:

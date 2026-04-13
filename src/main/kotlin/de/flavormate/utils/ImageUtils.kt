@@ -62,6 +62,14 @@ object ImageUtils {
     }
   }
 
+  fun createOriginal(inputFile: Path, outputDir: Path) {
+    // Create full image
+    val entry = ImageResolution.Original
+    val outputFile = outputDir.resolve(entry.path)
+    outputFile.parent.createDirectories()
+    scaleMagick(input = inputFile, output = outputFile, dimensions = entry.resolution)
+  }
+
   fun resizeMagick(input: Path, output: Path, dimensions: String): Boolean {
     val command =
       listOf(
@@ -92,6 +100,7 @@ object ImageUtils {
         "-strip",
         output.toString(),
       )
+
     val result =
       ProcessBuilder(command)
         .redirectOutput(ProcessBuilder.Redirect.INHERIT)
@@ -109,11 +118,10 @@ object ImageUtils {
       listOf(
         "magick",
         input.toString(),
-        "-resize",
+        "-thumbnail",
         "${dimensions}>",
         "-quality",
         "80",
-        "-strip",
         output.toString(),
       )
     val result =

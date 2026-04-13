@@ -37,14 +37,15 @@ class ShareController(val service: ShareService) {
   fun shareWeb(@RestPath token: String, @RestPath id: String) = service.shareWeb(id)
 
   @GET
-  @Path("/{token}/{id}/file")
+  @Path("/{token}/{id}/file/{fileId}")
   @RolesAllowed(RoleTypes.SHARE_VALUE)
   @Produces(MimeTypes.WEBP_MIME)
-  fun shareFile(
+  fun shareFileId(
     @RestPath token: String,
     @RestPath id: String,
+    @RestPath fileId: String,
     @RestQuery resolution: ImageResolution?,
-  ) = service.shareFile(id = id, resolution = resolution)
+  ) = service.shareFileId(id = id, fileId = fileId, resolution = resolution)
 
   @Path("/{token}/{id}/in-app")
   @RolesAllowed(RoleTypes.SHARE_VALUE)

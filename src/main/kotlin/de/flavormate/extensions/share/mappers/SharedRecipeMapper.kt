@@ -1,8 +1,6 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.share.mappers
 
-import de.flavormate.configuration.properties.FlavorMateProperties
-import de.flavormate.extensions.share.controllers.ShareController
 import de.flavormate.extensions.share.models.SharedIngredientGroup
 import de.flavormate.extensions.share.models.SharedInstructionGroup
 import de.flavormate.extensions.share.models.SharedRecipe
@@ -14,36 +12,22 @@ import de.flavormate.features.recipe.daos.models.ingredient.IngredientGroupEntit
 import de.flavormate.features.recipe.daos.models.instruction.InstructionGroupEntity
 import de.flavormate.shared.enums.Course
 import de.flavormate.shared.enums.Diet
-import de.flavormate.shared.enums.ImageResolution
-import de.flavormate.shared.interfaces.BasicMapper
-import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.TemplateService
 import de.flavormate.utils.DurationUtils
 import de.flavormate.utils.NumberUtils
-import jakarta.enterprise.context.RequestScoped
-import jakarta.ws.rs.core.UriBuilder
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import org.apache.commons.lang3.StringUtils
-import org.apache.hc.core5.net.URIBuilder
 
-@RequestScoped
-class SharedRecipeMapper(
-  private val authorizationDetails: AuthorizationDetails,
-  private val templateService: TemplateService,
-  private val flavorMateProperties: FlavorMateProperties,
-) : BasicMapper<RecipeEntity, SharedRecipe>() {
-
-  private val server
-    get() = flavorMateProperties.server().url()
-
-  override fun mapNotNullBasic(input: RecipeEntity): SharedRecipe {
+class SharedRecipeMapper(private val templateService: TemplateService) {
+  fun map(input: RecipeEntity, images: List<String>): SharedRecipe {
     return SharedRecipe(
       id = input.id,
       label = input.label,
-      cover = input.coverFile?.let { mapCover(input.id) },
+      cover = images.firstOrNull(),
+      images = images,
       description = input.description,
       prepTime = input.prepTime.takeIf { it.seconds != 0L }?.let { mapDuration(it) },
       cookTime = input.cookTime.takeIf { it.seconds != 0L }?.let { mapDuration(it) },
@@ -59,19 +43,6 @@ class SharedRecipeMapper(
       version = input.version,
       url = input.url,
     )
-  }
-
-  private fun mapCover(id: String): String {
-    val token = authorizationDetails.token
-    val quality = ImageResolution.W1280.name
-
-    val path =
-      UriBuilder.fromResource(ShareController::class.java)
-        .path(ShareController::class.java, ShareController::shareFile.name)
-        .build(token, id)
-        .toString()
-
-    return URIBuilder(server).appendPath(path).addParameter("resolution", quality).toString()
   }
 
   private fun mapDuration(input: Duration): String {

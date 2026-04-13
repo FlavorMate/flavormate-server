@@ -20,8 +20,6 @@ class AuthorizationDetails(
 ) {
   @Context private lateinit var httpHeaders: HttpHeaders
 
-  private var self: AccountEntity? = null
-
   private val jwt: JsonWebToken
     get() = securityIdentity.principal as JsonWebToken
 
@@ -46,15 +44,6 @@ class AuthorizationDetails(
   val email: String?
     get() = jwt.getClaim<String>("email")
 
-  private fun getAccount(): AccountEntity {
-    if (self == null) {
-      self =
-        accountRepository.findById(subject)
-          ?: throw FNotFoundException(message = "AccountEntity with id $subject not found", id = "")
-    }
-    return self!!
-  }
-
   val userAgent: String?
     get() = httpHeaders.getHeaderString("User-Agent").takeIf(ValidatorUtils::validateUserAgent)
 
@@ -70,5 +59,15 @@ class AuthorizationDetails(
     return isAdmin() || isOwner(target)
   }
 
-  fun getSelf() = getAccount()
+  // TODO: introduce null aware cache
+  private var cachedAccount: AccountEntity? = null
+
+  val account
+    get(): AccountEntity? =
+      cachedAccount ?: accountRepository.findById(subject).also { cachedAccount = it }
+
+  // TODO: make this a property named something like "requireAccount"
+  fun getSelf() =
+    account
+      ?: throw FNotFoundException(message = "AccountEntity with id $subject not found", id = "")
 }

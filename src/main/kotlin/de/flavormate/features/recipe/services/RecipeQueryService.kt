@@ -46,7 +46,7 @@ class RecipeQueryService(
     return fileService.streamFile(
       prefix = FilePath.Recipe,
       uuid = cover.id,
-      fileName = resolution.path,
+      fileName = if (cover.isTemporary) ImageResolution.Original.path else resolution.path,
     )
   }
 
@@ -59,7 +59,7 @@ class RecipeQueryService(
     return fileService.streamFile(
       prefix = FilePath.Recipe,
       uuid = fileEntity.id,
-      fileName = resolution.path,
+      fileName = if (fileEntity.isTemporary) ImageResolution.Original.path else resolution.path,
     )
   }
 

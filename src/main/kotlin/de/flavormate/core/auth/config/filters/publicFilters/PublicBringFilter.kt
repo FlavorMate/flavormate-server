@@ -15,6 +15,6 @@ class PublicBringFilter(tokenService: AuthTokenService) : PublicFilter(tokenServ
 
   override val securedClass by lazy { BringController::class.java }
   override val securedMethods by lazy {
-    listOf(BringController::shareBring.javaMethod, BringController::shareFile.javaMethod)
+    listOf(BringController::shareBring.javaMethod, BringController::shareFileId.javaMethod)
   }
 }

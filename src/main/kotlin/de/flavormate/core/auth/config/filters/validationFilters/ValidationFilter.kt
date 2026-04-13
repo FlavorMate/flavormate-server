@@ -33,12 +33,12 @@ class ValidationFilter(private val tokenService: AuthTokenService) : ContainerRe
   private val securedMethods by lazy {
     listOf(
       BringController::shareBring.javaMethod,
-      BringController::shareFile.javaMethod,
+      BringController::shareFileId.javaMethod,
       RecoveryController::showPasswordResetPage.javaMethod,
       RecoveryController::handlePasswordReset.javaMethod,
       RegistrationController::register.javaMethod,
       ShareController::shareWeb.javaMethod,
-      ShareController::shareFile.javaMethod,
+      ShareController::shareFileId.javaMethod,
       ShareController::openInApp.javaMethod,
     )
   }

@@ -8,6 +8,6 @@ object OIDCUtils {
 
   fun cleanURL(url: String): String {
     val urlWithSuffix = if (url.endsWith(OPENID_SUFFIX)) url else url + OPENID_SUFFIX
-    return URLUtils.cleanURL(urlWithSuffix)
+    return URLUtils.cleanURL(urlWithSuffix).toString()
   }
 }

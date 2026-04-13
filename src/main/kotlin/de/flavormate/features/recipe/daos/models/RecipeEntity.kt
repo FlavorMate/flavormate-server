@@ -23,10 +23,15 @@ import org.hibernate.type.SqlTypes
 class RecipeEntity : OwnedEntity() {
   lateinit var label: String
 
-  @OneToMany(cascade = [CascadeType.ALL], mappedBy = "recipe", fetch = FetchType.LAZY)
+  @OneToMany(
+    cascade = [CascadeType.ALL],
+    mappedBy = "recipe",
+    fetch = FetchType.LAZY,
+    orphanRemoval = true,
+  )
   lateinit var files: MutableList<RecipeFileEntity>
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
   @JoinColumn(name = "cover_file", referencedColumnName = "id")
   var coverFile: RecipeFileEntity? = null
 
