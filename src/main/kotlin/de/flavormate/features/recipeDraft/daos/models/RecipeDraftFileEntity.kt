@@ -24,6 +24,9 @@ class RecipeDraftFileEntity : OwnedEntity() {
   @JoinColumn(name = "recipe_draft_id", referencedColumnName = "id")
   lateinit var recipeDraft: RecipeDraftEntity
 
+  val isTemporary
+    get() = temporaryFile != null
+
   companion object {
     fun create(
       account: AccountEntity,

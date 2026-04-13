@@ -20,6 +20,7 @@ import de.flavormate.shared.enums.FilePath
 import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
+import de.flavormate.utils.ImageUtils
 import de.flavormate.utils.MimeTypes
 import de.flavormate.utils.NumberUtils
 import io.quarkus.logging.Log
@@ -27,7 +28,6 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import java.io.File
 import java.time.Duration
-import kotlin.io.path.copyTo
 import kotlin.io.path.name
 import org.apache.commons.lang3.StringUtils
 
@@ -186,14 +186,14 @@ class IERecipeDraftConvertService(
         RecipeDraftFileEntity.create(
             authorizationDetails.getSelf(),
             draft,
-            ImageResolution.Temporary.fileName.name,
+            ImageResolution.Original.fileName.name,
           )
           .apply { this.mimeType = MimeTypes.WEBP_MIME }
           .also { fileRecipeDraftRepository.persist(it) }
 
       val destination = fileService.createPath(FilePath.RecipeDraft, entity.id)
 
-      input.toPath().copyTo(destination.resolve(ImageResolution.Temporary.path))
+      ImageUtils.createOriginal(inputFile = input.toPath(), outputDir = destination)
     } catch (e: Exception) {
       Log.error("Failed to convert image ${input.path}", e)
     } finally {

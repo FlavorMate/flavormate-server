@@ -62,6 +62,14 @@ object ImageUtils {
     }
   }
 
+  fun createOriginal(inputFile: Path, outputDir: Path) {
+    // Create full image
+    val entry = ImageResolution.Original
+    val outputFile = outputDir.resolve(entry.path)
+    outputFile.parent.createDirectories()
+    scaleMagick(input = inputFile, output = outputFile, dimensions = entry.resolution)
+  }
+
   fun resizeMagick(input: Path, output: Path, dimensions: String): Boolean {
     val command =
       listOf(

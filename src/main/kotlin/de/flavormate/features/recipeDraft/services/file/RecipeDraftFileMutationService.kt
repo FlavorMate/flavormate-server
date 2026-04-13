@@ -11,9 +11,9 @@ import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
 import de.flavormate.shared.services.TransactionService
+import de.flavormate.utils.ImageUtils
 import jakarta.enterprise.context.RequestScoped
 import java.io.File
-import kotlin.io.path.copyTo
 import kotlin.io.path.name
 
 @RequestScoped
@@ -60,12 +60,12 @@ class RecipeDraftFileMutationService(
       RecipeDraftFileEntity.create(
           account = self,
           recipeDraft = recipeDraft,
-          ImageResolution.Temporary.fileName.name,
+          ImageResolution.Original.fileName.name,
         )
         .also { fileRepository.persist(it) }
 
     val path = fileService.createPath(prefix = FilePath.RecipeDraft, uuid = fileEntity.id)
 
-    file.toPath().copyTo(path.resolve(ImageResolution.Temporary.path))
+    ImageUtils.createOriginal(inputFile = file.toPath(), outputDir = path)
   }
 }

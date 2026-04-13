@@ -1,6 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.core.cron
 
+import de.flavormate.features.recipe.repositories.RecipeFileRepository
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.shared.enums.FilePath
 import de.flavormate.shared.enums.ImageResolution
@@ -11,7 +12,6 @@ import io.quarkus.narayana.jta.QuarkusTransaction
 import io.quarkus.scheduler.Scheduled
 import jakarta.enterprise.context.ApplicationScoped
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.io.path.deleteIfExists
 import kotlin.io.path.name
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -21,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 @ApplicationScoped
 class ImageCron(
   private val recipeDraftFileRepository: RecipeDraftFileRepository,
+  private val recipeFileRepository: RecipeFileRepository,
   private val fileService: FileService,
 ) {
   private val running = AtomicBoolean(false)
@@ -31,25 +32,46 @@ class ImageCron(
 
     running.set(true)
 
-    val imagesToGenerate = recipeDraftFileRepository.findAllTemporary(limit = 10)
+    val recipeDraftsWithMissingThumbnails = recipeDraftFileRepository.findAllTemporary(limit = 10)
+    val recipesWithMissingThumbnails = recipeFileRepository.findAllTemporary(limit = 10)
 
     runBlocking(Dispatchers.IO) {
-      imagesToGenerate
+      recipeDraftsWithMissingThumbnails
         .map { image ->
           async {
             runCatching {
                 Log.debug("Generating thumbnails for image: $image")
 
                 val outputPath = fileService.readPath(FilePath.RecipeDraft, image)
-                val temporaryImage = outputPath.resolve(ImageResolution.Temporary.fileName.name)
+                val originalImage = outputPath.resolve(ImageResolution.Original.fileName.name)
 
-                ImageUtils.createDynamicImage(temporaryImage, outputPath)
+                ImageUtils.createDynamicImage(originalImage, outputPath, newFile = false)
 
                 QuarkusTransaction.requiringNew().run {
                   recipeDraftFileRepository.updateDeleteTemporary(image)
                 }
+              }
+              .getOrNull()
+          }
+        }
+        .awaitAll()
+    }
 
-                temporaryImage.deleteIfExists()
+    runBlocking(Dispatchers.IO) {
+      recipesWithMissingThumbnails
+        .map { image ->
+          async {
+            runCatching {
+                Log.debug("Generating thumbnails for image: $image")
+
+                val outputPath = fileService.readPath(FilePath.Recipe, image)
+                val originalImage = outputPath.resolve(ImageResolution.Original.fileName.name)
+
+                ImageUtils.createDynamicImage(originalImage, outputPath, newFile = false)
+
+                QuarkusTransaction.requiringNew().run {
+                  recipeFileRepository.updateDeleteTemporary(image)
+                }
               }
               .getOrNull()
           }
