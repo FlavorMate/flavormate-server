@@ -93,11 +93,11 @@ class RecipeMutationService(
 
     for (recipeFile in recipe.files) {
       val entityFile =
-        RecipeDraftFileEntity.create(account = self, recipeDraft = entity)
-          .apply {
-            this.mimeType = recipeFile.mimeType
-            this.originId = recipeFile.id
-          }
+        RecipeDraftFileEntity.createFromRecipe(
+            account = self,
+            recipeDraft = entity,
+            originId = recipeFile.id,
+          )
           .also { recipeDraftFileRepository.persist(it) }
 
       recipeFileService.copyFolder(

@@ -12,6 +12,7 @@ enum class ImageResolution(
   private val fileStem: String,
 ) {
   // defines the upper bounds
+  Temporary(width = 0, height = 0, folder = null, fileStem = "temporary"),
   Original(width = 4096, height = 4096, folder = null, fileStem = "original"),
 
   // 1:1 - Square / Plane

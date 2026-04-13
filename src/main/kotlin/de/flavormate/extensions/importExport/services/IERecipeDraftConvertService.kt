@@ -17,9 +17,9 @@ import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftRepository
 import de.flavormate.features.unit.repositories.UnitLocalizedRepository
 import de.flavormate.shared.enums.FilePath
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
-import de.flavormate.utils.ImageUtils
 import de.flavormate.utils.MimeTypes
 import de.flavormate.utils.NumberUtils
 import io.quarkus.logging.Log
@@ -27,6 +27,8 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import java.io.File
 import java.time.Duration
+import kotlin.io.path.copyTo
+import kotlin.io.path.name
 import org.apache.commons.lang3.StringUtils
 
 @RequestScoped
@@ -181,13 +183,17 @@ class IERecipeDraftConvertService(
     var entity: RecipeDraftFileEntity? = null
     try {
       entity =
-        RecipeDraftFileEntity.create(authorizationDetails.getSelf(), draft)
+        RecipeDraftFileEntity.create(
+            authorizationDetails.getSelf(),
+            draft,
+            ImageResolution.Temporary.fileName.name,
+          )
           .apply { this.mimeType = MimeTypes.WEBP_MIME }
           .also { fileRecipeDraftRepository.persist(it) }
 
       val destination = fileService.createPath(FilePath.RecipeDraft, entity.id)
 
-      ImageUtils.createDynamicImage(inputFile = input.toPath(), outputDir = destination)
+      input.toPath().copyTo(destination.resolve(ImageResolution.Temporary.path))
     } catch (e: Exception) {
       Log.error("Failed to convert image ${input.path}", e)
     } finally {

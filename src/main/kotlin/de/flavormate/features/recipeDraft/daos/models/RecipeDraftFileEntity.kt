@@ -17,19 +17,32 @@ class RecipeDraftFileEntity : OwnedEntity() {
 
   var schema: Int = 2
 
+  @Column(name = "temporary_file") var temporaryFile: String? = null
+
   @JsonIgnore
   @ManyToOne
   @JoinColumn(name = "recipe_draft_id", referencedColumnName = "id")
   lateinit var recipeDraft: RecipeDraftEntity
 
   companion object {
-    fun create(account: AccountEntity, recipeDraft: RecipeDraftEntity): RecipeDraftFileEntity {
+    fun create(
+      account: AccountEntity,
+      recipeDraft: RecipeDraftEntity,
+      temporaryFile: String?,
+    ): RecipeDraftFileEntity {
       return RecipeDraftFileEntity().apply {
         this.ownedBy = account
         this.ownedById = account.id
         this.recipeDraft = recipeDraft
         this.mimeType = MimeTypes.WEBP_MIME
+        this.temporaryFile = temporaryFile
       }
     }
+
+    fun createFromRecipe(
+      account: AccountEntity,
+      recipeDraft: RecipeDraftEntity,
+      originId: String,
+    ): RecipeDraftFileEntity = create(account, recipeDraft, null).apply { this.originId = originId }
   }
 }

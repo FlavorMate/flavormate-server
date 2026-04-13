@@ -4,6 +4,7 @@ package de.flavormate.features.recipeDraft.repositories
 import de.flavormate.features.recipeDraft.daos.models.RecipeDraftFileEntity
 import de.flavormate.shared.interfaces.CRepository
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheQuery
+import io.quarkus.panache.common.Page
 import io.quarkus.panache.common.Sort
 import jakarta.enterprise.context.ApplicationScoped
 
@@ -16,5 +17,19 @@ class RecipeDraftFileRepository : CRepository<RecipeDraftFileEntity>(RecipeDraft
       sort = sort,
       params = params,
     )
+  }
+
+  fun findAllTemporary(limit: Int): List<String> {
+    val page = Page.ofSize(limit)
+    return find("select id from RecipeDraftFileEntity where temporaryFile is not null")
+      .page(page)
+      .project(String::class.java)
+      .list()
+  }
+
+  fun updateDeleteTemporary(id: String): Int {
+    val params = mapOf("id" to id)
+
+    return update("temporaryFile = null where id = :id", params)
   }
 }
