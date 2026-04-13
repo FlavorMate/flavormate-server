@@ -1,15 +1,18 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.utils
 
+import de.flavormate.utils.NumberUtils.isInteger
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
 import java.util.regex.Pattern
 import kotlin.math.floor
 
 object NumberUtils {
   fun beautify(value: Double): String? {
     return when {
-      isInteger(value) -> return value.toInt().toString()
-      value < 0 -> return null
+      isInteger(value) -> value.toInt().toString()
+      value < 0 -> null
       else -> DecimalFormat("0.00").format(value)
     }
   }
@@ -66,3 +69,13 @@ object NumberUtils {
     }
   }
 }
+
+operator fun Double?.plus(other: Double?): Double = (this ?: 0.0) + (other ?: 0.0)
+
+val Double.beautify
+  get(): String? =
+    when {
+      isInteger(this) -> this.toInt().toString()
+      this < 0 -> null
+      else -> DecimalFormat("0.00", DecimalFormatSymbols(Locale.ENGLISH)).format(this)
+    }

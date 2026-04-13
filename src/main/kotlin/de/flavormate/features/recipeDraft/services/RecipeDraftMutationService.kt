@@ -468,7 +468,7 @@ class RecipeDraftMutationService(
 
     for (file in addedFiles) {
       val fileEntity =
-        RecipeFileEntity.create(authorizationDetails.getSelf(), recipe).also {
+        RecipeFileEntity.create(authorizationDetails.getSelf(), recipe, file.temporaryFile).also {
           recipeFileRepository.persist(it)
         }
 

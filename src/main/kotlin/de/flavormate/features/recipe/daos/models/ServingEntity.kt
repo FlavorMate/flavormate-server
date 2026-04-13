@@ -14,7 +14,7 @@ class ServingEntity : CoreEntity() {
   lateinit var label: String
 
   override fun toString(): String {
-    return NumberUtils.beautify(amount) + " " + label
+    return listOfNotNull(NumberUtils.beautify(amount), label).joinToString(" ")
   }
 
   fun toString(requestedAmount: Int): String {

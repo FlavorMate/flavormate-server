@@ -7,13 +7,14 @@ import de.flavormate.features.recipeDraft.daos.models.RecipeDraftFileEntity
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftRepository
 import de.flavormate.shared.enums.FilePath
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
 import de.flavormate.shared.services.TransactionService
 import de.flavormate.utils.ImageUtils
 import jakarta.enterprise.context.RequestScoped
 import java.io.File
-import java.nio.file.Paths
+import kotlin.io.path.name
 
 @RequestScoped
 class RecipeDraftFileMutationService(
@@ -56,14 +57,15 @@ class RecipeDraftFileMutationService(
       throw FForbiddenException(message = "You are not allowed to upload files!")
 
     val fileEntity =
-      RecipeDraftFileEntity.create(account = self, recipeDraft = recipeDraft).also {
-        fileRepository.persist(it)
-      }
+      RecipeDraftFileEntity.create(
+          account = self,
+          recipeDraft = recipeDraft,
+          ImageResolution.Original.fileName.name,
+        )
+        .also { fileRepository.persist(it) }
 
     val path = fileService.createPath(prefix = FilePath.RecipeDraft, uuid = fileEntity.id)
 
-    val inputFile = Paths.get(file.path)
-
-    ImageUtils.createDynamicImage(inputFile = inputFile, outputDir = path)
+    ImageUtils.createOriginal(inputFile = file.toPath(), outputDir = path)
   }
 }

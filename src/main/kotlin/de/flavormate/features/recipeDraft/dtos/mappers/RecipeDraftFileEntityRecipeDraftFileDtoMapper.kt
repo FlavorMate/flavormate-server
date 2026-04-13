@@ -12,6 +12,7 @@ object RecipeDraftFileEntityRecipeDraftFileDtoMapper :
   override fun mapNotNullBasic(input: RecipeDraftFileEntity): RecipeDraftFileDto =
     RecipeDraftFileDto(
       id = input.id,
+      temporary = input.temporaryFile != null,
       path =
         UriBuilder.fromResource(RecipeDraftController::class.java)
           .path(

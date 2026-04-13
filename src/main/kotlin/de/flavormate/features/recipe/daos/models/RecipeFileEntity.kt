@@ -18,17 +18,19 @@ class RecipeFileEntity : OwnedEntity() {
 
   var schema: Int = 2
 
+  @Column(name = "temporary_file") var temporaryFile: String? = null
+
+  val isTemporary
+    get() = temporaryFile != null
+
   companion object {
-    fun create(
-      account: AccountEntity,
-      recipe: RecipeEntity,
-      mimeType: String = MimeTypes.WEBP_MIME,
-    ) =
+    fun create(account: AccountEntity, recipe: RecipeEntity, temporaryFile: String?) =
       RecipeFileEntity().apply {
         this.ownedBy = account
         this.ownedById = account.id
-        this.mimeType = mimeType
+        this.mimeType = MimeTypes.WEBP_MIME
         this.recipe = recipe
+        this.temporaryFile = temporaryFile
       }
   }
 }

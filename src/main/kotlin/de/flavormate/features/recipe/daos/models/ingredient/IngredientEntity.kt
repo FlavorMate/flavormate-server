@@ -5,6 +5,7 @@ import de.flavormate.features.recipe.daos.models.NutritionEntity
 import de.flavormate.features.unit.daos.models.UnitLocalizedEntity
 import de.flavormate.shared.models.entities.CoreEntity
 import de.flavormate.utils.NumberUtils
+import de.flavormate.utils.beautify
 import jakarta.persistence.*
 import org.apache.commons.lang3.StringUtils
 
@@ -40,7 +41,7 @@ class IngredientEntity : CoreEntity() {
   }
 
   fun toJsonString(): String {
-    val amountLabel: String? = amount?.let { NumberUtils.beautify(it) }
+    val amountLabel: String? = amount?.beautify
 
     val unitLabel = unit?.getLongLabel(amount)
 

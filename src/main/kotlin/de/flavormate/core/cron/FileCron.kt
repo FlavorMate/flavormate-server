@@ -49,6 +49,10 @@ class FileCron(
 
     cleanAvatarTable(FilePath.AccountAvatar, fileAccountRepository)
 
+    cleanRecipeTable(FilePath.Recipe, fileRecipeRepository)
+
+    cleanRecipeDraftTable(FilePath.RecipeDraft, fileRecipeDraftRepository)
+
     Log.info("Finished deleting missing db entries")
 
     Log.info("Start generating missing thumbnails")
@@ -115,6 +119,42 @@ class FileCron(
         } else if (isNonExistent) {
           Log.info("Deleting entry with non-existent files: ${data.id}")
           data.ownedBy.avatar = null
+          repository.deleteById(data.id)
+        }
+      }
+    }
+  }
+
+  @Transactional
+  fun cleanRecipeTable(prefix: FilePath, repository: RecipeFileRepository) {
+    DatabaseUtils.batchedRun(query = repository.findAll()) { items, _ ->
+      items.forEach { data ->
+        // Check filesystem existence outside the main logic if possible
+        val path = fileService.readPath(prefix, data.id)
+        val isNonExistent =
+          !path.exists() || Files.list(path).use { stream -> stream.findAny().isEmpty }
+
+        if (isNonExistent) {
+          Log.info("Deleting entry with non-existent files: ${data.id}")
+          data.recipe.files.removeIf { it.id == data.id }
+          repository.deleteById(data.id)
+        }
+      }
+    }
+  }
+
+  @Transactional
+  fun cleanRecipeDraftTable(prefix: FilePath, repository: RecipeDraftFileRepository) {
+    DatabaseUtils.batchedRun(query = repository.findAll()) { items, _ ->
+      items.forEach { data ->
+        // Check filesystem existence outside the main logic if possible
+        val path = fileService.readPath(prefix, data.id)
+        val isNonExistent =
+          !path.exists() || Files.list(path).use { stream -> stream.findAny().isEmpty }
+
+        if (isNonExistent) {
+          Log.info("Deleting entry with non-existent files: ${data.id}")
+          data.recipeDraft.files.removeIf { it.id == data.id }
           repository.deleteById(data.id)
         }
       }

@@ -1,68 +1,82 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.utils
 
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
+import kotlin.io.copyTo
+import kotlin.io.path.createDirectories
+import kotlin.io.path.inputStream
+import kotlin.io.path.outputStream
+import kotlin.use
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream
+import org.apache.commons.compress.archivers.zip.ZipFile
 
 /** Utility class that provides methods for compressing directories into ZIP files. */
 object ZipUtils {
+
   /**
-   * Compresses a file or directory into a ZIP archive.
+   * Compresses a directory into a ZIP file.
    *
-   * @param fileToZip the file or directory to be zipped
-   * @param fileName the name of the file within the ZIP archive
-   * @param zipOut the ZipOutputStream to write the compressed data
-   * @throws IOException if an I/O error occurs
+   * @param sourceDir the path to the directory to be compressed
+   * @param zipFile the path to the resulting ZIP file
    */
-  @Throws(IOException::class)
-  private fun zipFile(fileToZip: File, fileName: String, zipOut: ZipOutputStream) {
-    if (fileToZip.isHidden) {
-      return
-    }
-    if (fileToZip.isDirectory) {
-      if (fileName.endsWith("/")) {
-        zipOut.putNextEntry(ZipEntry(fileName))
-        zipOut.closeEntry()
-      } else {
-        zipOut.putNextEntry(ZipEntry("$fileName/"))
-        zipOut.closeEntry()
+  fun zipFile(sourceDir: Path, zipFile: Path) {
+    Files.newOutputStream(zipFile).use { os ->
+      ZipArchiveOutputStream(os).use { zipOut ->
+        Files.walk(sourceDir).use { paths ->
+          paths.forEach { path ->
+            val relative = sourceDir.relativize(path).toString().replace('\\', '/')
+            if (relative.isEmpty()) return@forEach
+
+            val entryName = if (Files.isDirectory(path)) "$relative/" else relative
+            val entry = ZipArchiveEntry(path.toFile(), entryName)
+
+            zipOut.putArchiveEntry(entry)
+
+            if (Files.isRegularFile(path)) {
+              path.inputStream().use { input -> input.copyTo(zipOut) }
+            }
+
+            zipOut.closeArchiveEntry()
+          }
+        }
       }
-      val children = fileToZip.listFiles()
-      for (childFile in children!!) {
-        zipFile(childFile, fileName + "/" + childFile.name, zipOut)
-      }
-      return
     }
-    val fis = FileInputStream(fileToZip)
-    val zipEntry = ZipEntry(fileName)
-    zipOut.putNextEntry(zipEntry)
-    val bytes = ByteArray(1024)
-    var length: Int
-    while ((fis.read(bytes).also { length = it }) >= 0) {
-      zipOut.write(bytes, 0, length)
-    }
-    fis.close()
   }
 
   /**
-   * Compresses the specified directory into a ZIP file at the given output path.
+   * Extracts a ZIP archive into the specified target directory.
    *
-   * @param input the path to the directory to be zipped
-   * @param output the path to the output ZIP file
-   * @throws IOException if an I/O error occurs during zipping
+   * This method protects against zip-slip attacks by validating the canonical path of each
+   * extracted entry before writing it to disk.
+   *
+   * @param zipFile the ZIP archive to extract
+   * @param targetDir the directory where the archive should be extracted
+   * @throws IOException if an I/O error occurs during extraction
    */
-  @Throws(IOException::class)
-  fun zipDir(input: Path, output: Path) {
-    val fos = FileOutputStream(output.toString())
-    val zipOut = ZipOutputStream(fos)
+  fun unzipDir(zipFile: Path, targetDir: Path) {
+    targetDir.createDirectories()
 
-    zipFile(input.toFile(), input.toFile().name, zipOut)
-    zipOut.close()
-    fos.close()
+    ZipFile.builder().setPath(zipFile).get().use { zip ->
+      val entries = zip.entries
+      while (entries.hasMoreElements()) {
+        val entry = entries.nextElement() as ZipArchiveEntry
+        val outPath = targetDir.resolve(entry.name).normalize()
+
+        // Protect against Zip Slip
+        require(outPath.startsWith(targetDir)) { "Bad zip entry: ${entry.name}" }
+
+        if (entry.isDirectory) {
+          outPath.createDirectories()
+        } else {
+          outPath.parent?.createDirectories()
+          zip.getInputStream(entry).use { input ->
+            outPath.outputStream().use { output -> input.copyTo(output) }
+          }
+        }
+      }
+    }
   }
 }

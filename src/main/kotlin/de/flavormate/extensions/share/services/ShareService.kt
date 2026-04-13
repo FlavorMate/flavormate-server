@@ -5,6 +5,8 @@ import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
+import de.flavormate.extensions.importExport.plugins.ld_json.services.exporter.IEPluginLDJsonExporter
+import de.flavormate.extensions.importExport.services.IERecipeConvertService
 import de.flavormate.extensions.share.controllers.ShareController
 import de.flavormate.extensions.share.mappers.SharedRecipeMapper
 import de.flavormate.extensions.urlShortener.services.ShortenerService
@@ -24,18 +26,18 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.core.StreamingOutput
 import jakarta.ws.rs.core.UriBuilder
-import org.schema.mappers.LDRecipeRecipeEntityMapper
+import org.apache.hc.core5.net.URIBuilder
 
 @RequestScoped
 class ShareService(
   private val authorizationDetails: AuthorizationDetails,
   private val recipeRepository: RecipeRepository,
-  private val sharedRecipeMapper: SharedRecipeMapper,
   private val templateService: TemplateService,
   private val shortenerService: ShortenerService,
   private val authTokenService: AuthTokenService,
   private val flavorMateProperties: FlavorMateProperties,
   private val fileService: FileService,
+  private val ieRecipeConvertService: IERecipeConvertService,
 ) {
 
   private val server
@@ -60,19 +62,22 @@ class ShareService(
     return shortenerService.generateUrl(path)
   }
 
-  fun shareFile(id: String, resolution: ImageResolution?): StreamingOutput {
+  fun shareFileId(id: String, fileId: String, resolution: ImageResolution?): StreamingOutput {
     if (!authTokenService.validateAccess(authorizationDetails.token, id))
       throw FForbiddenException(message = "Token is invalid")
 
     val recipe =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
 
-    if (recipe.coverFile == null) throw FNotFoundException(message = "Recipe has no cover")
+    val file =
+      recipe.files.find { it.id == fileId } ?: throw FNotFoundException(message = "File not found")
 
     return fileService.streamFile(
       prefix = FilePath.Recipe,
-      uuid = recipe.coverFile!!.id,
-      fileName = resolution?.path ?: ImageResolution.Original.path,
+      uuid = file.id,
+      fileName =
+        if (file.isTemporary) ImageResolution.Original.path
+        else resolution?.path ?: ImageResolution.Original.path,
     )
   }
 
@@ -80,22 +85,28 @@ class ShareService(
     if (!authTokenService.validateAccess(authorizationDetails.token, id))
       throw FForbiddenException(message = "Token is invalid")
 
+    val sharedRecipeMapper = SharedRecipeMapper(templateService)
+
     val recipeEntity =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
 
-    val imagePath =
-      UriBuilder.fromResource(ShareController::class.java)
-        .path(ShareController::class.java, ShareController::shareFile.name)
-        .queryParam("resolution", ImageResolution.Original.name)
-        .build(authorizationDetails.token, id)
-        .toString()
+    val images =
+      recipeEntity.files.map {
+        val path =
+          UriBuilder.fromResource(ShareController::class.java)
+            .path(ShareController::class.java, ShareController::shareFileId.name)
+            .build(authorizationDetails.token, id, it.id)
+            .toString()
+        URIBuilder(server)
+          .appendPath(path)
+          .addParameter("resolution", ImageResolution.Original.name)
+          .toString()
+      }
 
     val ldJson =
-      LDRecipeRecipeEntityMapper.mapNotNullWithToken(
-        input = recipeEntity,
-        server = server,
-        path = imagePath,
-      )
+      ieRecipeConvertService.convert(recipeEntity).let { IEPluginLDJsonExporter().export(it) }
+
+    ldJson.images = images
 
     val appUrl =
       UriBuilder.fromPath("flavormate://")
@@ -110,8 +121,8 @@ class ShareService(
     val data =
       mutableMapOf<String, Any?>(
         "appUrl" to appUrl,
-        "recipe" to sharedRecipeMapper.mapNotNullBasic(recipeEntity),
-        "ldJson" to JSONUtils.mapper.writeValueAsString(ldJson),
+        "recipe" to sharedRecipeMapper.map(recipeEntity, images),
+        "ldJson" to JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ldJson),
         "token" to authorizationDetails.token,
       )
 
