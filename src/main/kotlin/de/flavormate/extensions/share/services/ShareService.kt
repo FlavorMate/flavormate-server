@@ -77,7 +77,9 @@ class ShareService(
     return fileService.streamFile(
       prefix = FilePath.Recipe,
       uuid = file.id,
-      fileName = resolution?.path ?: ImageResolution.Original.path,
+      fileName =
+        if (file.isTemporary) ImageResolution.Original.path
+        else resolution?.path ?: ImageResolution.Original.path,
     )
   }
 
