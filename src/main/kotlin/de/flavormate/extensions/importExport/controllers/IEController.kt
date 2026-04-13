@@ -39,17 +39,9 @@ class IEController(private val service: IEService) {
 
   @POST
   @Produces("application/zip")
-  @Path("/export/single/{pluginId}")
-  fun exportSingle(
-    @RestPath @NotBlank pluginId: String,
-    @RestForm("recipe") recipe: String,
-  ): Response = service.exportSingle(pluginId = pluginId, recipeId = recipe)
-
-  @POST
-  @Produces("application/zip")
-  @Path("/export/multiple/{pluginId}")
+  @Path("/export/{pluginId}")
   fun exportMultiple(
     @RestPath @NotBlank pluginId: String,
     @RestForm("recipe") recipes: List<String>,
-  ): Response = service.exportMultiple(pluginId = pluginId, recipeIds = recipes)
+  ): Response = service.export(pluginId = pluginId, recipeIds = recipes)
 }

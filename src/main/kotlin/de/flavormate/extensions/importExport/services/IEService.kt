@@ -12,7 +12,6 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.StreamingOutput
 import java.io.File
-import java.nio.file.Path
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.inputStream
 
@@ -43,21 +42,12 @@ class IEService(
 
     if (inputs.isEmpty()) throw FBadRequestException("No file or url provided")
 
-    val drafts = iePluginManager.importMultiple(pluginId, input = inputs)
+    val drafts = iePluginManager.import(pluginId, input = inputs)
 
     return drafts.map { it.id }
   }
 
-  fun exportSingle(pluginId: String, recipeId: String): Response {
-    val recipe =
-      recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found")
-
-    val file = iePluginManager.exportSingle(pluginId, recipe)
-
-    return export(file)
-  }
-
-  fun exportMultiple(pluginId: String, recipeIds: List<String>): Response {
+  fun export(pluginId: String, recipeIds: List<String>): Response {
     if (recipeIds.isEmpty()) {
       throw FBadRequestException("No recipes provided")
     }
@@ -68,19 +58,15 @@ class IEService(
       throw FNotFoundException(message = "Recipes not found")
     }
 
-    val zipFile = iePluginManager.exportMultiple(pluginId, recipes)
+    val zipFile = iePluginManager.export(pluginId, recipes)
 
-    return export(zipFile)
-  }
-
-  private fun export(input: Path): Response {
     val stream = StreamingOutput { output ->
-      input.inputStream().use { input -> input.copyTo(output) }
-      input.deleteIfExists()
+      zipFile.inputStream().use { input -> input.copyTo(output) }
+      zipFile.deleteIfExists()
     }
 
     return Response.ok(stream)
-      .header("Content-Disposition", """attachment; filename="${input.fileName}"""")
+      .header("Content-Disposition", """attachment; filename="${zipFile.fileName}"""")
       .build()
   }
 }

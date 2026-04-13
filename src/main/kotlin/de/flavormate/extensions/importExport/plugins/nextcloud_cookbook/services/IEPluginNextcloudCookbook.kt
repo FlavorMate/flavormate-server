@@ -54,15 +54,7 @@ class IEPluginNextcloudCookbook(
       supportedExtensions = listOf("zip"),
     )
 
-  override fun importSingle(
-    input: IEInputSource,
-    workDirectory: Path,
-    context: IEPluginContext,
-  ): IERecipeDraft {
-    throw FBadRequestException("Importing single files is not supported by ${metadata.name}")
-  }
-
-  override fun importMultiple(
+  override fun import(
     inputs: List<IEInputSource>,
     workDirectory: Path,
     context: IEPluginContext,
@@ -127,10 +119,6 @@ class IEPluginNextcloudCookbook(
     }
   }
 
-  override fun exportSingle(input: IERecipe, workDirectory: Path, context: IEPluginContext): Path {
-    throw FBadRequestException("Exporting single recipes is not supported by ${metadata.name}")
-  }
-
   /**
    * Creates a .zip file containing the exported recipes.
    *
@@ -142,11 +130,7 @@ class IEPluginNextcloudCookbook(
    * - - recipe.json
    * - - full.jpg
    */
-  override fun exportMultiple(
-    inputs: List<IERecipe>,
-    workDirectory: Path,
-    context: IEPluginContext,
-  ): Path {
+  override fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
     val zipContent = workDirectory.resolve("zipContent")
 
     val exporter = IEPluginLDNextcloudCookbookExporter()

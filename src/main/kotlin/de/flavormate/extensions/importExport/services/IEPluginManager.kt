@@ -42,36 +42,27 @@ class IEPluginManager(
         it.metadata.supportedExtensions.contains(extension.lowercase().removePrefix("."))
     }
 
-  fun importSingle(pluginId: String, input: IEInputSource): RecipeDraftEntity =
-    prepareImportSingle(pluginId) { plugin, workDirectory ->
-      val normalized = plugin.importSingle(input, workDirectory, createContext())
+  fun import(pluginId: String, input: List<IEInputSource>): List<RecipeDraftEntity> {
+    val plugin =
+      getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
-      recipeDraftConvertService.convert(normalized)
-    }
+    if (plugin.metadata.import.isEmpty())
+      throw FBadRequestException("Plugin $pluginId does not support import")
 
-  fun importMultiple(pluginId: String, input: List<IEInputSource>): List<RecipeDraftEntity> {
-    return prepareImportMultiple(pluginId) { plugin, workDirectory ->
-      val normalized = plugin.importMultiple(input, workDirectory, createContext())
+    val workDirectory = Files.createTempDirectory("ie-import-$pluginId")
+
+    val drafts = runCatching {
+      val normalized = plugin.import(input, workDirectory, createContext())
       normalized.map { recipeDraftConvertService.convert(it) }
     }
+
+    FileUtils.deleteDirectory(workDirectory.toFile())
+
+    return drafts.getOrThrow()
   }
 
-  fun exportSingle(pluginId: String, recipe: RecipeEntity): Path =
-    prepareExport(pluginId) { plugin, workDirectory ->
-      val normalized = recipeConvertService.convert(recipe)
-      plugin.exportSingle(normalized, workDirectory, createContext())
-    }
+  fun export(pluginId: String, recipes: List<RecipeEntity>): Path {
 
-  fun exportMultiple(pluginId: String, recipes: List<RecipeEntity>): Path =
-    prepareExport(pluginId) { plugin, workDirectory ->
-      val normalized = recipes.map { recipeConvertService.convert(it) }
-      plugin.exportMultiple(normalized, workDirectory, createContext())
-    }
-
-  private fun prepareExport(
-    pluginId: String,
-    callback: (plugin: IEPlugin, workDirectory: Path) -> Path,
-  ): Path {
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
@@ -82,7 +73,9 @@ class IEPluginManager(
     val tmpFile = Files.createTempFile(null, null)
 
     try {
-      val outputFile = callback(plugin, workDirectory)
+      val normalized = recipes.map { recipeConvertService.convert(it) }
+
+      val outputFile = plugin.export(normalized, workDirectory, createContext())
 
       outputFile.copyTo(tmpFile, overwrite = true)
       FileUtils.deleteDirectory(workDirectory.toFile())
@@ -93,50 +86,6 @@ class IEPluginManager(
       Files.deleteIfExists(tmpFile)
       throw e
     }
-  }
-
-  private fun prepareImport(pluginId: String): Pair<IEPlugin, Path> {
-    val plugin =
-      getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
-
-    if (plugin.metadata.import.isEmpty())
-      throw FBadRequestException("Plugin $pluginId does not support import")
-
-    val workDirectory = Files.createTempDirectory("ie-import-$pluginId")
-
-    return Pair(plugin, workDirectory)
-  }
-
-  private fun prepareImportSingle(
-    pluginId: String,
-    callback: (plugin: IEPlugin, workDirectory: Path) -> RecipeDraftEntity,
-  ): RecipeDraftEntity {
-    val result = prepareImport(pluginId)
-
-    val plugin = result.first
-    val workDirectory = result.second
-
-    val draft = runCatching { callback(plugin, workDirectory) }
-
-    FileUtils.deleteDirectory(workDirectory.toFile())
-
-    return draft.getOrThrow()
-  }
-
-  private fun prepareImportMultiple(
-    pluginId: String,
-    callback: (plugin: IEPlugin, workDirectory: Path) -> List<RecipeDraftEntity>,
-  ): List<RecipeDraftEntity> {
-    val result = prepareImport(pluginId)
-
-    val plugin = result.first
-    val workDirectory = result.second
-
-    val drafts = runCatching { callback(plugin, workDirectory) }
-
-    FileUtils.deleteDirectory(workDirectory.toFile())
-
-    return drafts.getOrThrow()
   }
 
   private fun createContext() =

@@ -11,15 +11,7 @@ import java.nio.file.Path
 interface IEPlugin {
   val metadata: IEPluginMetadata
 
-  fun importSingle(
-    input: IEInputSource,
-    workDirectory: Path,
-    context: IEPluginContext,
-  ): IERecipeDraft {
-    throw UnsupportedOperationException("Import not supported by plugin ${metadata.name}")
-  }
-
-  fun importMultiple(
+  fun import(
     inputs: List<IEInputSource>,
     workDirectory: Path,
     context: IEPluginContext,
@@ -27,11 +19,7 @@ interface IEPlugin {
     throw UnsupportedOperationException("Import not supported by plugin ${metadata.name}")
   }
 
-  fun exportSingle(input: IERecipe, workDirectory: Path, context: IEPluginContext): Path {
-    throw UnsupportedOperationException("Export not supported by plugin ${metadata.name}")
-  }
-
-  fun exportMultiple(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
+  fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
     throw UnsupportedOperationException("Export not supported by plugin ${metadata.name}")
   }
 }

@@ -24,8 +24,6 @@ import jakarta.enterprise.context.ApplicationScoped
 import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.io.path.copyTo
-import kotlin.io.path.createParentDirectories
 
 @ApplicationScoped
 class IEPluginLDJson(
@@ -50,52 +48,29 @@ class IEPluginLDJson(
       supportedExtensions = listOf("json", "jsonld"),
     )
 
-  override fun importSingle(
-    input: IEInputSource,
-    workDirectory: Path,
-    context: IEPluginContext,
-  ): IERecipeDraft {
-    val downloader = IEPluginLDJsonDownloader(context)
-    val mapper = IEPluginLDJsonImporter(context, languageDetectorService, downloadService)
-
-    if (metadata.import.none { it.isImportSupported(input) }) {
-      throw FBadRequestException(
-        message = "Unsupported import type ${input::class.simpleName} for ${metadata.name}"
-      )
-    }
-
-    val ldJson =
-      when (input) {
-        is UrlInputSource -> downloader.download(input.name)
-        is FileInputSource -> context.objectMapper.readValue<LDJsonRecipe>(input.file)
-      }
-
-    return mapper.import(ldJson)
-  }
-
-  override fun importMultiple(
+  override fun import(
     inputs: List<IEInputSource>,
     workDirectory: Path,
     context: IEPluginContext,
   ): List<IERecipeDraft> {
-    return inputs.mapNotNull {
-      try {
-        importSingle(it, workDirectory, context)
-      } catch (_: Exception) {
-        null
+    val downloader = IEPluginLDJsonDownloader(context)
+    val mapper = IEPluginLDJsonImporter(context, languageDetectorService, downloadService)
+
+    return inputs.map { input ->
+      if (metadata.import.none { it.isImportSupported(input) }) {
+        throw FBadRequestException(
+          message = "Unsupported import type ${input::class.simpleName} for ${metadata.name}"
+        )
       }
+
+      val ldJson =
+        when (input) {
+          is UrlInputSource -> downloader.download(input.name)
+          is FileInputSource -> context.objectMapper.readValue<LDJsonRecipe>(input.file)
+        }
+
+      mapper.import(ldJson)
     }
-  }
-
-  /** Creates a .json file containing the recipe */
-  override fun exportSingle(input: IERecipe, workDirectory: Path, context: IEPluginContext): Path {
-    val exporter = IEPluginLDJsonExporter()
-    val outputFile = workDirectory.resolve("${input.label} (${input.id}).json")
-
-    val ldJson = exporter.export(input)
-    context.objectMapper.writeValue(outputFile.toFile(), ldJson)
-
-    return outputFile
   }
 
   /**
@@ -105,22 +80,26 @@ class IEPluginLDJson(
    * - recipe1.json
    * - recipe2.json
    */
-  override fun exportMultiple(
-    inputs: List<IERecipe>,
-    workDirectory: Path,
-    context: IEPluginContext,
-  ): Path {
+  override fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
     val zipContent = workDirectory.resolve("zipContent")
 
-    val files = inputs.map { input -> exportSingle(input, workDirectory, context) }
+    val exporter = IEPluginLDJsonExporter()
 
-    files.forEach { it.copyTo(zipContent.resolve(it.fileName).createParentDirectories()) }
+    for (input in inputs) {
+      runCatching {
+        val ldJson = exporter.export(input)
+
+        val ldJsonFile = zipContent.resolve("${input.label} - (${input.id}).json")
+
+        context.objectMapper.writeValue(ldJsonFile.toFile(), ldJson)
+      }
+    }
 
     val zipFile =
       workDirectory.resolve(
         "Export ${
-          LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
-        }.zip"
+        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
+      }.zip"
       )
 
     ZipUtils.zipFile(sourceDir = zipContent, zipFile = zipFile)

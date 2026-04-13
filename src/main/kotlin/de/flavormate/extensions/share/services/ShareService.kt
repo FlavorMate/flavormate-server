@@ -1,14 +1,12 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.share.services
 
-import com.fasterxml.jackson.module.kotlin.readValue
-import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
-import de.flavormate.extensions.importExport.plugins.ld_json.models.LDJsonRecipe
-import de.flavormate.extensions.importExport.services.IEPluginManager
+import de.flavormate.extensions.importExport.plugins.ld_json.services.exporter.IEPluginLDJsonExporter
+import de.flavormate.extensions.importExport.services.IERecipeConvertService
 import de.flavormate.extensions.share.controllers.ShareController
 import de.flavormate.extensions.share.mappers.SharedRecipeMapper
 import de.flavormate.extensions.urlShortener.services.ShortenerService
@@ -39,7 +37,7 @@ class ShareService(
   private val authTokenService: AuthTokenService,
   private val flavorMateProperties: FlavorMateProperties,
   private val fileService: FileService,
-  private val pluginManager: IEPluginManager,
+  private val ieRecipeConvertService: IERecipeConvertService,
 ) {
 
   private val server
@@ -105,9 +103,8 @@ class ShareService(
           .toString()
       }
 
-    val ldJsonFile = pluginManager.exportSingle(pluginId = "ld_json", recipe = recipeEntity)
-
-    val ldJson = CustomObjectMapper.instance.readValue<LDJsonRecipe>(ldJsonFile.toFile())
+    val ldJson =
+      ieRecipeConvertService.convert(recipeEntity).let { IEPluginLDJsonExporter().export(it) }
 
     ldJson.images = images
 
