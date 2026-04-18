@@ -128,6 +128,10 @@ flavormate:
       enabled: ${FLAVORMATE_FEATURE_OPEN_FOOD_FACTS:false}
     share:
       enabled: ${FLAVORMATE_FEATURE_SHARE:false}
+    import:
+      enabled: ${FLAVORMATE_FEATURE_IMPORT:false}
+    export:
+      enabled: ${FLAVORMATE_FEATURE_EXPORT:false}
 
   mailer:
     from: ${FLAVORMATE_MAILER_FROM}

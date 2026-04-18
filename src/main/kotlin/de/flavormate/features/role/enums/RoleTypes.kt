@@ -2,8 +2,11 @@
 package de.flavormate.features.role.enums
 
 enum class RoleTypes {
+  // User roles
   Admin,
   User,
+  Import,
+  Export,
 
   // Public accessors
   Bring,
@@ -17,8 +20,13 @@ enum class RoleTypes {
   Reset;
 
   companion object {
+    // User roles
     const val ADMIN_VALUE = "Admin"
     const val USER_VALUE = "User"
+    const val IMPORT_VALUE = "Import"
+    const val EXPORT_VALUE = "Export"
+
+    // Technical roles
     const val BRING_VALUE = "Bring"
     const val SHARE_VALUE = "Share"
     const val VERIFY_VALUE = "Verify"

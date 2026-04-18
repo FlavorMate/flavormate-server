@@ -37,15 +37,24 @@ class IEPluginLDJson(
       name = mapOf(Language.EN to "LD-JSON Plugin", Language.DE to "LD-JSON Plugin"),
       version = "1.0.0",
       author = "FlavorMate",
-      description =
-        mapOf(
-          Language.EN to "Import and Export JSON-LD structured recipe data",
-          Language.DE to "Import und Export von JSON-LD-Strukturierten Rezeptdaten",
-        ),
       import = listOf(IEImportType.FileImport, IEImportType.UrlImport),
-      export = true, // Export not yet implemented
-      supportedMimeTypes = listOf("application/ld+json", "application/json"),
-      supportedExtensions = listOf("json", "jsonld"),
+      importMimeTypes = listOf("application/ld+json", "application/json"),
+      importExtensions = listOf("json", "jsonld"),
+      importShortDescription =
+        mapOf(Language.EN to "Import LD-JSON", Language.DE to "LD-JSON importieren"),
+      importLongDescription =
+        mapOf(
+          Language.EN to "Import recipe data from LD-JSON files or URLs.",
+          Language.DE to "Rezeptdaten aus LD-JSON-Dateien oder URLs importieren.",
+        ),
+      export = true,
+      exportShortDescription =
+        mapOf(Language.EN to "Export LD-JSON", Language.DE to "LD-JSON exportieren"),
+      exportLongDescription =
+        mapOf(
+          Language.EN to "Export recipes as LD-JSON archive.",
+          Language.DE to "Rezepte als LD-JSON-Archiv exportieren.",
+        ),
     )
 
   override fun import(

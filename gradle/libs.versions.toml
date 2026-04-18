@@ -2,7 +2,7 @@
 versions = "0.53.0"
 spotless = "8.0.0"
 kotlin = "2.3.20"
-quarkus = "3.34.3"
+quarkus = "3.34.5"
 commons-io = "2.21.0"
 commons-lang3 = "3.20.0"
 commons-compress = "1.28.0"

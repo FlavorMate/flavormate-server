@@ -4,6 +4,8 @@ package de.flavormate.core.auth.config
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.features.enums.FeatureType
 import de.flavormate.extensions.bring.controllers.BringController
+import de.flavormate.extensions.importExport.controllers.IEExportController
+import de.flavormate.extensions.importExport.controllers.IEImportController
 import de.flavormate.extensions.ratings.controllers.RatingsController
 import de.flavormate.extensions.recovery.controllers.RecoveryController
 import de.flavormate.extensions.registration.controllers.RegistrationController
@@ -41,6 +43,12 @@ class FeatureRequestFilter(flavorMateProperties: FlavorMateProperties) : Contain
   private val storyEnabled = flavorMateProperties.features()[FeatureType.Story]!!.enabled()
   private val storyPath = StoryController::class.java.getAnnotation(Path::class.java).value
 
+  private val importEnabled = flavorMateProperties.features()[FeatureType.Import]!!.enabled()
+  private val importPath = IEImportController::class.java.getAnnotation(Path::class.java).value
+
+  private val exportEnabled = flavorMateProperties.features()[FeatureType.Export]!!.enabled()
+  private val exportPath = IEExportController::class.java.getAnnotation(Path::class.java).value
+
   override fun filter(ctx: ContainerRequestContext?) {
     if (ctx == null) return
 
@@ -50,6 +58,9 @@ class FeatureRequestFilter(flavorMateProperties: FlavorMateProperties) : Contain
     checkRegistrationFeature(ctx)
     checkShareFeature(ctx)
     checkStoryFeature(ctx)
+
+    checkImportFeature(ctx)
+    checkExportFeature(ctx)
   }
 
   fun checkBringFeature(ctx: ContainerRequestContext) {
@@ -98,5 +109,21 @@ class FeatureRequestFilter(flavorMateProperties: FlavorMateProperties) : Contain
     if (!requestedPath.startsWith(storyPath)) return
 
     if (!storyEnabled) ctx.abortWith(Response.status(Response.Status.NOT_FOUND).build())
+  }
+
+  fun checkImportFeature(ctx: ContainerRequestContext) {
+    val requestedPath = ctx.uriInfo.requestUri.path
+
+    if (!requestedPath.startsWith(importPath)) return
+
+    if (!importEnabled) ctx.abortWith(Response.status(Response.Status.NOT_FOUND).build())
+  }
+
+  fun checkExportFeature(ctx: ContainerRequestContext) {
+    val requestedPath = ctx.uriInfo.requestUri.path
+
+    if (!requestedPath.startsWith(exportPath)) return
+
+    if (!exportEnabled) ctx.abortWith(Response.status(Response.Status.NOT_FOUND).build())
   }
 }
