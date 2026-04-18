@@ -9,4 +9,6 @@ enum class FeatureType {
   Share,
   Story,
   Ratings,
+  Import,
+  Export,
 }

@@ -12,34 +12,21 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Response
-import java.io.File
 import org.jboss.resteasy.reactive.RestForm
 import org.jboss.resteasy.reactive.RestPath
 
 @RequestScoped
-@RolesAllowed(RoleTypes.USER_VALUE)
-@Path("/v3/import-export")
-class IEController(private val service: IEService) {
+@RolesAllowed(RoleTypes.EXPORT_VALUE)
+@Path("/v3/import-export/export")
+class IEExportController(private val service: IEService) {
 
   @GET
-  @Path("/importers")
-  fun getAvailableImporters(): List<IEPluginMetadata> = service.getAvailableImporters()
-
-  @GET
-  @Path("/exporters")
+  @Path("/")
   fun getAvailableExporters(): List<IEPluginMetadata> = service.getAvailableExporters()
 
   @POST
-  @Path("/import/{pluginId}")
-  fun import(
-    @RestPath @NotBlank pluginId: String,
-    @RestForm("file") files: List<File>?,
-    @RestForm("url") urls: List<String>?,
-  ): List<String> = service.import(pluginId = pluginId, files = files, urls = urls)
-
-  @POST
   @Produces("application/zip")
-  @Path("/export/{pluginId}")
+  @Path("/{pluginId}")
   fun exportMultiple(
     @RestPath @NotBlank pluginId: String,
     @RestForm("recipe") recipes: List<String>,
