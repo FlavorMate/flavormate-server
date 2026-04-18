@@ -1,9 +1,10 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.importExport.controllers
 
-import de.flavormate.extensions.importExport.models.IEPluginMetadata
+import de.flavormate.extensions.importExport.models.IEPluginMetadataDto
 import de.flavormate.extensions.importExport.services.IEService
 import de.flavormate.features.role.enums.RoleTypes
+import de.flavormate.shared.enums.Language
 import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
 import jakarta.validation.constraints.NotBlank
@@ -14,6 +15,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Response
 import org.jboss.resteasy.reactive.RestForm
 import org.jboss.resteasy.reactive.RestPath
+import org.jboss.resteasy.reactive.RestQuery
 
 @RequestScoped
 @RolesAllowed(RoleTypes.EXPORT_VALUE)
@@ -22,7 +24,10 @@ class IEExportController(private val service: IEService) {
 
   @GET
   @Path("/")
-  fun getAvailableExporters(): List<IEPluginMetadata> = service.getAvailableExporters()
+  fun getAvailableExporters(@RestQuery @NotBlank language: String): List<IEPluginMetadataDto> {
+    val lang = Language.from(language) ?: Language.EN
+    return service.getAvailableExporters(lang)
+  }
 
   @POST
   @Produces("application/zip")

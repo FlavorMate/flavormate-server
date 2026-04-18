@@ -3,11 +3,13 @@ package de.flavormate.extensions.importExport.services
 
 import de.flavormate.exceptions.FBadRequestException
 import de.flavormate.exceptions.FNotFoundException
-import de.flavormate.extensions.importExport.models.IEPluginMetadata
+import de.flavormate.extensions.importExport.mappers.IEPluginMetadataMapper
+import de.flavormate.extensions.importExport.models.IEPluginMetadataDto
 import de.flavormate.extensions.importExport.models.inputSource.FileInputSource
 import de.flavormate.extensions.importExport.models.inputSource.IEInputSource
 import de.flavormate.extensions.importExport.models.inputSource.UrlInputSource
 import de.flavormate.features.recipe.repositories.RecipeRepository
+import de.flavormate.shared.enums.Language
 import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.StreamingOutput
@@ -21,16 +23,16 @@ class IEService(
   private val recipeRepository: RecipeRepository,
 ) {
 
-  fun getAvailableImporters(): List<IEPluginMetadata> {
+  fun getAvailableImporters(language: Language): List<IEPluginMetadataDto> {
     val importers = iePluginManager.getImportPlugins()
 
-    return importers.map { it.metadata }
+    return importers.map { IEPluginMetadataMapper.map(it.metadata, language) }
   }
 
-  fun getAvailableExporters(): List<IEPluginMetadata> {
+  fun getAvailableExporters(language: Language): List<IEPluginMetadataDto> {
     val exporters = iePluginManager.getExportPlugins()
 
-    return exporters.map { it.metadata }
+    return exporters.map { IEPluginMetadataMapper.map(it.metadata, language) }
   }
 
   fun import(pluginId: String, files: List<File>?, urls: List<String>?): List<String> {

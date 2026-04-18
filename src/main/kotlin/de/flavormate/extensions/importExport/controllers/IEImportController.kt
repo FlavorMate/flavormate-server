@@ -1,9 +1,10 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.importExport.controllers
 
-import de.flavormate.extensions.importExport.models.IEPluginMetadata
+import de.flavormate.extensions.importExport.models.IEPluginMetadataDto
 import de.flavormate.extensions.importExport.services.IEService
 import de.flavormate.features.role.enums.RoleTypes
+import de.flavormate.shared.enums.Language
 import jakarta.annotation.security.RolesAllowed
 import jakarta.enterprise.context.RequestScoped
 import jakarta.validation.constraints.NotBlank
@@ -13,6 +14,7 @@ import jakarta.ws.rs.Path
 import java.io.File
 import org.jboss.resteasy.reactive.RestForm
 import org.jboss.resteasy.reactive.RestPath
+import org.jboss.resteasy.reactive.RestQuery
 
 @RequestScoped
 @RolesAllowed(RoleTypes.IMPORT_VALUE)
@@ -21,7 +23,10 @@ class IEImportController(private val service: IEService) {
 
   @GET
   @Path("/")
-  fun getAvailableImporters(): List<IEPluginMetadata> = service.getAvailableImporters()
+  fun getAvailableImporters(@RestQuery @NotBlank language: String): List<IEPluginMetadataDto> {
+    val lang = Language.from(language) ?: Language.EN
+    return service.getAvailableImporters(lang)
+  }
 
   @POST
   @Path("/{pluginId}")
