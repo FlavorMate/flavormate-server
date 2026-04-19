@@ -69,12 +69,15 @@ class IEPluginManager(
       throw FBadRequestException("Plugin $pluginId does not support export")
 
     val workDirectory = Files.createTempDirectory("ie-export-single-$pluginId")
-    val tmpFile = Files.createTempFile(null, null)
+    val tmpFolder = Files.createTempDirectory("ie-export-tmp-$pluginId")
+    var tmpFile = tmpFolder.resolve("export.zip")
 
     try {
       val normalized = recipes.map { recipeConvertService.convert(it) }
 
       val outputFile = plugin.export(normalized, workDirectory, createContext())
+
+      tmpFile = tmpFolder.resolve(outputFile.fileName)
 
       outputFile.copyTo(tmpFile, overwrite = true)
       FileUtils.deleteDirectory(workDirectory.toFile())

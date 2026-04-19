@@ -24,6 +24,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.io.path.createDirectories
 
 @ApplicationScoped
 class IEPluginLDJson(
@@ -90,7 +91,7 @@ class IEPluginLDJson(
    * - recipe2.json
    */
   override fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
-    val zipContent = workDirectory.resolve("zipContent")
+    val zipContent = workDirectory.resolve("zipContent").createDirectories()
 
     val exporter = IEPluginLDJsonExporter()
 
