@@ -7,6 +7,7 @@ import de.flavormate.features.category.daos.models.CategoryEntity
 import de.flavormate.features.category.repositories.CategoryRepository
 import de.flavormate.features.recipe.daos.models.NutritionEntity
 import de.flavormate.features.recipe.daos.models.RecipeEntity
+import de.flavormate.features.recipe.daos.models.RecipeFileEntity
 import de.flavormate.features.recipe.daos.models.ServingEntity
 import de.flavormate.features.recipe.daos.models.ingredient.IngredientEntity
 import de.flavormate.features.recipe.daos.models.ingredient.IngredientGroupEntity
@@ -15,6 +16,8 @@ import de.flavormate.features.recipe.daos.models.instruction.InstructionGroupEnt
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftRepository
 import de.flavormate.features.unit.repositories.UnitLocalizedRepository
+import de.flavormate.shared.enums.FilePath
+import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.enums.Language
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
@@ -22,7 +25,9 @@ import de.flavormate.shared.services.LanguageDetectorService
 import de.flavormate.utils.beautify
 import jakarta.enterprise.context.RequestScoped
 import jakarta.transaction.Transactional
+import java.io.File
 import java.time.ZoneOffset
+import kotlin.io.path.exists
 import org.apache.commons.lang3.StringUtils
 
 @RequestScoped
@@ -55,7 +60,7 @@ class IERecipeConvertService(
       ingredientGroups = input.ingredientGroups.map { mapIngredientGroup(it) },
       categories = input.categories.map { mapCategory(it, language) },
       tags = input.tags.map { it.label },
-      files = listOf(), // input.files.map { mapFile(it, language) },
+      files = input.files.mapNotNull { mapFile(it) }, // input.files.map { mapFile(it, language) },
       url = input.url,
       author = input.ownedBy.displayName,
       createdOn = input.createdOn.toInstant(ZoneOffset.UTC),
@@ -128,5 +133,12 @@ class IERecipeConvertService(
       salt = input.salt,
       sodium = input.sodium,
     )
+  }
+
+  private fun mapFile(input: RecipeFileEntity): File? {
+    val filePath =
+      fileService.readPath(FilePath.Recipe, input.id).resolve(ImageResolution.Original.path)
+
+    return filePath.takeIf { it.exists() }?.toFile()
   }
 }
