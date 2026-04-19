@@ -14,8 +14,8 @@ import jakarta.enterprise.context.RequestScoped
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.StreamingOutput
 import java.io.File
-import kotlin.io.path.deleteIfExists
 import kotlin.io.path.inputStream
+import org.apache.commons.io.FileUtils
 
 @RequestScoped
 class IEService(
@@ -64,11 +64,12 @@ class IEService(
 
     val stream = StreamingOutput { output ->
       zipFile.inputStream().use { input -> input.copyTo(output) }
-      zipFile.deleteIfExists()
+      FileUtils.deleteDirectory(zipFile.parent.toFile())
     }
 
     return Response.ok(stream)
-      .header("Content-Disposition", """attachment; filename="${zipFile.fileName}"""")
+      .header("Content-Disposition", "attachment")
+      .header("filename", "${zipFile.fileName}")
       .build()
   }
 }
