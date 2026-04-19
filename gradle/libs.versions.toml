@@ -11,7 +11,7 @@ nanoid = "1.0.1"
 ksoup = "0.2.6"
 google-java-format = "1.31.0"
 assertj = "3.27.7"
-http-client5 = "5.6"
+http-client5 = "5.6.1"
 tika = "3.3.0"
 
 [libraries]
