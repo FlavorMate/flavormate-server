@@ -20,6 +20,22 @@ tailored just for you.
 ## Migration Guides
 
 <details>
+<summary>6.0.0</summary>
+
+### Environment Changes:
+
+The following properties have been added:
+
+**Features**
+
+|        new property         | required |         note          |
+|-----------------------------|----------|-----------------------|
+| `FLAVORMATE_FEATURE_IMPORT` | no       | Enables recipe import |
+| `FLAVORMATE_FEATURE_EXPORT` | no       | Enables recipe export |
+
+</details>
+
+<details>
 <summary>3.4.0</summary>
 
 ### Environment Changes:
@@ -399,6 +415,8 @@ You must have these dependencies installed:
 | FLAVORMATE_FEATURE_BRING           | -        | Enables the [Bring!](https://www.getbring.com) integration                 | `true`  | `false` |
 | FLAVORMATE_FEATURE_OPEN_FOOD_FACTS | -        | Enables the [Open Food Facts](https://world.openfoodfacts.org) integration | `true`  | `false` |
 | FLAVORMATE_FEATURE_SHARE           | -        | Enables the ability to share recipes                                       | `true`  | `false` |
+| FLAVORMATE_FEATURE_IMPORT          | -        | Enables the ability to import recipes                                      | `true`  | `false` |
+| FLAVORMATE_FEATURE_EXPORT          | -        | Enables the ability to export recipes                                      | `true`  | `false` |
 
 </details>
 
@@ -464,4 +482,38 @@ This section represents an array. Please change the index inside the `[]` - star
 | FLAVORMATE_MAILER_PASSWORD  | -        | E-Mail password                      | `Passw0rd!`                          | -           |
 
 </details>
+
+## Import / Export Plugins
+
+FlavorMate supports plugins that let you import recipes into the app and export recipes out of it.
+
+- **Import**
+  - You can start an import from a `file` or from an `URL`, depending on the plugin
+  - Not every plugin may support both sources
+- **Export**
+  - Exported recipes are always a `.zip` archive
+
+FlavorMate currently ships with two plugins:
+
+### LD+JSON Plugin
+
+|     Import      | Export |
+|-----------------|--------|
+| Yes (Web, File) | Yes    |
+
+Use this plugin to import recipes in the [Schema.org Recipe Format](https://schema.org/Recipe), which is used by many
+cookbook websites.
+
+It can also export recipes in the same format inside a `.zip` archive.
+
+### Nextcloud Cookbook Plugin
+
+|     Import      | Export |
+|-----------------|--------|
+| Yes (Web, File) | Yes    |
+
+Use this plugin to import recipes from the [Nextcloud Cookbook App](https://apps.nextcloud.com/apps/cookbook).
+You can either upload the ZIP file containing the root folder or paste the share link of the root folder.
+
+It can also export recipes in the Nextcloud Cookbook format inside a `.zip` archive.
 
