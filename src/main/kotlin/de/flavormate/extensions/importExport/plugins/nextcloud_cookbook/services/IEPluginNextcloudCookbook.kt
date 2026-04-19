@@ -43,15 +43,30 @@ class IEPluginNextcloudCookbook(
       name = mapOf(Language.EN to "Nextcloud Cookbook", Language.DE to "Nextcloud Kochbuch"),
       version = "1.0.0",
       author = "FlavorMate",
-      description =
-        mapOf(
-          Language.EN to "Import and Export recipes from the Nextcloud Cookbook App",
-          Language.DE to "Import und Export von Rezepten aus der Nextcloud Kochbuch App",
-        ),
       import = listOf(IEImportType.FileImport, IEImportType.UrlImport),
+      importMimeTypes = listOf("application/zip"),
+      importExtensions = listOf("zip"),
+      importShortDescription =
+        mapOf(
+          Language.EN to "Import Nextcloud Cookbook",
+          Language.DE to "Nextcloud Kochbuch importieren",
+        ),
+      importLongDescription =
+        mapOf(
+          Language.EN to "Import recipes from Nextcloud Cookbook zip files or URLs.",
+          Language.DE to "Rezepte aus Nextcloud Kochbuch-ZIP-Dateien oder URLs importieren.",
+        ),
       export = true,
-      supportedMimeTypes = listOf("application/zip"),
-      supportedExtensions = listOf("zip"),
+      exportShortDescription =
+        mapOf(
+          Language.EN to "Export Nextcloud Cookbook",
+          Language.DE to "Nextcloud Kochbuch exportieren",
+        ),
+      exportLongDescription =
+        mapOf(
+          Language.EN to "Export recipes as Nextcloud Cookbook zip archive.",
+          Language.DE to "Rezepte als Nextcloud Kochbuch-ZIP-Archiv exportieren.",
+        ),
     )
 
   override fun import(

@@ -32,14 +32,13 @@ class IEPluginManager(
 
   fun findImportPluginByMimeType(mimeType: String): IEPlugin? =
     plugins.find {
-      it.metadata.import.isNotEmpty() &&
-        it.metadata.supportedMimeTypes.contains(mimeType.lowercase())
+      it.metadata.import.isNotEmpty() && it.metadata.importMimeTypes.contains(mimeType.lowercase())
     }
 
   fun findImportPluginByExtension(extension: String): IEPlugin? =
     plugins.find {
       it.metadata.import.isNotEmpty() &&
-        it.metadata.supportedExtensions.contains(extension.lowercase().removePrefix("."))
+        it.metadata.importExtensions.contains(extension.lowercase().removePrefix("."))
     }
 
   fun import(pluginId: String, input: List<IEInputSource>): List<RecipeDraftEntity> {
