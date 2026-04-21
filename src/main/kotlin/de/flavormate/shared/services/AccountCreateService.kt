@@ -30,7 +30,13 @@ class AccountCreateService(
       throw FConflictException(message = "Account already exists!")
     }
 
-    val role =
+    val roleUser =
+      roleRepository.findByRole(RoleTypes.User)
+        ?: throw FNotFoundException(message = "Role not found!")
+    val roleImport =
+      roleRepository.findByRole(RoleTypes.User)
+        ?: throw FNotFoundException(message = "Role not found!")
+    val roleExport =
       roleRepository.findByRole(RoleTypes.User)
         ?: throw FNotFoundException(message = "Role not found!")
 
@@ -42,7 +48,7 @@ class AccountCreateService(
         this.password = BcryptUtil.bcryptHash(password)
         this.enabled = enabled
         this.verified = verified
-        this.roles = mutableSetOf(role)
+        this.roles = mutableSetOf(roleUser, roleImport, roleExport)
         this.ownedBy = this
       }
       .also { accountRepository.persist(it) }

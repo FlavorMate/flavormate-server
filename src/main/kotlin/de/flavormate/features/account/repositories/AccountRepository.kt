@@ -3,6 +3,7 @@ package de.flavormate.features.account.repositories
 
 import de.flavormate.features.account.dao.models.AccountEntity
 import de.flavormate.features.recipe.daos.models.RecipeEntity
+import de.flavormate.features.role.enums.RoleTypes
 import de.flavormate.features.story.daos.models.StoryEntity
 import de.flavormate.shared.constants.AllowedSorts
 import de.flavormate.shared.enums.SearchOrderBy
@@ -27,6 +28,15 @@ class AccountRepository : PanacheRepositoryBase<AccountEntity, String> {
     }
 
     return find(query = "select a from AccountEntity a left join fetch a.sessions s", sort = sort)
+  }
+
+  fun findByNoRole(role: RoleTypes): PanacheQuery<AccountEntity> {
+    val params = mapOf("role" to role)
+    return find(
+      query =
+        "select a from AccountEntity a where not exists (select 1 from a.roles r where r.role = :role)",
+      params = params,
+    )
   }
 
   fun findByUsername(username: String): AccountEntity? {

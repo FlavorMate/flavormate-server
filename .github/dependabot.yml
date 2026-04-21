@@ -23,12 +23,3 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "docker" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    groups:
-      all:
-        patterns:
-          - "*"
-    target-branch: "dev"
-    schedule:
-      interval: "weekly"
