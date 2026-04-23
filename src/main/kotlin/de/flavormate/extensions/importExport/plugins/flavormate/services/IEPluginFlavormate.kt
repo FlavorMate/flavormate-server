@@ -1,5 +1,5 @@
 /* Licensed under AGPLv3 2024 - 2026 */
-package de.flavormate.extensions.importExport.plugins.nextcloud_cookbook.services
+package de.flavormate.extensions.importExport.plugins.flavormate.services
 
 import de.flavormate.exceptions.FBadRequestException
 import de.flavormate.exceptions.FInternalErrorException
@@ -12,35 +12,28 @@ import de.flavormate.extensions.importExport.models.inputSource.FileInputSource
 import de.flavormate.extensions.importExport.models.inputSource.IEImportType
 import de.flavormate.extensions.importExport.models.inputSource.IEInputSource
 import de.flavormate.extensions.importExport.models.inputSource.UrlInputSource
-import de.flavormate.extensions.importExport.plugins.ld_json.models.LDJsonRecipe
-import de.flavormate.extensions.importExport.plugins.nextcloud_cookbook.services.exporter.IEPluginLDNextcloudCookbookExporter
-import de.flavormate.extensions.importExport.plugins.nextcloud_cookbook.services.importer.IEPluginNextcloudCookbookDownloader
-import de.flavormate.extensions.importExport.plugins.nextcloud_cookbook.services.importer.IEPluginNextcloudCookbookImporter
+import de.flavormate.extensions.importExport.plugins.flavormate.models.IEFlavorMateRecipe
+import de.flavormate.extensions.importExport.plugins.flavormate.services.exporter.IEFlavorMateExporter
+import de.flavormate.extensions.importExport.plugins.flavormate.services.importer.IEPluginFlavorMateDownloader
+import de.flavormate.extensions.importExport.plugins.flavormate.services.importer.IEPluginFlavorMateImporter
 import de.flavormate.shared.enums.Language
 import de.flavormate.shared.services.DownloadService
-import de.flavormate.shared.services.LanguageDetectorService
 import de.flavormate.utils.ZipUtils
 import jakarta.enterprise.context.ApplicationScoped
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.io.path.createDirectories
-import kotlin.io.path.exists
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.name
+import kotlin.io.path.*
 import kotlin.streams.asSequence
 
 @ApplicationScoped
-class IEPluginNextcloudCookbook(
-  private val languageDetectorService: LanguageDetectorService,
-  private val downloadService: DownloadService,
-) : IEPlugin {
+class IEPluginFlavormate(private val downloadService: DownloadService) : IEPlugin {
 
   override val metadata =
     IEPluginMetadata(
-      id = "nextcloud_cookbook",
-      name = mapOf(Language.EN to "Nextcloud Cookbook", Language.DE to "Nextcloud Kochbuch"),
+      id = "flavormate",
+      name = mapOf(Language.EN to "FlavorMate Plugin", Language.DE to "FlavorMate Plugin"),
       version = "1.0.0",
       author = "FlavorMate",
       import = listOf(IEImportType.FileImport, IEImportType.UrlImport),
@@ -48,24 +41,24 @@ class IEPluginNextcloudCookbook(
       importExtensions = listOf("zip"),
       importShortDescription =
         mapOf(
-          Language.EN to "Import Nextcloud Cookbook",
-          Language.DE to "Nextcloud Kochbuch importieren",
+          Language.EN to "Import FlavorMate Backups",
+          Language.DE to "FlavorMate Sicherungen importieren",
         ),
       importLongDescription =
         mapOf(
-          Language.EN to "Import recipes from Nextcloud Cookbook zip files or URLs.",
-          Language.DE to "Rezepte aus Nextcloud Kochbuch-ZIP-Dateien oder URLs importieren.",
+          Language.EN to "Import FlavorMate backups from files or URLs.",
+          Language.DE to "FlavorMate Sicherungen aus Dateien oder URLs importieren.",
         ),
       export = true,
       exportShortDescription =
         mapOf(
-          Language.EN to "Export Nextcloud Cookbook",
-          Language.DE to "Nextcloud Kochbuch exportieren",
+          Language.EN to "Create FlavorMate backups",
+          Language.DE to "FlavorMate Sicherungen erstellen",
         ),
       exportLongDescription =
         mapOf(
-          Language.EN to "Export recipes as Nextcloud Cookbook zip archive.",
-          Language.DE to "Rezepte als Nextcloud Kochbuch-ZIP-Archiv exportieren.",
+          Language.EN to "Export recipes by creating FlavorMate backups",
+          Language.DE to "Rezepte als FlavorMate Sicherung exportieren.",
         ),
     )
 
@@ -74,7 +67,7 @@ class IEPluginNextcloudCookbook(
     workDirectory: Path,
     context: IEPluginContext,
   ): List<IERecipeDraft> {
-    val downloader = IEPluginNextcloudCookbookDownloader(context, downloadService)
+    val downloader = IEPluginFlavorMateDownloader(context, downloadService)
 
     return inputs.flatMap { input ->
       if (metadata.import.none { it.isImportSupported(input) }) {
@@ -94,11 +87,13 @@ class IEPluginNextcloudCookbook(
     }
   }
 
-  fun handleZipFile(
+  private fun handleZipFile(
     zipFile: Path,
     workDirectory: Path,
     context: IEPluginContext,
   ): List<IERecipeDraft> {
+    val importer = IEPluginFlavorMateImporter()
+
     val zipContent = workDirectory.resolve("extracted")
 
     ZipUtils.unzipDir(zipFile, zipContent)
@@ -120,17 +115,23 @@ class IEPluginNextcloudCookbook(
 
     val recipeFolders = rootDirectory.listDirectoryEntries()
 
-    val importer = IEPluginNextcloudCookbookImporter(languageDetectorService)
-
     return recipeFolders.mapNotNull { recipeFolder ->
-      val imageFile = recipeFolder.resolve("full.jpg").takeIf { it.exists() }
-      val ldJsonFile = recipeFolder.resolve("recipe.json")
+      val imageFolder = recipeFolder.resolve("files")
+      val imageFiles =
+        imageFolder
+          .takeIf { it.exists() && it.isDirectory() }
+          ?.listDirectoryEntries()
+          ?.filter { it.exists() }
+          ?.map { it.toFile() }
 
-      if (!ldJsonFile.exists()) return@mapNotNull null
+      val recipeFile = recipeFolder.resolve("recipe.json")
 
-      val ldJson = context.objectMapper.readValue(ldJsonFile.toFile(), LDJsonRecipe::class.java)
+      if (!recipeFile.exists()) return@mapNotNull null
 
-      importer.import(ldJson, imageFile)
+      val recipe =
+        context.objectMapper.readValue(recipeFile.toFile(), IEFlavorMateRecipe::class.java)
+
+      importer.import(recipe, imageFiles)
     }
   }
 
@@ -140,32 +141,33 @@ class IEPluginNextcloudCookbook(
    * export.zip
    * - Recipe 1/
    * - - recipe.json
-   * - - full.jpg
-   * - Recipe 2/
-   * - - recipe.json
-   * - - full.jpg
+   * - - files/
+   * - - - {UUID}.webp
+   * - - - {UUID}.webp
    */
   override fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
-    val zipContent = workDirectory.resolve("zipContent")
+    val exporter = IEFlavorMateExporter()
 
-    val exporter = IEPluginLDNextcloudCookbookExporter()
+    val zipContent = workDirectory.resolve("zipContent").createDirectories()
 
     for (input in inputs) {
       runCatching {
-        val ldJson = exporter.export(input)
-        val image = input.files.firstOrNull()
+        val recipeFolder = zipContent.resolve("${input.label} - (${input.id})")
+        val fileFolder = recipeFolder.resolve("files")
 
-        val recipeFolder = zipContent.resolve("${input.label} - (${input.id})").createDirectories()
+        val recipeFile = recipeFolder.resolve("recipe.json")
+
+        val recipe = exporter.export(input)
 
         context.objectMapper
           .writerWithDefaultPrettyPrinter()
-          .writeValue(recipeFolder.resolve("recipe.json").toFile(), ldJson)
+          .writeValue(recipeFile.createParentDirectories().toFile(), recipe)
 
-        /**
-         * Only copy the full-resolution image. There is no need to generate thumbnails, because the
-         * Nextcloud Cookbook App already does that.
-         */
-        image?.copyTo(recipeFolder.resolve("full.jpg").toFile())
+        for (image in input.files) {
+          val imageFile = fileFolder.resolve(image.parentFile.name + "." + image.extension)
+
+          image.copyTo(imageFile.createParentDirectories().toFile())
+        }
       }
     }
 
