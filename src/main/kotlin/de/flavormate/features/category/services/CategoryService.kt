@@ -6,7 +6,6 @@ import jakarta.enterprise.context.RequestScoped
 
 @RequestScoped
 class CategoryService(private val queryService: CategoryQueryService) {
-
   fun getCategories(language: String, pagination: Pagination) =
     queryService.getCategories(language, pagination)
 

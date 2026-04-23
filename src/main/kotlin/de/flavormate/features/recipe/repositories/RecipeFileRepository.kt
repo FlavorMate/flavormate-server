@@ -8,7 +8,6 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class RecipeFileRepository : CRepository<RecipeFileEntity>(RecipeFileEntity::class) {
-
   fun findAllTemporary(limit: Int): List<String> {
     val page = Page.ofSize(limit)
     return find("select id from RecipeFileEntity where temporaryFile is not null")

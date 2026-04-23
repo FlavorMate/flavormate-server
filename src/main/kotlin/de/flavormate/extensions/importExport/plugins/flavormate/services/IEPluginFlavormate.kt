@@ -29,7 +29,6 @@ import kotlin.streams.asSequence
 
 @ApplicationScoped
 class IEPluginFlavormate(private val downloadService: DownloadService) : IEPlugin {
-
   override val metadata =
     IEPluginMetadata(
       id = "flavormate",
@@ -77,10 +76,14 @@ class IEPluginFlavormate(private val downloadService: DownloadService) : IEPlugi
       }
       val zipFile =
         when (input) {
-          is FileInputSource -> input.file.toPath()
-          is UrlInputSource ->
+          is FileInputSource -> {
+            input.file.toPath()
+          }
+
+          is UrlInputSource -> {
             downloader.download(input.name)
               ?: throw FInternalErrorException("Download failed for ${input.name}")
+          }
         }
 
       handleZipFile(zipFile, workDirectory, context)

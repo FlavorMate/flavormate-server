@@ -8,7 +8,6 @@ import jakarta.transaction.TransactionManager
 
 @RequestScoped
 class TransactionService(private val transactionManager: TransactionManager) {
-
   val pendingOperations = mutableListOf<() -> Unit>()
 
   fun initialize() {

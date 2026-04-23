@@ -15,7 +15,6 @@ import org.apache.commons.compress.archivers.zip.ZipFile
 
 /** Utility class that provides methods for compressing directories into ZIP files. */
 object ZipUtils {
-
   /**
    * Compresses a directory into a ZIP file.
    *

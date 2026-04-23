@@ -9,10 +9,8 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class RecipeDraftRepository : PanacheRepositoryBase<RecipeDraftEntity, String> {
-
-  override fun findAll(sort: Sort): PanacheQuery<RecipeDraftEntity> {
-    return find(query = "select r from RecipeDraftEntity r", sort = sort)
-  }
+  override fun findAll(sort: Sort): PanacheQuery<RecipeDraftEntity> =
+    find(query = "select r from RecipeDraftEntity r", sort = sort)
 
   fun existsByOriginId(id: String): Boolean {
     val params = mapOf("id" to id)

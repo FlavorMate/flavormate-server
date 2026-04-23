@@ -18,7 +18,6 @@ class AccountRepository : PanacheRepositoryBase<AccountEntity, String> {
     val sortColumn = sort.columns.firstOrNull()
 
     if (sortColumn?.name == AllowedSorts.adminAccounts.getValue(SearchOrderBy.LastActivity)) {
-
       val aggregateFn = if (sortColumn.direction == Sort.Direction.Ascending) "min" else "max"
 
       return find(

@@ -8,7 +8,6 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "v3__recipe_draft__ingredient_group")
 class RecipeDraftIngredientGroupEntity : CoreEntity() {
-
   var label: String? = null
 
   var index: Int = 0
@@ -31,14 +30,13 @@ class RecipeDraftIngredientGroupEntity : CoreEntity() {
       ingredients: List<RecipeDraftIngredientGroupItemEntity>,
       recipe: RecipeDraftEntity,
       id: String? = null,
-    ): RecipeDraftIngredientGroupEntity {
-      return RecipeDraftIngredientGroupEntity().apply {
+    ): RecipeDraftIngredientGroupEntity =
+      RecipeDraftIngredientGroupEntity().apply {
         this.label = label
         this.index = index
         this.ingredients = ingredients.toMutableList()
         this.recipe = recipe
         id?.let { this.id = it }
       }
-    }
   }
 }

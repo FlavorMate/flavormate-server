@@ -14,7 +14,6 @@ class AccountFileQueryService(
   private val repository: AccountFileRepository,
   private val fileService: FileService,
 ) {
-
   fun getAccountsIdFile(id: String, resolution: ImageResolution): StreamingOutput {
     val avatar =
       repository.findByOwnedById(id = id) ?: throw FNotFoundException(message = "Avatar not found")

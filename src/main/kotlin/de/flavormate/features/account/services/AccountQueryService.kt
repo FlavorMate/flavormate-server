@@ -32,8 +32,9 @@ class AccountQueryService(
   fun getAccountsSelf(): AccountFullDto {
     val entity = authorizationDetails.getSelf()
 
-    if (!authorizationDetails.isAdminOrOwner(target = entity))
+    if (!authorizationDetails.isAdminOrOwner(target = entity)) {
       throw FNotFoundException(message = "You are not allowed to access this account!", id = "")
+    }
 
     return AccountFullDtoMapper.mapNotNullBasic(input = entity)
   }

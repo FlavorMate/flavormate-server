@@ -30,7 +30,6 @@ class IERecipeConvertService(
   private val fileService: FileService,
   private val languageDetectorService: LanguageDetectorService,
 ) {
-
   @Transactional
   fun convert(input: RecipeEntity): IERecipe {
     val language = getLanguage(input.instructionGroups) ?: Language.EN
@@ -68,30 +67,25 @@ class IERecipeConvertService(
     return input.label
   }
 
-  private fun mapServing(input: ServingEntity): IERecipeServing {
-    return IERecipeServing(amount = input.amount, label = input.label)
-  }
+  private fun mapServing(input: ServingEntity): IERecipeServing =
+    IERecipeServing(amount = input.amount, label = input.label)
 
-  private fun mapInstructionGroup(input: InstructionGroupEntity): IERecipeInstructionGroup {
-    return IERecipeInstructionGroup(
+  private fun mapInstructionGroup(input: InstructionGroupEntity): IERecipeInstructionGroup =
+    IERecipeInstructionGroup(
       label = input.label,
       index = input.index,
       instructions = input.instructions.map { mapInstructionGroupItem(it) },
     )
-  }
 
-  private fun mapInstructionGroupItem(input: InstructionEntity): IERecipeInstructionGroupItem {
-    return IERecipeInstructionGroupItem(label = input.label, index = input.index)
-  }
+  private fun mapInstructionGroupItem(input: InstructionEntity): IERecipeInstructionGroupItem =
+    IERecipeInstructionGroupItem(label = input.label, index = input.index)
 
-  private fun mapIngredientGroup(input: IngredientGroupEntity): IERecipeIngredientGroup {
-
-    return IERecipeIngredientGroup(
+  private fun mapIngredientGroup(input: IngredientGroupEntity): IERecipeIngredientGroup =
+    IERecipeIngredientGroup(
       label = input.label,
       index = input.index,
       ingredients = input.ingredients.map { mapIngredientGroupItem(it) },
     )
-  }
 
   private fun mapIngredientGroupItem(input: IngredientEntity): IERecipeIngredientGroupItem {
     val amountLabel: String? = input.amount?.beautify
@@ -110,8 +104,8 @@ class IERecipeConvertService(
     )
   }
 
-  private fun mapNutrition(input: NutritionEntity): IENutrition {
-    return IENutrition(
+  private fun mapNutrition(input: NutritionEntity): IENutrition =
+    IENutrition(
       openFoodFactsId = input.openFoodFactsId?.id,
       carbohydrates = input.carbohydrates,
       energyKcal = input.energyKcal,
@@ -123,7 +117,6 @@ class IERecipeConvertService(
       salt = input.salt,
       sodium = input.sodium,
     )
-  }
 
   private fun mapFile(input: RecipeFileEntity): File? {
     val filePath =

@@ -26,7 +26,6 @@ class SearchController(
   private val searchRepository: SearchRepository,
   private val authorizationDetails: AuthorizationDetails,
 ) {
-
   @GET
   @Path("/{searchTerm}")
   fun search(

@@ -19,7 +19,6 @@ import org.jboss.resteasy.reactive.RestQuery
 @RolesAllowed(RoleTypes.USER_VALUE)
 @Path("/v3/recipes")
 class RecipeController(private val service: RecipeService) {
-
   @GET
   fun getRecipes(@BeanParam pagination: Pagination) = service.getRecipes(pagination = pagination)
 

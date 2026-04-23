@@ -25,7 +25,6 @@ import org.jboss.resteasy.reactive.server.jaxrs.ContainerRequestContextImpl
  *   for token validation.
  */
 abstract class PublicFilter(private val tokenService: AuthTokenService) : ContainerRequestFilter {
-
   @Context protected lateinit var resourceInfo: ResourceInfo
 
   @Context protected lateinit var uriInfo: UriInfo

@@ -16,7 +16,6 @@ class AccountCron(
   private val accountRepository: AccountRepository,
   private val roleRepository: RoleRepository,
 ) {
-
   @Startup
   @Transactional
   fun addIERoles() {

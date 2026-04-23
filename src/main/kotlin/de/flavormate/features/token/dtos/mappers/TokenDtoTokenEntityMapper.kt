@@ -6,8 +6,8 @@ import de.flavormate.features.token.dtos.models.TokenDto
 import de.flavormate.shared.interfaces.BasicMapper
 
 object TokenDtoTokenEntityMapper : BasicMapper<TokenEntity, TokenDto>() {
-  override fun mapNotNullBasic(input: TokenEntity): TokenDto {
-    return TokenDto(
+  override fun mapNotNullBasic(input: TokenEntity): TokenDto =
+    TokenDto(
       id = input.id,
       createdAt = input.issuedAt,
       expiresAt = input.expiredAt,
@@ -15,5 +15,4 @@ object TokenDtoTokenEntityMapper : BasicMapper<TokenEntity, TokenDto>() {
       type = input.type,
       resource = input.securedResource,
     )
-  }
 }

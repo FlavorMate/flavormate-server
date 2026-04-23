@@ -6,8 +6,6 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class FeaturesService(val flavorMateProperties: FlavorMateProperties) {
-
-  fun getEnabledFeatures(): List<String> {
-    return flavorMateProperties.features().filter { it.value.enabled() }.map { it.key.name }
-  }
+  fun getEnabledFeatures(): List<String> =
+    flavorMateProperties.features().filter { it.value.enabled() }.map { it.key.name }
 }

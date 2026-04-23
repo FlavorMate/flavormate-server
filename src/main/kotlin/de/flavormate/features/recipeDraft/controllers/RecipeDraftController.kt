@@ -25,7 +25,6 @@ class RecipeDraftController(
   private val service: RecipeDraftService,
   private val fileService: RecipeDraftFileService,
 ) {
-
   @GET
   fun getRecipeDrafts(@BeanParam pagination: Pagination) =
     service.getRecipeDrafts(pagination = pagination)

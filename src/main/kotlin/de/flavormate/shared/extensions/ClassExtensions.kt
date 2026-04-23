@@ -9,13 +9,11 @@ package de.flavormate.shared.extensions
  * @return A new mutable set containing the transformed elements, or null if the resulting set is
  *   empty.
  */
-fun <S, T> Set<S>.mapToSet(transform: (S) -> T): MutableSet<T>? {
-  return this.mapTo(mutableSetOf(), transform).takeIf { it.isNotEmpty() }
-}
+fun <S, T> Set<S>.mapToSet(transform: (S) -> T): MutableSet<T>? =
+  this.mapTo(mutableSetOf(), transform).takeIf { it.isNotEmpty() }
 
-fun <S, T> List<S>.mapToSet(transform: (S) -> T): MutableSet<T>? {
-  return this.mapTo(mutableSetOf(), transform).takeIf { it.isNotEmpty() }
-}
+fun <S, T> List<S>.mapToSet(transform: (S) -> T): MutableSet<T>? =
+  this.mapTo(mutableSetOf(), transform).takeIf { it.isNotEmpty() }
 
 fun String?.trimToNull() = this?.trim()?.ifBlank { null }
 
@@ -31,6 +29,4 @@ fun String.toKebabCase(): String {
     .lowercase() // Convert to lowercase
 }
 
-fun String.stripHTMLTags(): String {
-  return replace("<.*?>".toRegex(), "")
-}
+fun String.stripHTMLTags(): String = replace("<.*?>".toRegex(), "")

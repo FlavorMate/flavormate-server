@@ -6,7 +6,7 @@ import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.bring.controllers.BringController
-import de.flavormate.extensions.importExport.plugins.ld_json.services.exporter.IEPluginLDJsonExporter
+import de.flavormate.extensions.importExport.plugins.ldJson.services.exporter.IEPluginLDJsonExporter
 import de.flavormate.extensions.importExport.services.IERecipeConvertService
 import de.flavormate.features.recipe.repositories.RecipeRepository
 import de.flavormate.shared.enums.ImageResolution
@@ -30,7 +30,6 @@ class BringService(
   private val templateService: TemplateService,
   private val ieRecipeConvertService: IERecipeConvertService,
 ) {
-
   private val server
     get() = flavorMateProperties.server().url()
 
@@ -53,8 +52,9 @@ class BringService(
   }
 
   fun shareBring(id: String): String {
-    if (!authTokenService.validateAccess(authorizationDetails.token, id))
+    if (!authTokenService.validateAccess(authorizationDetails.token, id)) {
       throw FForbiddenException(message = "Token is invalid")
+    }
 
     val recipeEntity =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")

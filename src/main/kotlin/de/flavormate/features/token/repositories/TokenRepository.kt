@@ -46,11 +46,8 @@ class TokenRepository : PanacheRepositoryBase<TokenEntity, String> {
     return update("revoked = true where id = :hashedJWT", params) > 0
   }
 
-  fun findAllRevoked(): List<String> {
-    return find("select id from TokenEntity where revoked = true")
-      .project(String::class.java)
-      .list()
-  }
+  fun findAllRevoked(): List<String> =
+    find("select id from TokenEntity where revoked = true").project(String::class.java).list()
 
   fun findIssuer(id: String): AccountEntity? {
     val params = mapOf("id" to id)
@@ -65,9 +62,7 @@ class TokenRepository : PanacheRepositoryBase<TokenEntity, String> {
     return find("tokenType = :tokenType and issuer.id = :issuerId", sortBy, params)
   }
 
-  fun deleteAllExpired(): Long {
-    return delete("expiredAt < current_timestamp")
-  }
+  fun deleteAllExpired(): Long = delete("expiredAt < current_timestamp")
 
   fun findAllByOwner(sort: Sort, ownedById: String): PanacheQuery<TokenEntity> {
     val params = mapOf("ownedById" to ownedById)

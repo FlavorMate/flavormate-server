@@ -13,11 +13,8 @@ class ServingEntity : CoreEntity() {
 
   lateinit var label: String
 
-  override fun toString(): String {
-    return listOfNotNull(NumberUtils.beautify(amount), label).joinToString(" ")
-  }
+  override fun toString(): String =
+    listOfNotNull(NumberUtils.beautify(amount), label).joinToString(" ")
 
-  fun toString(requestedAmount: Int): String {
-    return "$requestedAmount $label"
-  }
+  fun toString(requestedAmount: Int): String = "$requestedAmount $label"
 }

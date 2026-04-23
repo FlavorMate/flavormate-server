@@ -11,7 +11,6 @@ class RatingsQueryService(
   private val authorizationDetails: AuthorizationDetails,
   private val repository: RatingsRepository,
 ) {
-
   fun getRecipesIdRating(recipeId: String): RatingsDto? {
     val self = authorizationDetails.getSelf()
     return repository.findByRecipeId(accountId = self.id, recipeId = recipeId)

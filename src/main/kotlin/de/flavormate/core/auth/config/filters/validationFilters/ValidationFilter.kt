@@ -21,7 +21,6 @@ import kotlin.reflect.jvm.javaMethod
 @Singleton
 @Priority(150)
 class ValidationFilter(private val tokenService: AuthTokenService) : ContainerRequestFilter {
-
   private val securedClass by lazy {
     listOf(
       BringController::class.java,

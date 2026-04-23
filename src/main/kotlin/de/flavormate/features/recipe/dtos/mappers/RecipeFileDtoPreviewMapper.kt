@@ -24,9 +24,8 @@ object RecipeFileDtoPreviewMapper : BasicMapper<RecipeFileEntity, RecipeFileDtoP
     input: RecipeFileEntity,
     path: String,
     server: String,
-  ): RecipeFileDtoPreview {
-
-    return RecipeFileDtoPreview(
+  ): RecipeFileDtoPreview =
+    RecipeFileDtoPreview(
       id = input.id,
       path =
         URIBuilder(server)
@@ -34,5 +33,4 @@ object RecipeFileDtoPreviewMapper : BasicMapper<RecipeFileEntity, RecipeFileDtoP
           .addParameter("resolution", ImageResolution.Original.name)
           .toString(),
     )
-  }
 }

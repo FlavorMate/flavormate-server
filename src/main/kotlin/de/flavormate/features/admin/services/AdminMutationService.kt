@@ -15,15 +15,15 @@ class AdminMutationService(
   private val authorizationDetails: AuthorizationDetails,
   private val accountCreateService: AccountCreateService,
 ) {
-
   fun setPassword(id: String, newPassword: String) {
     val account =
       accountRepository.findById(id) ?: throw FNotFoundException(message = "Account not found!")
 
-    if (!authorizationDetails.isAdmin())
+    if (!authorizationDetails.isAdmin()) {
       throw FForbiddenException(
         message = "You are not allowed to update the password of this account!"
       )
+    }
 
     account.password = BcryptUtil.bcryptHash(newPassword)
 
@@ -34,10 +34,11 @@ class AdminMutationService(
     val account =
       accountRepository.findById(id) ?: throw FNotFoundException(message = "Account not found!")
 
-    if (!authorizationDetails.isAdmin())
+    if (!authorizationDetails.isAdmin()) {
       throw FForbiddenException(
         message = "You are not allowed to update the state of this account!"
       )
+    }
 
     account.enabled = !account.enabled
 
@@ -45,15 +46,17 @@ class AdminMutationService(
   }
 
   fun deleteAccount(id: String) {
-    if (!authorizationDetails.isAdmin())
+    if (!authorizationDetails.isAdmin()) {
       throw FForbiddenException(message = "You are not allowed to delete this account!")
+    }
 
     accountRepository.deleteById(id)
   }
 
   fun createAccount(displayName: String, username: String, password: String, email: String) {
-    if (!authorizationDetails.isAdmin())
+    if (!authorizationDetails.isAdmin()) {
       throw FForbiddenException(message = "You are not allowed to create an account!")
+    }
 
     accountCreateService.createAccount(
       username = username,

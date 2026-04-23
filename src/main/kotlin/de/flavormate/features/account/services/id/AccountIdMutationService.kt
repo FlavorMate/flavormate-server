@@ -15,13 +15,13 @@ class AccountIdMutationService(
   private val accountRepository: AccountRepository,
   private val authorizationDetails: AuthorizationDetails,
 ) {
-
   fun putAccountsId(id: String, form: AccountUpdateDto) {
     val account =
       accountRepository.findById(id) ?: throw FNotFoundException(message = "Account not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(account))
+    if (!authorizationDetails.isAdminOrOwner(account)) {
       throw FForbiddenException(message = "You are not allowed to update this account!")
+    }
 
     if (form.diet != null) {
       account.diet = form.diet

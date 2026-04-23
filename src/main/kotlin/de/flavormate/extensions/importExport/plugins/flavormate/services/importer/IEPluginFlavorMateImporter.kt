@@ -6,9 +6,8 @@ import de.flavormate.extensions.importExport.plugins.flavormate.models.*
 import java.io.File
 
 class IEPluginFlavorMateImporter {
-
-  fun import(input: IEFlavorMateRecipe, files: List<File>?): IERecipeDraft {
-    return IERecipeDraft(
+  fun import(input: IEFlavorMateRecipe, files: List<File>?): IERecipeDraft =
+    IERecipeDraft(
       language = input.language,
       cookTime = input.cookTime,
       course = input.course,
@@ -25,7 +24,6 @@ class IEPluginFlavorMateImporter {
       files = files ?: emptyList(),
       url = input.url,
     )
-  }
 
   private fun mapServing(input: IEFlavorMateRecipeServing) =
     IERecipeDraftServing(amount = input.amount, label = input.label)

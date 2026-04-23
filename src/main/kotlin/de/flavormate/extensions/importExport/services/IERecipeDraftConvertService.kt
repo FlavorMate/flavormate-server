@@ -40,7 +40,6 @@ class IERecipeDraftConvertService(
   private val fileRecipeDraftRepository: RecipeDraftFileRepository,
   private val fileService: FileService,
 ) {
-
   @Transactional
   fun convert(input: IERecipeDraft): RecipeDraftEntity {
     val language = input.language.value
@@ -78,49 +77,45 @@ class IERecipeDraftConvertService(
     return recipe
   }
 
-  private fun mapServing(input: IERecipeDraftServing): RecipeDraftServingEntity {
-    return RecipeDraftServingEntity().apply {
+  private fun mapServing(input: IERecipeDraftServing): RecipeDraftServingEntity =
+    RecipeDraftServingEntity().apply {
       this.amount = input.amount
       this.label = input.label
     }
-  }
 
   private fun mapInstructionGroup(
     input: IERecipeDraftInstructionGroup,
     recipe: RecipeDraftEntity,
-  ): RecipeDraftInstructionGroupEntity {
-    return RecipeDraftInstructionGroupEntity().apply {
+  ): RecipeDraftInstructionGroupEntity =
+    RecipeDraftInstructionGroupEntity().apply {
       this.label = input.label
       this.index = input.index
       this.instructions = input.instructions.mapTo(mutableListOf()) { mapInstruction(it, this) }
       this.recipe = recipe
     }
-  }
 
   private fun mapInstruction(
     input: IERecipeDraftInstructionGroupItem,
     group: RecipeDraftInstructionGroupEntity,
-  ): RecipeDraftInstructionGroupItemEntity {
-    return RecipeDraftInstructionGroupItemEntity.create(
+  ): RecipeDraftInstructionGroupItemEntity =
+    RecipeDraftInstructionGroupItemEntity.create(
       label = input.label,
       index = input.index,
       group = group,
     )
-  }
 
   private fun mapIngredientGroup(
     input: IERecipeDraftIngredientGroup,
     recipe: RecipeDraftEntity,
     language: String,
-  ): RecipeDraftIngredientGroupEntity {
-    return RecipeDraftIngredientGroupEntity().apply {
+  ): RecipeDraftIngredientGroupEntity =
+    RecipeDraftIngredientGroupEntity().apply {
       this.label = input.label
       this.index = input.index
       this.ingredients =
         input.ingredients.mapNotNullTo(mutableListOf()) { mapIngredient(it, this, language) }
       this.recipe = recipe
     }
-  }
 
   private fun mapIngredient(
     input: IERecipeDraftIngredientGroupItem,

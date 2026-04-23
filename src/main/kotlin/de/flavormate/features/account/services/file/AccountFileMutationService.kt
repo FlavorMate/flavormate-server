@@ -32,8 +32,9 @@ class AccountFileMutationService(
     val account =
       accountRepository.findById(id) ?: throw FNotFoundException(message = "Account not found")
 
-    if (!authorizationDetails.isAdminOrOwner(target = account))
+    if (!authorizationDetails.isAdminOrOwner(target = account)) {
       throw FForbiddenException(message = "You are not allowed to delete this account!")
+    }
 
     transactionService.pendingOperations.add {
       fileService.deleteFolder(prefix = FilePath.AccountAvatar, uuid = account.avatar!!.id)
@@ -50,10 +51,11 @@ class AccountFileMutationService(
     val account =
       accountRepository.findById(id) ?: throw FNotFoundException(message = "Account not found")
 
-    if (!authorizationDetails.isAdminOrOwner(target = account))
+    if (!authorizationDetails.isAdminOrOwner(target = account)) {
       throw FForbiddenException(
         message = "You are not allowed to upload an avatar for this account!"
       )
+    }
 
     // remove the old avatar
     if (account.avatar != null) {

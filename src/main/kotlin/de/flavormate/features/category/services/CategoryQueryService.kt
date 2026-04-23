@@ -14,7 +14,6 @@ import jakarta.enterprise.context.RequestScoped
 
 @RequestScoped
 class CategoryQueryService(private val categoryRepository: CategoryRepository) {
-
   fun getCategories(language: String, pagination: Pagination): PageableDto<CategoryDto> {
     val dataQuery =
       categoryRepository.findAll(

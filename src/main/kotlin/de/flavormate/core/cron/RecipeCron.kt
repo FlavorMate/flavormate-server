@@ -18,7 +18,6 @@ class RecipeCron(
   private val repository: RecipeRepository,
   private val nutritionRepository: RecipeNutritionRepository,
 ) {
-
   @Scheduled(cron = "0 0 0 * * ?")
   @Startup
   fun run() {

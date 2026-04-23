@@ -12,7 +12,6 @@ import kotlin.reflect.jvm.javaMethod
 @Singleton
 @Priority(100)
 class PublicBringFilter(tokenService: AuthTokenService) : PublicFilter(tokenService) {
-
   override val securedClass by lazy { BringController::class.java }
   override val securedMethods by lazy {
     listOf(BringController::shareBring.javaMethod, BringController::shareFileId.javaMethod)

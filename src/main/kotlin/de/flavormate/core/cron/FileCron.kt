@@ -31,7 +31,6 @@ class FileCron(
   private val fileRecipeRepository: RecipeFileRepository,
   private val fileRecipeDraftRepository: RecipeDraftFileRepository,
 ) {
-
   @Scheduled(cron = "5 0 0 * * ?")
   @Startup
   fun run() {

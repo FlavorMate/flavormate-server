@@ -7,10 +7,9 @@ import de.flavormate.shared.interfaces.BasicMapper
 
 object ServingEntityServingDraftEntityMapper :
   BasicMapper<RecipeDraftServingEntity, ServingEntity>() {
-  override fun mapNotNullBasic(input: RecipeDraftServingEntity): ServingEntity {
-    return ServingEntity().apply {
+  override fun mapNotNullBasic(input: RecipeDraftServingEntity): ServingEntity =
+    ServingEntity().apply {
       this.amount = input.amount!!
       this.label = input.label!!
     }
-  }
 }

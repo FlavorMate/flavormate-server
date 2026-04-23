@@ -30,7 +30,6 @@ class RegistrationService(
   val accountCreateService: AccountCreateService,
   val flavorMateProperties: FlavorMateProperties,
 ) {
-
   @Location("registration/welcome.html") private lateinit var emailTemplate: Template
 
   @Location("registration/ok.html") private lateinit var successTemplate: Template

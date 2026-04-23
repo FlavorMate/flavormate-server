@@ -24,10 +24,12 @@ class AuthService(
       accountRepository.findByUsername(loginForm.username)
         ?: throw FNotFoundException(message = "Account with id ${loginForm.username} not found")
 
-    if (!account.enabled)
+    if (!account.enabled) {
       throw FUnauthorizedException(message = "Account not enabled by an administrator yet")
-    if (!account.verified)
+    }
+    if (!account.verified) {
       throw FUnauthorizedException(message = "Account not validated. Please check your email")
+    }
 
     if (!BcryptUtil.matches(loginForm.password, account.password)) {
       throw FUnauthorizedException(message = "Invalid password")
@@ -42,10 +44,12 @@ class AuthService(
       accountRepository.findById(accountId)
         ?: throw FNotFoundException(message = "Account with id $accountId not found")
 
-    if (!account.enabled)
+    if (!account.enabled) {
       throw FUnauthorizedException(message = "Account not enabled by an administrator yet")
-    if (!account.verified)
+    }
+    if (!account.verified) {
       throw FUnauthorizedException(message = "Account not validated. Please check your email")
+    }
 
     return sessionService.login(account)
   }

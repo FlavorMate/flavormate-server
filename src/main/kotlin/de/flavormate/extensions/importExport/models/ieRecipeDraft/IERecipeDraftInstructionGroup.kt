@@ -5,4 +5,4 @@ data class IERecipeDraftInstructionGroup(
   val label: String?,
   val index: Int,
   val instructions: List<IERecipeDraftInstructionGroupItem>,
-) {}
+)

@@ -26,9 +26,7 @@ import jakarta.ws.rs.core.UriBuilder
  */
 @ApplicationScoped
 class AuthHeaderFilter(private val flavorMateProperties: FlavorMateProperties) {
-
   companion object {
-
     /** The order used by `HttpAuthenticationMechanism` is -150 so this one has to be lower */
     private const val FILTER_ORDER = -200
 

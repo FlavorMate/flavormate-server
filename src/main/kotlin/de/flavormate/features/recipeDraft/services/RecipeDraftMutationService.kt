@@ -53,7 +53,6 @@ class RecipeDraftMutationService(
   private val recipeDraftInstructionGroupRepository: RecipeDraftInstructionGroupRepository,
   private val recipeDraftInstructionGroupItemRepository: RecipeDraftInstructionGroupItemRepository,
 ) {
-
   fun delete(id: String): Boolean {
     transactionService.initialize()
 
@@ -61,8 +60,9 @@ class RecipeDraftMutationService(
       recipeDraftRepository.findById(id)
         ?: throw FNotFoundException(message = "Recipe draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(draft))
+    if (!authorizationDetails.isAdminOrOwner(draft)) {
       throw FForbiddenException(message = "You are not allowed to delete this recipe draft!")
+    }
 
     for (file in draft.files) {
       transactionService.pendingOperations.add {
@@ -87,8 +87,9 @@ class RecipeDraftMutationService(
       recipeDraftRepository.findById(id)
         ?: throw FNotFoundException(message = "Recipe draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(entity))
+    if (!authorizationDetails.isAdminOrOwner(entity)) {
       throw FForbiddenException(message = "You are not allowed to update this recipe draft!")
+    }
 
     if (form.cookTime != null) {
       entity.cookTime = form.cookTime
@@ -376,8 +377,9 @@ class RecipeDraftMutationService(
       recipeDraftRepository.findById(id)
         ?: throw FNotFoundException(message = "Recipe draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(draftEntity))
+    if (!authorizationDetails.isAdminOrOwner(draftEntity)) {
       throw FForbiddenException(message = "You are not allowed to create a recipe from this draft!")
+    }
 
     val recipe =
       if (draftEntity.originId == null) {

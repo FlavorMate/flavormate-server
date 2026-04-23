@@ -13,7 +13,6 @@ class ShortenerService(
   val repository: ShortenerRepository,
   val flavorMateProperties: FlavorMateProperties,
 ) {
-
   private val server
     get() = flavorMateProperties.server().url()
 

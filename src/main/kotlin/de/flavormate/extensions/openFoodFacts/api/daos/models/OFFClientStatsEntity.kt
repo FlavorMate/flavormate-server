@@ -9,7 +9,7 @@ import java.util.*
 
 @Entity
 @Table(name = "v3__ext__off__api_usage")
-class OFFClientStatsEntity() {
+class OFFClientStatsEntity {
   @Id var id: String = UUID.randomUUID().toString()
 
   var timestamp: LocalDateTime = LocalDateTime.now().withSecond(0).withNano(0)

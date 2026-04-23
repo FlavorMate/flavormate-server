@@ -14,24 +14,16 @@ import org.apache.commons.io.FileUtils
 
 @ApplicationScoped
 class FileService(private val flavorMateProperties: FlavorMateProperties) {
-
   private val path
     get() = flavorMateProperties.paths().files()
 
-  fun rootPath(prefix: FilePath): Path {
-    return Paths.get(path).resolve(prefix.path)
-  }
+  fun rootPath(prefix: FilePath): Path = Paths.get(path).resolve(prefix.path)
 
-  fun createPath(prefix: FilePath, uuid: String): Path {
-    return readPath(prefix, uuid).also { it.createDirectories() }
-  }
+  fun createPath(prefix: FilePath, uuid: String): Path =
+    readPath(prefix, uuid).also { it.createDirectories() }
 
-  fun readPath(prefix: FilePath, uuid: String): Path {
-    return rootPath(prefix)
-      .resolve(uuid.substring(0, 2))
-      .resolve(uuid.substring(2, 4))
-      .resolve(uuid)
-  }
+  fun readPath(prefix: FilePath, uuid: String): Path =
+    rootPath(prefix).resolve(uuid.substring(0, 2)).resolve(uuid.substring(2, 4)).resolve(uuid)
 
   fun streamFile(prefix: FilePath, uuid: String, fileName: Path): StreamingOutput {
     val file = readPath(prefix, uuid).resolve(fileName)

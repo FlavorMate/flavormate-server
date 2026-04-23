@@ -7,21 +7,14 @@ import kotlin.reflect.KClass
 
 abstract class CRepository<Entity : Any>(val clazz: KClass<Entity>) :
   PanacheRepositoryBase<Entity, String> {
+  override fun findById(id: String): Entity? = find("id", id).firstResult()
 
-  override fun findById(id: String): Entity? {
-    return find("id", id).firstResult()
-  }
-
-  fun existsById(id: String): Boolean {
-    return count("id = ?1", id) > 0
-  }
+  fun existsById(id: String): Boolean = count("id = ?1", id) > 0
 
   fun findIds(): List<String> {
     val entity = clazz.simpleName
     return find("select id from $entity").project(String::class.java).list()
   }
 
-  fun findBySchema(schema: Int): PanacheQuery<Entity> {
-    return find("schema = ?1", schema)
-  }
+  fun findBySchema(schema: Int): PanacheQuery<Entity> = find("schema = ?1", schema)
 }

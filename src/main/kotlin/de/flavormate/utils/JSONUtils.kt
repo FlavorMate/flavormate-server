@@ -35,11 +35,10 @@ object JSONUtils {
    * @return The extracted field converted to the specified data type or null if the field is
    *   missing. </T>
    */
-  fun <T> extractField(body: JsonNode, fieldName: String?, clazz: Class<T>?): T? {
-    return Optional.ofNullable(body[fieldName])
+  fun <T> extractField(body: JsonNode, fieldName: String?, clazz: Class<T>?): T? =
+    Optional.ofNullable(body[fieldName])
       .map { jsonNode: JsonNode? -> mapper.convertValue(jsonNode, clazz) }
       .orElse(null)
-  }
 
   /**
    * Extracts a list of objects from a JSON array field and converts them to the specified data
@@ -52,11 +51,10 @@ object JSONUtils {
    * @return A List of objects with elements converted to the specified data type, or an empty list
    *   if the field is missing. </T>
    */
-  fun <T> extractList(body: JsonNode, fieldName: String?, clazz: Class<Array<T>>?): List<T> {
-    return Optional.ofNullable(body[fieldName])
+  fun <T> extractList(body: JsonNode, fieldName: String?, clazz: Class<Array<T>>?): List<T> =
+    Optional.ofNullable(body[fieldName])
       .map { jsonNode: JsonNode? -> Arrays.asList(*mapper.convertValue(jsonNode, clazz)) }
       .orElse(emptyList())
-  }
 
   /**
    * Extracts an object from a JSON field and converts it to the specified data type.
@@ -66,14 +64,12 @@ object JSONUtils {
    * @param clazz The class representing the target data type.
    * @return An element converted to the specified data type, or null if the field is missing. </T>
    */
-  fun <T> parseObject(body: JsonNode?, clazz: Class<T>?): T {
-    return Optional.ofNullable<JsonNode>(body)
+  fun <T> parseObject(body: JsonNode?, clazz: Class<T>?): T =
+    Optional.ofNullable<JsonNode>(body)
       .map<T> { jsonNode: JsonNode? -> (mapper.convertValue<T>(jsonNode, clazz)) }
       .orElseThrow<RuntimeException>(Supplier<RuntimeException> { NotAcceptableException() })
-  }
 
   @Throws(JsonProcessingException::class)
-  fun toJsonString(`object`: Any?): String {
-    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(`object`)
-  }
+  fun toJsonString(`object`: Any?): String =
+    mapper.writerWithDefaultPrettyPrinter().writeValueAsString(`object`)
 }

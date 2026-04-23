@@ -19,7 +19,6 @@ class AdminCron(
   private val accountCreateService: AccountCreateService,
   private val flavorMateProperties: FlavorMateProperties,
 ) {
-
   @Startup
   @Transactional
   fun createAdminAccount() {

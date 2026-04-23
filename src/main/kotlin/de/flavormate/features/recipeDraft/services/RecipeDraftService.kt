@@ -11,7 +11,6 @@ class RecipeDraftService(
   private val mutationService: RecipeDraftMutationService,
   private val queryService: RecipeDraftQueryService,
 ) {
-
   // GET
   fun getRecipeDrafts(pagination: Pagination) =
     queryService.getRecipeDrafts(pagination = pagination)

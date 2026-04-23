@@ -11,10 +11,8 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class BookRepository : PanacheRepositoryBase<BookEntity, String> {
-
-  override fun findAll(sort: Sort): PanacheQuery<BookEntity> {
-    return find(query = "select b from BookEntity b", sort = sort)
-  }
+  override fun findAll(sort: Sort): PanacheQuery<BookEntity> =
+    find(query = "select b from BookEntity b", sort = sort)
 
   fun findBySearch(sort: Sort, accountId: String, query: String): PanacheQuery<BookEntity> {
     val params = mapOf("accountId" to accountId, "query" to query)
@@ -27,14 +25,13 @@ class BookRepository : PanacheRepositoryBase<BookEntity, String> {
     )
   }
 
-  fun search(email: String, searchTerm: String, sortBy: Sort): PanacheQuery<BookEntity> {
-    return find(
+  fun search(email: String, searchTerm: String, sortBy: Sort): PanacheQuery<BookEntity> =
+    find(
       "select b from BookEntity b where (b.ownedBy.email = ?1 or b.visible = true) and lower(b.label) like lower(concat('%', ?2, '%')) ",
       sortBy,
       email,
       searchTerm,
     )
-  }
 
   fun findOwn(sort: Sort, id: String): PanacheQuery<BookEntity> {
     val params = mapOf("id" to id)
@@ -89,9 +86,7 @@ class BookRepository : PanacheRepositoryBase<BookEntity, String> {
       .project(RecipeEntity::class.java)
   }
 
-  override fun deleteById(id: String): Boolean {
-    return delete("id = ?1", id) > 0
-  }
+  override fun deleteById(id: String): Boolean = delete("id = ?1", id) > 0
 
   fun findByIds(ids: List<String>, sort: Sort): PanacheQuery<BookEntity> {
     val params = mapOf("ids" to ids)

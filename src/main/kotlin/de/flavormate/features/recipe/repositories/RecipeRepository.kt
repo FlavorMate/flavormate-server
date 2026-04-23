@@ -12,14 +12,10 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class RecipeRepository : PanacheRepositoryBase<RecipeEntity, String> {
+  override fun findAll(sort: Sort): PanacheQuery<RecipeEntity> =
+    find(query = "select r from RecipeEntity r", sort = sort)
 
-  override fun findAll(sort: Sort): PanacheQuery<RecipeEntity> {
-    return find(query = "select r from RecipeEntity r", sort = sort)
-  }
-
-  fun countByDietIn(diet: Set<Diet>): Long {
-    return count("diet in ?1", diet)
-  }
+  fun countByDietIn(diet: Set<Diet>): Long = count("diet in ?1", diet)
 
   fun findFiles(sort: Sort, id: String): PanacheQuery<RecipeFileEntity> {
     val params = mapOf("id" to id)
@@ -63,15 +59,9 @@ class RecipeRepository : PanacheRepositoryBase<RecipeEntity, String> {
       .project(Long::class.java)
   }
 
-  fun findAllWithUrl(): PanacheQuery<RecipeEntity> {
-    return find(query = "url is not null")
-  }
+  fun findAllWithUrl(): PanacheQuery<RecipeEntity> = find(query = "url is not null")
 
-  fun findAllWithDescription(): PanacheQuery<RecipeEntity> {
-    return find(query = "description is not null")
-  }
+  fun findAllWithDescription(): PanacheQuery<RecipeEntity> = find(query = "description is not null")
 
-  override fun deleteById(id: String): Boolean {
-    return delete("id = ?1", id) > 0
-  }
+  override fun deleteById(id: String): Boolean = delete("id = ?1", id) > 0
 }

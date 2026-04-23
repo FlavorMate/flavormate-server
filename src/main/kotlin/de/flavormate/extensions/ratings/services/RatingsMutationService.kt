@@ -15,7 +15,6 @@ class RatingsMutationService(
   private val recipeRepository: RecipeRepository,
   private val ratingRepository: RecipeRatingRepository,
 ) {
-
   fun putRecipesIdRating(recipeId: String, form: RecipeRatingFormDto) {
     val recipe =
       recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found!")

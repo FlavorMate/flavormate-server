@@ -24,7 +24,6 @@ import org.jboss.resteasy.reactive.RestQuery
 @RequestScoped
 @Path("/v3/share")
 class ShareController(val service: ShareService) {
-
   @Path("/{id}")
   @RolesAllowed(RoleTypes.USER_VALUE)
   @POST

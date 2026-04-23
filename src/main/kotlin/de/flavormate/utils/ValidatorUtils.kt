@@ -2,12 +2,10 @@
 package de.flavormate.utils
 
 object ValidatorUtils {
-
-  fun validateUUID4(uuid: String): Boolean {
-    return uuid.matches(
+  fun validateUUID4(uuid: String): Boolean =
+    uuid.matches(
       Regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
     )
-  }
 
   /**
    * AppName/AppVersion (Device; OS-Version) OtherProps e.g. "FlavorMate/3.0.0 (iPhone 14; iOS

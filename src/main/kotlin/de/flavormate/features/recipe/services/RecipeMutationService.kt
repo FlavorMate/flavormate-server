@@ -28,15 +28,15 @@ class RecipeMutationService(
   private val transactionService: TransactionService,
   private val categoryRepository: CategoryRepository,
 ) {
-
   fun delete(id: String): Boolean {
     transactionService.initialize()
 
     val recipe =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(recipe))
+    if (!authorizationDetails.isAdminOrOwner(recipe)) {
       throw FForbiddenException(message = "You are not allowed to delete this recipe!")
+    }
 
     recipe.files.forEach {
       transactionService.pendingOperations.add {
@@ -51,8 +51,9 @@ class RecipeMutationService(
     val recipe =
       recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found!")
 
-    if (!authorizationDetails.isAdmin())
+    if (!authorizationDetails.isAdmin()) {
       throw FForbiddenException(message = "You are not allowed to transfer this recipe!")
+    }
 
     val account =
       accountRepository.findById(ownerId)
@@ -68,12 +69,12 @@ class RecipeMutationService(
 
   // Returns the created draft id
   fun createDraft(id: String): String {
-
     val recipe =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(recipe))
+    if (!authorizationDetails.isAdminOrOwner(recipe)) {
       throw FForbiddenException(message = "You are not allowed to create a draft for this recipe!")
+    }
 
     val draftEntity = recipeDraftRepository.findByOriginId(id)
 
@@ -115,8 +116,9 @@ class RecipeMutationService(
     val recipe =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found!")
 
-    if (!authorizationDetails.isAdmin())
+    if (!authorizationDetails.isAdmin()) {
       throw FForbiddenException(message = "You are not allowed to transfer this recipe!")
+    }
 
     val account =
       accountRepository.findById(form.newOwner)

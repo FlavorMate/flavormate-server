@@ -29,11 +29,10 @@ class OFFProductEntity : CoreEntity() {
   @Enumerated(EnumType.STRING) var state: OFFProductState? = null
 
   companion object {
-    fun new(id: String): OFFProductEntity {
-      return OFFProductEntity().apply {
+    fun new(id: String): OFFProductEntity =
+      OFFProductEntity().apply {
         this.id = id
         this.state = OFFProductState.New
       }
-    }
   }
 }

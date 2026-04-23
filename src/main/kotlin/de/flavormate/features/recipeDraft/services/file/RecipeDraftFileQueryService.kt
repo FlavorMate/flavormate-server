@@ -24,7 +24,6 @@ class RecipeDraftFileQueryService(
   private val fileRepository: RecipeDraftFileRepository,
   private val fileService: FileService,
 ) {
-
   // GET
   fun getRecipeDraftsIdFilesFile(
     id: String,
@@ -34,8 +33,9 @@ class RecipeDraftFileQueryService(
     val draftEntity =
       draftRepository.findById(id = id) ?: throw FNotFoundException(message = "Recipe not found")
 
-    if (!authorizationDetails.isAdminOrOwner(draftEntity))
+    if (!authorizationDetails.isAdminOrOwner(draftEntity)) {
       throw FForbiddenException(message = "You are not allowed to access this recipe draft!")
+    }
 
     val fileEntity =
       fileRepository.findById(id = file) ?: throw FNotFoundException(message = "File not found")
@@ -51,8 +51,9 @@ class RecipeDraftFileQueryService(
     val draftEntity =
       draftRepository.findById(id = id) ?: throw FNotFoundException(message = "Recipe not found")
 
-    if (!authorizationDetails.isAdminOrOwner(draftEntity))
+    if (!authorizationDetails.isAdminOrOwner(draftEntity)) {
       throw FForbiddenException(message = "You are not allowed to access this recipe draft!")
+    }
 
     val dataQuery =
       fileRepository.findByRecipeDraft(id = id, sort = pagination.sortRequest(AllowedSorts.files))

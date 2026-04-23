@@ -16,7 +16,6 @@ import org.jboss.resteasy.reactive.RestPath
 @RolesAllowed(RoleTypes.USER_VALUE)
 @Path("/v3/story-drafts")
 class StoryDraftController(private val service: StoryDraftService) {
-
   @GET
   fun getStoryDrafts(@BeanParam pagination: Pagination) =
     service.getStoryDrafts(pagination = pagination)

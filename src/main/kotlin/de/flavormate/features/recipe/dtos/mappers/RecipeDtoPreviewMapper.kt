@@ -6,8 +6,8 @@ import de.flavormate.features.recipe.dtos.models.RecipeDtoPreview
 import de.flavormate.shared.interfaces.BasicMapper
 
 object RecipeDtoPreviewMapper : BasicMapper<RecipeEntity, RecipeDtoPreview>() {
-  override fun mapNotNullBasic(input: RecipeEntity): RecipeDtoPreview {
-    return RecipeDtoPreview(
+  override fun mapNotNullBasic(input: RecipeEntity): RecipeDtoPreview =
+    RecipeDtoPreview(
       id = input.id,
       createdOn = input.createdOn,
       label = input.label,
@@ -17,5 +17,4 @@ object RecipeDtoPreviewMapper : BasicMapper<RecipeEntity, RecipeDtoPreview>() {
       restTime = input.restTime,
       cover = input.coverFile?.let(RecipeFileDtoPreviewMapper::mapNotNullBasic),
     )
-  }
 }

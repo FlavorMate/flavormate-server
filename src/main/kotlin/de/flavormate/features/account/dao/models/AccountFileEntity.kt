@@ -15,12 +15,11 @@ class AccountFileEntity : OwnedEntity() {
   var schema: Int = 2
 
   companion object {
-    fun create(account: AccountEntity): AccountFileEntity {
-      return AccountFileEntity().apply {
+    fun create(account: AccountEntity): AccountFileEntity =
+      AccountFileEntity().apply {
         this.ownedBy = account
         this.ownedById = account.id
         this.mimeType = MimeTypes.WEBP_MIME
       }
-    }
   }
 }

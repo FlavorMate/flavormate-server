@@ -7,9 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class OIDCProviderRepository : PanacheRepositoryBase<OIDCProviderEntity, String> {
-  fun findAllEnabled(): List<OIDCProviderEntity> {
-    return list("enabled = true")
-  }
+  fun findAllEnabled(): List<OIDCProviderEntity> = list("enabled = true")
 
   fun findByIssuerAndClientId(issuer: String, clientId: String): OIDCProviderEntity? {
     val params = mapOf("issuer" to issuer, "clientId" to clientId)

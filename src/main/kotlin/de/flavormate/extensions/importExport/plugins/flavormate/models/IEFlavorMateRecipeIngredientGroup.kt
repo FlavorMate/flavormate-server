@@ -5,4 +5,4 @@ data class IEFlavorMateRecipeIngredientGroup(
   var label: String?,
   var index: Int,
   var ingredients: List<IEFlavorMateRecipeIngredientGroupItem>,
-) {}
+)

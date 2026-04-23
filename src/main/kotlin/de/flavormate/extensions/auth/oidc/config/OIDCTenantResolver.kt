@@ -21,7 +21,6 @@ class OIDCTenantResolver(
   private val oidcProviderRepository: OIDCProviderRepository,
   private val encryptionService: EncryptionService,
 ) : TenantConfigResolver {
-
   companion object {
     private const val BEARER_PREFIX = "Bearer "
   }
@@ -29,13 +28,11 @@ class OIDCTenantResolver(
   override fun resolve(
     routingContext: RoutingContext?,
     requestContext: OidcRequestContext<OidcTenantConfig?>?,
-  ): Uni<OidcTenantConfig?>? {
-
-    return Uni.createFrom()
+  ): Uni<OidcTenantConfig?>? =
+    Uni.createFrom()
       .item { getProviderConfig(routingContext) }
       .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
       .map { config -> config?.let { createTenantConfig(it) } }
-  }
 
   @ActivateRequestContext
   fun getProviderConfig(routingContext: RoutingContext?): OIDCProviderEntity? {
@@ -52,12 +49,11 @@ class OIDCTenantResolver(
     return oidcProviderRepository.findByIssuerAndClientIds(issuer, audiences)
   }
 
-  private fun createTenantConfig(config: OIDCProviderEntity): OidcTenantConfig {
-    return OidcTenantConfig.authServerUrl(config.urlDiscoveryBasicEndpoint)
+  private fun createTenantConfig(config: OIDCProviderEntity): OidcTenantConfig =
+    OidcTenantConfig.authServerUrl(config.urlDiscoveryBasicEndpoint)
       .tenantId(config.id)
       .clientId(config.clientId)
       .credentials(config.clientSecret)
       .tenantEnabled(config.enabled)
       .build()
-  }
 }

@@ -20,7 +20,6 @@ class OFFService(
   private val productRepository: OFFProductRepository,
   flavorMateProperties: FlavorMateProperties,
 ) {
-
   private val openFoodFactsEnabled =
     flavorMateProperties.features()[FeatureType.OpenFoodFacts]!!.enabled()
 
@@ -50,7 +49,6 @@ class OFFService(
 
   private fun fetchProductFromOFF(product: OFFProductEntity): OFFProductEntity {
     try {
-
       val response = OFFClient.fetchProduct(product.id)
 
       return product.apply {
