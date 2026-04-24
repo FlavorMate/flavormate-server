@@ -2,10 +2,10 @@
 package de.flavormate.extensions.auth.oidc.client
 
 import com.fasterxml.jackson.databind.JsonNode
+import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.extensions.auth.oidc.dao.models.OIDCProviderEntity
 import de.flavormate.extensions.auth.oidc.dto.models.OIDCExchangeForm
 import de.flavormate.extensions.auth.oidc.utils.OIDCUtils
-import de.flavormate.utils.JSONUtils.mapper
 import jakarta.ws.rs.core.HttpHeaders
 import org.apache.hc.client5.http.classic.methods.HttpGet
 import org.apache.hc.client5.http.classic.methods.HttpPost
@@ -23,7 +23,7 @@ object OIDCClient {
     val response =
       HttpClients.createDefault().use { client ->
         val response = client.execute(httpGet, BasicHttpClientResponseHandler())
-        mapper.readTree(response)
+        CustomObjectMapper.instance.readTree(response)
       }
 
     return response
@@ -52,7 +52,7 @@ object OIDCClient {
     val response =
       HttpClients.createDefault().use { client ->
         val response = client.execute(httpPost, BasicHttpClientResponseHandler())
-        mapper.readTree(response)
+        CustomObjectMapper.instance.readTree(response)
       }
 
     return response.get("id_token").asText()

@@ -100,9 +100,7 @@ class IEPluginLDJson(
 
         val ldJsonFile = zipContent.resolve("${input.label} - (${input.id}).json")
 
-        context.objectMapper
-          .writerWithDefaultPrettyPrinter()
-          .writeValue(ldJsonFile.toFile(), ldJson)
+        context.objectMapper.writeValue(ldJsonFile.toFile(), ldJson)
       }
     }
 

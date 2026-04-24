@@ -1,8 +1,8 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.shared.interfaces
 
+import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.features.account.dao.models.AccountEntity
-import de.flavormate.utils.JSONUtils
 
 /**
  * Abstract base class for mapping data between two types.
@@ -15,35 +15,13 @@ import de.flavormate.utils.JSONUtils
  * @param TO The target type of the mapping.
  */
 abstract class BasicMapper<FROM, TO> {
-  val om = JSONUtils.mapper
+  val objectMapper = CustomObjectMapper.instance
 
   abstract fun mapNotNullBasic(input: FROM): TO
 
   fun mapBasic(input: FROM?): TO? {
     if (input == null) return null
     return mapNotNullBasic(input)
-  }
-}
-
-/**
- * Abstract class that provides secure mapping functionality between an input entity of type `E` and
- * an output entity of type `G`. It extends the `MinimalMapper` class and introduces an additional
- * layer of security by considering roles such as "Owner" and "Admin" during the mapping process.
- *
- * @param FROM The type of the input entity.
- * @param TO The type of the output entity.
- */
-abstract class SecureMapper<FROM, TO> {
-  abstract fun mapNotNullSecure(input: FROM, isOwner: Boolean, isAdmin: Boolean): TO
-
-  protected fun <T> isAccessible(input: T, isOwner: Boolean, isAdmin: Boolean): T? {
-    if (!(isOwner || isAdmin)) return null
-    return input
-  }
-
-  fun mapSecure(input: FROM?, isOwner: Boolean, isAdmin: Boolean): TO? {
-    if (input == null) return null
-    return mapNotNullSecure(input, isOwner, isAdmin)
   }
 }
 
@@ -57,7 +35,7 @@ abstract class OwnedMapper<FROM, TO> {
 }
 
 abstract class L10nMapper<FROM, TO> {
-  val om = JSONUtils.mapper
+  val objectMapper = CustomObjectMapper.instance
 
   abstract fun mapNotNullL10n(input: FROM, language: String): TO
 

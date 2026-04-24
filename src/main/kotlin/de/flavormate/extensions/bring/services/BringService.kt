@@ -1,6 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.bring.services
 
+import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
@@ -12,7 +13,6 @@ import de.flavormate.features.recipe.repositories.RecipeRepository
 import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.TemplateService
-import de.flavormate.utils.JSONUtils
 import io.quarkus.qute.Location
 import io.quarkus.qute.Template
 import jakarta.enterprise.context.RequestScoped
@@ -78,9 +78,7 @@ class BringService(
     ldJson.images = images
 
     val data =
-      mutableMapOf<String, Any?>(
-        "json" to JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ldJson)
-      )
+      mutableMapOf<String, Any?>("json" to CustomObjectMapper.instance.writeValueAsString(ldJson))
 
     return templateService.handleTemplate(bringTemplate, data).render()
   }

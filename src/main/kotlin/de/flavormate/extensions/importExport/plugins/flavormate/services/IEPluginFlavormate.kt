@@ -162,9 +162,7 @@ class IEPluginFlavormate(private val downloadService: DownloadService) : IEPlugi
 
         val recipe = exporter.export(input)
 
-        context.objectMapper
-          .writerWithDefaultPrettyPrinter()
-          .writeValue(recipeFile.createParentDirectories().toFile(), recipe)
+        context.objectMapper.writeValue(recipeFile.createParentDirectories().toFile(), recipe)
 
         for (image in input.files) {
           val imageFile = fileFolder.resolve(image.parentFile.name + "." + image.extension)

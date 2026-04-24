@@ -1,6 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.share.services
 
+import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
@@ -18,7 +19,6 @@ import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
 import de.flavormate.shared.services.TemplateService
-import de.flavormate.utils.JSONUtils
 import io.quarkus.qute.Location
 import io.quarkus.qute.Template
 import io.quarkus.qute.TemplateInstance
@@ -126,7 +126,7 @@ class ShareService(
       mutableMapOf<String, Any?>(
         "appUrl" to appUrl,
         "recipe" to sharedRecipeMapper.map(recipeEntity, images),
-        "ldJson" to JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ldJson),
+        "ldJson" to CustomObjectMapper.instance.writeValueAsString(ldJson),
         "token" to authorizationDetails.token,
       )
 

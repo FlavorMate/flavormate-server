@@ -42,6 +42,7 @@ class CustomObjectMapper {
       om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
       om.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
       om.configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false)
+      om.configure(SerializationFeature.INDENT_OUTPUT, true)
 
       return om
     }

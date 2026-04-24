@@ -16,13 +16,13 @@ object IngredientEntityIngredientDraftEntityMapper :
       this.amount = input.amount
       this.label = input.label!!
       this.index = input.index
-      this.unit = om.convertValue(input.unit)
+      this.unit = objectMapper.convertValue(input.unit)
       this.nutrition = if (!input.nutrition.isEmpty) mapNutrition(input.nutrition) else null
     }
 
   fun mapNutrition(input: RecipeDraftIngredientGroupItemNutritionEntity): NutritionEntity =
     if (input.openFoodFactsId == null) {
-      om.convertValue(input)
+      objectMapper.convertValue(input)
     } else {
       NutritionEntity().apply {
         this.openFoodFactsId = OFFProductEntity().apply { id = input.openFoodFactsId!! }

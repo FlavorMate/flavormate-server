@@ -160,9 +160,7 @@ class IEPluginNextcloudCookbook(
 
         val recipeFolder = zipContent.resolve("${input.label} - (${input.id})").createDirectories()
 
-        context.objectMapper
-          .writerWithDefaultPrettyPrinter()
-          .writeValue(recipeFolder.resolve("recipe.json").toFile(), ldJson)
+        context.objectMapper.writeValue(recipeFolder.resolve("recipe.json").toFile(), ldJson)
 
         /*
          * Only copy the full-resolution image. There is no need to generate thumbnails, because the
