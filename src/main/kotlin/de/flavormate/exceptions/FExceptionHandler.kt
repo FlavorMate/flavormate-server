@@ -7,7 +7,6 @@ import jakarta.ws.rs.ext.Provider
 
 @Provider
 class FExceptionHandler : ExceptionMapper<FException> {
-
   @Context private lateinit var uriInfo: UriInfo
 
   override fun toResponse(exception: FException): Response {

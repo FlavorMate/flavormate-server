@@ -68,7 +68,7 @@ class RecoveryService(
    */
   @Transactional
   fun requestPasswordReset(email: String): Boolean {
-    val account = accountRepository.findByEmail(email) ?: return true
+    val account = accountRepository.findByEmail(email) ?: return false
 
     val token = tokenService.createAndSaveResetToken(account)
 
@@ -120,10 +120,11 @@ class RecoveryService(
   @Transactional
   fun handlePasswordReset(@RestForm password: String): TemplateInstance {
     try {
-      if (!tokenService.revokeJWT(authorizationDetails.token))
+      if (!tokenService.revokeJWT(authorizationDetails.token)) {
         throw FBadRequestException("Invalid token")
+      }
 
-      authorizationDetails.getSelf().password = BcryptUtil.bcryptHash(password)
+      authorizationDetails.accountRequired.password = BcryptUtil.bcryptHash(password)
 
       return templateService.handleTemplate(successTemplate)
     } catch (_: Exception) {

@@ -12,10 +12,8 @@ data class Pagination(
   @RestQuery("orderBy") var orderBy: SearchOrderBy? = null,
   @RestQuery("orderDirection") var orderDirection: Sort.Direction? = null,
 ) {
-
   fun sortRequest(map: Map<SearchOrderBy, String>): Sort {
     if (map.containsKey(orderBy)) {
-
       // Used to enable case-insensitive sorting
       // This is only allowed on String values
       val column =

@@ -19,10 +19,9 @@ class RecipeDraftQueryService(
   private val authorizationDetails: AuthorizationDetails,
   private val repository: RecipeDraftRepository,
 ) {
-
   // GET
   fun getRecipeDrafts(pagination: Pagination): PageableDto<RecipeDraftDtoPreview> {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
     val dataQuery =
       repository.findAllByOwnedBy(
         id = self.id,
@@ -44,8 +43,9 @@ class RecipeDraftQueryService(
       repository.findById(id)
         ?: throw FNotFoundException(message = "Recipe draft with id $id not found")
 
-    if (!authorizationDetails.isAdminOrOwner(entity))
+    if (!authorizationDetails.isAdminOrOwner(entity)) {
       throw FForbiddenException(message = "You are not allowed to access this recipe draft!")
+    }
 
     return RecipeDraftDtoFullMapper.mapNotNullL10n(input = entity, language = language)
   }

@@ -11,4 +11,4 @@ data class TokenDto(
   val revoked: Boolean,
   val type: TokenType,
   val resource: String,
-) {}
+)

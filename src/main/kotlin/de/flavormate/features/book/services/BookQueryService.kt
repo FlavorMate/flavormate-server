@@ -16,7 +16,7 @@ class BookQueryService(
   private val authorizationDetails: AuthorizationDetails,
 ) {
   fun getBooks(pagination: Pagination): PageableDto<BookDto> {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val dataQuery =
       repository.findOwnView(id = self.id, sort = pagination.sortRequest(map = AllowedSorts.books))
@@ -32,7 +32,7 @@ class BookQueryService(
   }
 
   fun getBooksOwn(pagination: Pagination): PageableDto<BookDto> {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val dataQuery =
       repository.findOwn(id = self.id, sort = pagination.sortRequest(map = AllowedSorts.books))
@@ -48,7 +48,7 @@ class BookQueryService(
   }
 
   fun getBooksSearch(query: String, pagination: Pagination): PageableDto<BookDto> {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val dataQuery =
       repository.findBySearch(

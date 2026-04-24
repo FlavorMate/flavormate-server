@@ -9,9 +9,7 @@ class LocalizationId {
   lateinit var foreignId: String
   lateinit var language: String
 
-  override fun hashCode(): Int {
-    return Objects.hash(foreignId, language)
-  }
+  override fun hashCode(): Int = Objects.hash(foreignId, language)
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

@@ -26,8 +26,9 @@ class BookIdQueryService(
       repository.findById(id = id)
         ?: throw FNotFoundException(message = "Book with id $id not found")
 
-    if (!authorizationDetails.isAdminOrOwner(entity) && !entity.visible)
+    if (!authorizationDetails.isAdminOrOwner(entity) && !entity.visible) {
       throw FForbiddenException(message = "You are not allowed to access this book!")
+    }
 
     return BookDtoMapper.mapNotNullBasic(entity)
   }
@@ -37,8 +38,9 @@ class BookIdQueryService(
       repository.findById(id = id)
         ?: throw FNotFoundException(message = "Book with id $id not found")
 
-    if (!authorizationDetails.isAdminOrOwner(entity) && !entity.visible)
+    if (!authorizationDetails.isAdminOrOwner(entity) && !entity.visible) {
       throw FForbiddenException(message = "You are not allowed to access this book!")
+    }
 
     val dataQuery =
       repository.findRecipes(id = id, sort = pagination.sortRequest(map = AllowedSorts.recipes))
@@ -55,8 +57,9 @@ class BookIdQueryService(
       repository.findById(id = id)
         ?: throw FNotFoundException(message = "Book with id $id not found")
 
-    if (!authorizationDetails.isAdminOrOwner(entity) || !entity.visible)
+    if (!authorizationDetails.isAdminOrOwner(entity) || !entity.visible) {
       throw FForbiddenException(message = "You are not allowed to access this book!")
+    }
 
     val dataQuery =
       repository.findSubscribers(
@@ -76,10 +79,11 @@ class BookIdQueryService(
       repository.findById(id = id)
         ?: throw FNotFoundException(message = "Book with id $id not found")
 
-    if (!authorizationDetails.isAdminOrOwner(entity) && !entity.visible)
+    if (!authorizationDetails.isAdminOrOwner(entity) && !entity.visible) {
       throw FForbiddenException(message = "You are not allowed to access this book!")
+    }
 
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     return repository.findSubscriber(id = id, accountId = self.id)
   }
@@ -87,8 +91,9 @@ class BookIdQueryService(
   fun getBooksIdContainsRecipe(bookId: String, recipeId: String): Boolean {
     val book = repository.findById(bookId) ?: throw FNotFoundException(message = "Book not found")
 
-    if (!authorizationDetails.isAdminOrOwner(book) && !book.visible)
+    if (!authorizationDetails.isAdminOrOwner(book) && !book.visible) {
       throw FForbiddenException(message = "You are not allowed to access this book!")
+    }
 
     return book.recipes.any { it.id == recipeId }
   }

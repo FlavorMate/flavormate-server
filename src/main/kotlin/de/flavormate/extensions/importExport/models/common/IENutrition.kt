@@ -1,6 +1,7 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.importExport.models.common
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import de.flavormate.utils.plus
 
 data class IENutrition(
@@ -15,10 +16,11 @@ data class IENutrition(
   val salt: Double?,
   val sodium: Double?,
 ) {
-
+  @get:JsonIgnore
   val isEmpty
     get() = openFoodFactsId.isNullOrBlank() && !hasAnyNutritionalValue
 
+  @get:JsonIgnore
   val hasAnyNutritionalValue
     get() =
       listOf(carbohydrates, energyKcal, fat, fiber, proteins, salt, saturatedFat, sodium, sugars)

@@ -16,7 +16,6 @@ class TokenService(
   private val authorizationDetails: AuthorizationDetails,
   private val tokenRepository: TokenRepository,
 ) {
-
   fun getAllTokens(pagination: Pagination): PageableDto<TokenDto> {
     val query =
       tokenRepository.findAllByOwner(
@@ -33,7 +32,6 @@ class TokenService(
   }
 
   @Transactional
-  fun deleteToken(id: String): Boolean {
-    return tokenRepository.deleteByOwnedByIdAndId(ownedById = authorizationDetails.subject, id = id)
-  }
+  fun deleteToken(id: String): Boolean =
+    tokenRepository.deleteByOwnedByIdAndId(ownedById = authorizationDetails.subject, id = id)
 }

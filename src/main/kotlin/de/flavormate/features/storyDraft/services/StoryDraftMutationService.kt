@@ -22,7 +22,7 @@ class StoryDraftMutationService(
   private val authorizationDetails: AuthorizationDetails,
 ) {
   fun postStoryDrafts(): String {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val draft = StoryDraftEntity.create(account = self).also { storyDraftRepository.persist(it) }
 
@@ -35,8 +35,9 @@ class StoryDraftMutationService(
     val story =
       storyDraftRepository.findById(id) ?: throw FNotFoundException(message = "Story not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(story))
+    if (!authorizationDetails.isAdminOrOwner(story)) {
       throw FForbiddenException(message = "You are not allowed to delete this story!")
+    }
 
     return storyDraftRepository.deleteById(id)
   }
@@ -46,8 +47,9 @@ class StoryDraftMutationService(
       storyDraftRepository.findById(id)
         ?: throw FNotFoundException(message = "Story draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(entity))
+    if (!authorizationDetails.isAdminOrOwner(entity)) {
       throw FForbiddenException(message = "You are not allowed to update this story draft!")
+    }
 
     form.label?.let { entity.label = it.getOrNull() }
     form.content?.let { entity.content = it.getOrNull() }
@@ -61,19 +63,22 @@ class StoryDraftMutationService(
   }
 
   fun postStoryDraftsId(id: String): String {
-
-    val account = authorizationDetails.getSelf()
+    val account = authorizationDetails.accountRequired
 
     val draftEntity =
       storyDraftRepository.findById(id)
         ?: throw FNotFoundException(message = "Story draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(draftEntity))
+    if (!authorizationDetails.isAdminOrOwner(draftEntity)) {
       throw FForbiddenException(message = "You are not allowed to create a story from this draft!")
+    }
 
     val story =
-      if (draftEntity.originId == null) createStory(account, draftEntity)
-      else updateStory(draftEntity)
+      if (draftEntity.originId == null) {
+        createStory(account, draftEntity)
+      } else {
+        updateStory(draftEntity)
+      }
 
     storyDraftRepository.deleteById(id)
 

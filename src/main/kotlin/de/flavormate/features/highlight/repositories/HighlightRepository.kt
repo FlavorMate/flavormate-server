@@ -11,9 +11,8 @@ import java.time.LocalDate
 
 @ApplicationScoped
 class HighlightRepository : PanacheRepositoryBase<HighlightEntity, String> {
-  override fun findAll(sort: Sort): PanacheQuery<HighlightEntity> {
-    return find(query = "select h from HighlightEntity h", sort = sort)
-  }
+  override fun findAll(sort: Sort): PanacheQuery<HighlightEntity> =
+    find(query = "select h from HighlightEntity h", sort = sort)
 
   fun findAllByDiet(sort: Sort, diet: Diet): PanacheQuery<HighlightEntity> {
     val params = mapOf("diet" to diet)
@@ -34,14 +33,13 @@ class HighlightRepository : PanacheRepositoryBase<HighlightEntity, String> {
       .project(Long::class.java)
   }
 
-  fun findInRangeByDiet(daysToGenerate: Long, diet: Diet): List<HighlightEntity> {
-    return list(
+  fun findInRangeByDiet(daysToGenerate: Long, diet: Diet): List<HighlightEntity> =
+    list(
       "date between ?1 and ?2 and diet = ?3",
       LocalDate.now().minusDays(daysToGenerate),
       LocalDate.now(),
       diet,
     )
-  }
 
   fun deleteOldEntriesById(diet: Diet, deleteBefore: LocalDate): Long {
     val params = mapOf("diet" to diet, "deleteBefore" to deleteBefore)

@@ -8,7 +8,5 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class RoleRepository : PanacheRepositoryBase<RoleEntity, String> {
-  fun findByRole(role: RoleTypes): RoleEntity? {
-    return find("role = ?1", role).firstResult()
-  }
+  fun findByRole(role: RoleTypes): RoleEntity? = find("role = ?1", role).firstResult()
 }

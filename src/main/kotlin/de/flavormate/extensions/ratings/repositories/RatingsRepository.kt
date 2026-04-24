@@ -9,7 +9,6 @@ import jakarta.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class RatingsRepository : PanacheRepositoryBase<RatingEntity, String> {
   fun findByRecipeId(accountId: String, recipeId: String): RatingsDto? {
-
     val hql =
       """
             SELECT NEW de.flavormate.extensions.ratings.dtos.RatingsDto(

@@ -7,7 +7,5 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class RecipeNutritionRepository : PanacheRepositoryBase<NutritionEntity, String> {
-  fun deleteOrphan(): Long {
-    return delete("ingredient is null")
-  }
+  fun deleteOrphan(): Long = delete("ingredient is null")
 }

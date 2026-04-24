@@ -16,7 +16,6 @@ import org.jboss.resteasy.reactive.RestQuery
 @RolesAllowed(RoleTypes.USER_VALUE)
 @Path("/v3/units")
 class UnitController(private val service: UnitService) {
-
   @GET
   fun getUnitsByLanguage(@RestQuery @NotBlank language: String, @BeanParam pagination: Pagination) =
     service.getUnitsByLanguage(language = language, pagination = pagination)

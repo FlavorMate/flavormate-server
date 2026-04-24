@@ -13,7 +13,6 @@ import org.apache.hc.core5.net.URIBuilder
 
 @ApplicationScoped
 class DownloadService(private val buildInfo: BuildInfo) {
-
   private val version
     get() = buildInfo.version()
 
@@ -38,7 +37,7 @@ class DownloadService(private val buildInfo: BuildInfo) {
         (uri.toURL().openConnection() as HttpURLConnection).apply {
           connectTimeout = 5000 // 5 seconds
           readTimeout = 10000 // 10 seconds
-          setRequestProperty("User-Agent", "FlavorMate/${version}")
+          setRequestProperty("User-Agent", "FlavorMate/$version")
         }
 
       // 4. Check content length before downloading

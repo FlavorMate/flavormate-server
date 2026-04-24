@@ -26,9 +26,7 @@ import jakarta.ws.rs.core.UriBuilder
  */
 @ApplicationScoped
 class AuthHeaderFilter(private val flavorMateProperties: FlavorMateProperties) {
-
   companion object {
-
     /** The order used by `HttpAuthenticationMechanism` is -150 so this one has to be lower */
     private const val FILTER_ORDER = -200
 
@@ -57,9 +55,9 @@ class AuthHeaderFilter(private val flavorMateProperties: FlavorMateProperties) {
 
       val hasAuthorization = !request.getHeader(HttpHeaders.AUTHORIZATION).isNullOrBlank()
 
-      if (!hasAuthorization) {
-        val path = request.path()
+      val path = request.path()
 
+      if (!hasAuthorization && path != null) {
         val token =
           when {
             path.startsWith(BRING_PATH) -> extractPathSegment(path, BRING_INDEX)

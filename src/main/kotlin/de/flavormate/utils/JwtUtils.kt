@@ -21,9 +21,8 @@ object JwtUtils {
     return tokenBuilder.sign()
   }
 
-  fun hashJWT(token: String): String {
-    return MessageDigest.getInstance("SHA-256").digest(token.toByteArray()).joinToString("") {
+  fun hashJWT(token: String): String =
+    MessageDigest.getInstance("SHA-256").digest(token.toByteArray()).joinToString("") {
       "%02x".format(it)
     }
-  }
 }

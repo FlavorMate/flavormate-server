@@ -10,7 +10,6 @@ import jakarta.ws.rs.ext.Provider
 
 @Provider
 class ExceptionHandler : ExceptionMapper<Throwable> {
-
   @Context private lateinit var uriInfo: UriInfo
 
   override fun toResponse(exception: Throwable): Response {
@@ -42,7 +41,6 @@ class ExceptionHandler : ExceptionMapper<Throwable> {
 
 @Provider
 class ValidationExceptionHandler : ExceptionMapper<ConstraintViolationException> {
-
   @Context private lateinit var uriInfo: UriInfo
 
   override fun toResponse(exception: ConstraintViolationException): Response {

@@ -17,7 +17,6 @@ import org.jboss.resteasy.reactive.RestQuery
 @RolesAllowed(RoleTypes.USER_VALUE)
 @Path("/v3/tags")
 class TagController(private val service: TagService) {
-
   @GET fun getTags(@BeanParam pagination: Pagination) = service.getTags(pagination = pagination)
 
   @GET

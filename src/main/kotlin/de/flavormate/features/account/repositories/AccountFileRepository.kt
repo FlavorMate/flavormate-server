@@ -7,12 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class AccountFileRepository : CRepository<AccountFileEntity>(AccountFileEntity::class) {
+  fun deleteByOwnedById(id: String): Boolean = delete("ownedById = ?1", id) > 0
 
-  fun deleteByOwnedById(id: String): Boolean {
-    return delete("ownedById = ?1", id) > 0
-  }
-
-  fun findByOwnedById(id: String): AccountFileEntity? {
-    return find("ownedById = ?1", id).firstResult()
-  }
+  fun findByOwnedById(id: String): AccountFileEntity? = find("ownedById = ?1", id).firstResult()
 }

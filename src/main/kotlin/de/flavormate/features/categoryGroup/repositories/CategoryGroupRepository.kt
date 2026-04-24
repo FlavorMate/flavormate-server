@@ -9,7 +9,6 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class CategoryGroupRepository : PanacheRepositoryBase<CategoryGroupEntity, String> {
-  override fun findAll(sort: Sort): PanacheQuery<CategoryGroupEntity> {
-    return find(query = "select c from CategoryGroupEntity c", sort = sort)
-  }
+  override fun findAll(sort: Sort): PanacheQuery<CategoryGroupEntity> =
+    find(query = "select c from CategoryGroupEntity c", sort = sort)
 }

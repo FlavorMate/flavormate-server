@@ -7,7 +7,6 @@ plugins {
   alias(libs.plugins.kotlin.all.open)
   alias(libs.plugins.quarkus)
   alias(libs.plugins.spotless)
-  alias(libs.plugins.versions)
 }
 
 repositories {
@@ -62,7 +61,7 @@ dependencies {
 
 group = "de.flavormate"
 
-version = "6.0.2"
+version = "6.0.3"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_25
@@ -118,6 +117,7 @@ spotless {
   }
   kotlin {
     // by default the target is every '.kt' and '.kts' file in the java source sets
+    ktlint()
     ktfmt().googleStyle()
     licenseHeader(
       "/* Licensed under AGPLv3 2024 - ${LocalDate.now().year} */"
@@ -125,6 +125,7 @@ spotless {
   }
   kotlinGradle {
     target("*.gradle.kts")
+    ktlint()
     ktfmt().googleStyle()
   }
 }

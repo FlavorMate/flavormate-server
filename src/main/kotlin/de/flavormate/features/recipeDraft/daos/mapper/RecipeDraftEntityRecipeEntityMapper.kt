@@ -7,8 +7,8 @@ import de.flavormate.features.recipeDraft.daos.models.RecipeDraftEntity
 import de.flavormate.shared.interfaces.OwnedMapper
 
 object RecipeDraftEntityRecipeEntityMapper : OwnedMapper<RecipeEntity, RecipeDraftEntity>() {
-  override fun mapNotNullOwned(input: RecipeEntity, account: AccountEntity): RecipeDraftEntity {
-    return RecipeDraftEntity.create(account).apply {
+  override fun mapNotNullOwned(input: RecipeEntity, account: AccountEntity): RecipeDraftEntity =
+    RecipeDraftEntity.create(account).apply {
       this.label = input.label
       this.description = input.description
       this.prepTime = input.prepTime
@@ -33,5 +33,4 @@ object RecipeDraftEntityRecipeEntityMapper : OwnedMapper<RecipeEntity, RecipeDra
       this.url = input.url
       this.originId = input.id
     }
-  }
 }

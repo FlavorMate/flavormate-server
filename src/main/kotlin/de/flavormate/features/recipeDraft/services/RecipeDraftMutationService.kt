@@ -53,7 +53,6 @@ class RecipeDraftMutationService(
   private val recipeDraftInstructionGroupRepository: RecipeDraftInstructionGroupRepository,
   private val recipeDraftInstructionGroupItemRepository: RecipeDraftInstructionGroupItemRepository,
 ) {
-
   fun delete(id: String): Boolean {
     transactionService.initialize()
 
@@ -61,8 +60,9 @@ class RecipeDraftMutationService(
       recipeDraftRepository.findById(id)
         ?: throw FNotFoundException(message = "Recipe draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(draft))
+    if (!authorizationDetails.isAdminOrOwner(draft)) {
       throw FForbiddenException(message = "You are not allowed to delete this recipe draft!")
+    }
 
     for (file in draft.files) {
       transactionService.pendingOperations.add {
@@ -76,7 +76,7 @@ class RecipeDraftMutationService(
 
   // Returns the created draft id
   fun initializeDraft(): String {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
     val draft = RecipeDraftEntity.create(account = self).also { recipeDraftRepository.persist(it) }
 
     return draft.id
@@ -87,8 +87,9 @@ class RecipeDraftMutationService(
       recipeDraftRepository.findById(id)
         ?: throw FNotFoundException(message = "Recipe draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(entity))
+    if (!authorizationDetails.isAdminOrOwner(entity)) {
       throw FForbiddenException(message = "You are not allowed to update this recipe draft!")
+    }
 
     if (form.cookTime != null) {
       entity.cookTime = form.cookTime
@@ -376,12 +377,13 @@ class RecipeDraftMutationService(
       recipeDraftRepository.findById(id)
         ?: throw FNotFoundException(message = "Recipe draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(draftEntity))
+    if (!authorizationDetails.isAdminOrOwner(draftEntity)) {
       throw FForbiddenException(message = "You are not allowed to create a recipe from this draft!")
+    }
 
     val recipe =
       if (draftEntity.originId == null) {
-        RecipeEntity.create(authorizationDetails.getSelf())
+        RecipeEntity.create(authorizationDetails.accountRequired)
       } else {
         recipeRepository.findById(draftEntity.originId!!)
           ?: throw FNotFoundException(message = "Recipe not found!")
@@ -468,9 +470,8 @@ class RecipeDraftMutationService(
 
     for (file in addedFiles) {
       val fileEntity =
-        RecipeFileEntity.create(authorizationDetails.getSelf(), recipe, file.temporaryFile).also {
-          recipeFileRepository.persist(it)
-        }
+        RecipeFileEntity.create(authorizationDetails.accountRequired, recipe, file.temporaryFile)
+          .also { recipeFileRepository.persist(it) }
 
       recipe.files.add(fileEntity)
       fileOperations.add {

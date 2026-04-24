@@ -22,7 +22,6 @@ class OIDCQueryService(
   private val oidcMappingRepository: OIDCMappingRepository,
   private val oidcProviderRepository: OIDCProviderRepository,
 ) {
-
   fun getProviders(): List<OIDCProviderDto> {
     val providers = oidcProviderRepository.findAllEnabled()
 
@@ -49,7 +48,7 @@ class OIDCQueryService(
   }
 
   fun getLinks(pagination: Pagination): PageableDto<OIDCMappingDto> {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val query =
       oidcMappingRepository.findByAccountId(

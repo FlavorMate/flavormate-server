@@ -47,27 +47,20 @@ class AuthorizationDetails(
   val userAgent: String?
     get() = httpHeaders.getHeaderString("User-Agent").takeIf(ValidatorUtils::validateUserAgent)
 
-  fun isOwner(target: OwnedEntity): Boolean {
-    return target.ownedById == subject
-  }
+  fun isOwner(target: OwnedEntity): Boolean = target.ownedById == subject
 
-  fun isAdmin(): Boolean {
-    return groups.contains(RoleTypes.Admin.name)
-  }
+  fun isAdmin(): Boolean = groups.contains(RoleTypes.Admin.name)
 
-  fun isAdminOrOwner(target: OwnedEntity): Boolean {
-    return isAdmin() || isOwner(target)
-  }
+  fun isAdminOrOwner(target: OwnedEntity): Boolean = isAdmin() || isOwner(target)
 
-  // TODO: introduce null aware cache
   private var cachedAccount: AccountEntity? = null
 
   val account
     get(): AccountEntity? =
       cachedAccount ?: accountRepository.findById(subject).also { cachedAccount = it }
 
-  // TODO: make this a property named something like "requireAccount"
-  fun getSelf() =
-    account
-      ?: throw FNotFoundException(message = "AccountEntity with id $subject not found", id = "")
+  val accountRequired
+    get() =
+      account
+        ?: throw FNotFoundException(message = "AccountEntity with id $subject not found", id = "")
 }

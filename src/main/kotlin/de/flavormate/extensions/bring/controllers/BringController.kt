@@ -16,7 +16,6 @@ import org.jboss.resteasy.reactive.RestQuery
 @Path("/v3/bring")
 @RequestScoped
 class BringController(val bringService: BringService, private val shareService: ShareService) {
-
   @POST
   @RolesAllowed(RoleTypes.USER_VALUE)
   @Path("/{recipeId}")

@@ -9,7 +9,6 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "v3__recipe__file")
 class RecipeFileEntity : OwnedEntity() {
-
   @Column(name = "mime_type") lateinit var mimeType: String
 
   @ManyToOne

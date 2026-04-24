@@ -10,9 +10,7 @@ class RatingEntityId {
 
   private lateinit var recipeId: String
 
-  override fun hashCode(): Int {
-    return Objects.hash(accountId, recipeId)
-  }
+  override fun hashCode(): Int = Objects.hash(accountId, recipeId)
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -22,11 +20,10 @@ class RatingEntityId {
   }
 
   companion object {
-    fun create(accountId: String, recipeId: String): RatingEntityId {
-      return RatingEntityId().apply {
+    fun create(accountId: String, recipeId: String): RatingEntityId =
+      RatingEntityId().apply {
         this.accountId = accountId
         this.recipeId = recipeId
       }
-    }
   }
 }

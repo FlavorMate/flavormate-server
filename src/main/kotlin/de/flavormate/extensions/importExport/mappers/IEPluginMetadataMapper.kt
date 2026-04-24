@@ -6,8 +6,8 @@ import de.flavormate.extensions.importExport.models.IEPluginMetadataDto
 import de.flavormate.shared.enums.Language
 
 object IEPluginMetadataMapper {
-  fun map(input: IEPluginMetadata, language: Language): IEPluginMetadataDto {
-    return IEPluginMetadataDto(
+  fun map(input: IEPluginMetadata, language: Language): IEPluginMetadataDto =
+    IEPluginMetadataDto(
       id = input.id,
       name = input.name[language]!!,
       version = input.version,
@@ -21,5 +21,4 @@ object IEPluginMetadataMapper {
       exportShortDescription = input.exportShortDescription[language]!!,
       exportLongDescription = input.exportLongDescription[language]!!,
     )
-  }
 }

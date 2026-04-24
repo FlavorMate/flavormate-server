@@ -10,7 +10,6 @@ import jakarta.transaction.Transactional
 
 @ApplicationScoped
 class TokenCron(val tokenRepository: TokenRepository) {
-
   @Startup
   @Transactional
   @Scheduled(cron = "0 0 0 * * ?")

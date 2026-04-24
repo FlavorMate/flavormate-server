@@ -13,7 +13,6 @@ import java.util.*
 @Table(name = "v3__category")
 @RegisterForReflection
 class CategoryEntity : CoreEntity() {
-
   lateinit var label: String
 
   @ManyToOne
@@ -49,9 +48,7 @@ class CategoryEntity : CoreEntity() {
     }
   }
 
-  override fun hashCode(): Int {
-    return Objects.hash(id, label)
-  }
+  override fun hashCode(): Int = Objects.hash(id, label)
 
   fun setCoverRecipe() {
     coverRecipe = recipes.filter { it.coverFile != null }.maxByOrNull { it.coverFile!!.createdOn }

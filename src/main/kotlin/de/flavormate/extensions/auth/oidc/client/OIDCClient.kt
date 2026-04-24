@@ -2,10 +2,10 @@
 package de.flavormate.extensions.auth.oidc.client
 
 import com.fasterxml.jackson.databind.JsonNode
+import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.extensions.auth.oidc.dao.models.OIDCProviderEntity
 import de.flavormate.extensions.auth.oidc.dto.models.OIDCExchangeForm
 import de.flavormate.extensions.auth.oidc.utils.OIDCUtils
-import de.flavormate.utils.JSONUtils.mapper
 import jakarta.ws.rs.core.HttpHeaders
 import org.apache.hc.client5.http.classic.methods.HttpGet
 import org.apache.hc.client5.http.classic.methods.HttpPost
@@ -15,9 +15,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.message.BasicNameValuePair
 
 object OIDCClient {
-
   fun fetchEndpoints(url: String): JsonNode {
-
     val cleanedUrl = OIDCUtils.cleanURL(url)
 
     val httpGet = HttpGet(cleanedUrl)
@@ -25,7 +23,7 @@ object OIDCClient {
     val response =
       HttpClients.createDefault().use { client ->
         val response = client.execute(httpGet, BasicHttpClientResponseHandler())
-        mapper.readTree(response)
+        CustomObjectMapper.instance.readTree(response)
       }
 
     return response
@@ -45,15 +43,16 @@ object OIDCClient {
         BasicNameValuePair("redirect_uri", form.redirectUri),
       )
 
-    if (provider.clientSecret != null)
+    if (provider.clientSecret != null) {
       params.add(BasicNameValuePair("client_secret", provider.clientSecret))
+    }
 
     httpPost.entity = UrlEncodedFormEntity(params)
 
     val response =
       HttpClients.createDefault().use { client ->
         val response = client.execute(httpPost, BasicHttpClientResponseHandler())
-        mapper.readTree(response)
+        CustomObjectMapper.instance.readTree(response)
       }
 
     return response.get("id_token").asText()

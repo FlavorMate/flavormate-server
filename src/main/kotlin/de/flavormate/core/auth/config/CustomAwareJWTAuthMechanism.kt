@@ -29,7 +29,6 @@ class CustomAwareJWTAuthMechanism(
   private val jwtParser: JWTParser,
   private val flavorMateProperties: FlavorMateProperties,
 ) : HttpAuthenticationMechanism {
-
   companion object {
     private const val BEARER_PREFIX = "Bearer "
   }
@@ -42,9 +41,8 @@ class CustomAwareJWTAuthMechanism(
   ): Uni<SecurityIdentity> =
     selectBetweenJwtAndOidc(context).authenticate(context, identityProviderManager)
 
-  override fun getChallenge(context: RoutingContext): Uni<ChallengeData> {
-    return selectBetweenJwtAndOidc(context).getChallenge(context)
-  }
+  override fun getChallenge(context: RoutingContext): Uni<ChallengeData> =
+    selectBetweenJwtAndOidc(context).getChallenge(context)
 
   override fun getCredentialTypes(): Set<Class<out AuthenticationRequest?>> {
     val credentialTypes: MutableSet<Class<out AuthenticationRequest?>> = HashSet()
@@ -53,9 +51,8 @@ class CustomAwareJWTAuthMechanism(
     return credentialTypes
   }
 
-  override fun getCredentialTransport(context: RoutingContext): Uni<HttpCredentialTransport> {
-    return selectBetweenJwtAndOidc(context).getCredentialTransport(context)
-  }
+  override fun getCredentialTransport(context: RoutingContext): Uni<HttpCredentialTransport> =
+    selectBetweenJwtAndOidc(context).getCredentialTransport(context)
 
   /**
    * Determines the appropriate `HttpAuthenticationMechanism` to use based on the provided routing

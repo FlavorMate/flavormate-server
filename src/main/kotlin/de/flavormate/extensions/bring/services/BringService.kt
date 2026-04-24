@@ -1,18 +1,18 @@
 /* Licensed under AGPLv3 2024 - 2026 */
 package de.flavormate.extensions.bring.services
 
+import de.flavormate.configuration.jackson.CustomObjectMapper
 import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.extensions.bring.controllers.BringController
-import de.flavormate.extensions.importExport.plugins.ld_json.services.exporter.IEPluginLDJsonExporter
+import de.flavormate.extensions.importExport.plugins.ldJson.services.exporter.IEPluginLDJsonExporter
 import de.flavormate.extensions.importExport.services.IERecipeConvertService
 import de.flavormate.features.recipe.repositories.RecipeRepository
 import de.flavormate.shared.enums.ImageResolution
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.TemplateService
-import de.flavormate.utils.JSONUtils
 import io.quarkus.qute.Location
 import io.quarkus.qute.Template
 import jakarta.enterprise.context.RequestScoped
@@ -30,7 +30,6 @@ class BringService(
   private val templateService: TemplateService,
   private val ieRecipeConvertService: IERecipeConvertService,
 ) {
-
   private val server
     get() = flavorMateProperties.server().url()
 
@@ -41,7 +40,7 @@ class BringService(
     val recipe =
       recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found")
 
-    val token = tokenService.createAndSaveBringToken(authorizationDetails.getSelf(), recipe)
+    val token = tokenService.createAndSaveBringToken(authorizationDetails.accountRequired, recipe)
 
     val path =
       UriBuilder.fromResource(BringController::class.java)
@@ -53,8 +52,9 @@ class BringService(
   }
 
   fun shareBring(id: String): String {
-    if (!authTokenService.validateAccess(authorizationDetails.token, id))
+    if (!authTokenService.validateAccess(authorizationDetails.token, id)) {
       throw FForbiddenException(message = "Token is invalid")
+    }
 
     val recipeEntity =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
@@ -78,9 +78,7 @@ class BringService(
     ldJson.images = images
 
     val data =
-      mutableMapOf<String, Any?>(
-        "json" to JSONUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ldJson)
-      )
+      mutableMapOf<String, Any?>("json" to CustomObjectMapper.instance.writeValueAsString(ldJson))
 
     return templateService.handleTemplate(bringTemplate, data).render()
   }

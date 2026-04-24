@@ -15,7 +15,7 @@ class BookMutationService(
   val authorizationDetails: AuthorizationDetails,
 ) {
   fun create(form: BookCreateDto): String {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
     val book =
       BookEntity.create(account = self, label = form.label).also { bookRepository.persist(it) }
 

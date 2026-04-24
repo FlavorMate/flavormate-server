@@ -13,7 +13,6 @@ import org.jboss.resteasy.reactive.RestPath
 @RequestScoped
 @Path("/v3/ratings")
 class RatingsController(private val service: RatingsService) {
-
   @GET
   @Path("/{recipeId}")
   fun getRecipesIdRating(@RestPath recipeId: String) =

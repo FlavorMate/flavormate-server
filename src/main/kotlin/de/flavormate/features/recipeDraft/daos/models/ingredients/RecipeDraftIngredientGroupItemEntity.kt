@@ -9,7 +9,6 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "v3__recipe_draft__ingredient_group__item")
 class RecipeDraftIngredientGroupItemEntity : CoreEntity() {
-
   var index: Int = 0
 
   var amount: Double? = null

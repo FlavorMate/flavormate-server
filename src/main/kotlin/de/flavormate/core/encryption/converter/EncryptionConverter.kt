@@ -10,11 +10,9 @@ import jakarta.persistence.Converter
 @Converter
 class EncryptionConverter(private val encryptionService: EncryptionService) :
   AttributeConverter<String, String> {
-  override fun convertToDatabaseColumn(attribute: String?): String? {
-    return attribute?.let { encryptionService.encrypt(it) }
-  }
+  override fun convertToDatabaseColumn(attribute: String?): String? =
+    attribute?.let { encryptionService.encrypt(it) }
 
-  override fun convertToEntityAttribute(dbData: String?): String? {
-    return dbData?.let { encryptionService.decrypt(it) }
-  }
+  override fun convertToEntityAttribute(dbData: String?): String? =
+    dbData?.let { encryptionService.decrypt(it) }
 }

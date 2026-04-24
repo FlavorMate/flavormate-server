@@ -10,10 +10,8 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class CategoryRepository : PanacheRepositoryBase<CategoryEntity, String> {
-
-  override fun findAll(sort: Sort): PanacheQuery<CategoryEntity> {
-    return find(query = "select c from CategoryEntity c left join  c.localizations l", sort = sort)
-  }
+  override fun findAll(sort: Sort): PanacheQuery<CategoryEntity> =
+    find(query = "select c from CategoryEntity c left join  c.localizations l", sort = sort)
 
   fun findAll(sort: Sort, language: String): PanacheQuery<CategoryEntity> {
     val params = mapOf("language" to language)

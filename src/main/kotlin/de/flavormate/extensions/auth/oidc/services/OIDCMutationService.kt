@@ -75,7 +75,7 @@ class OIDCMutationService(
   }
 
   fun deleteLink(providerId: String): Boolean {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
     return oidcMappingRepository.deleteByAccountIdAndProviderId(
       accountId = self.id,
       providerId = providerId,

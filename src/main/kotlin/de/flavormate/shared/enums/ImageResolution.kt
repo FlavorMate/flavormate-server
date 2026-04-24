@@ -54,7 +54,7 @@ enum class ImageResolution(
   }
 
   val resolution: String
-    get() = "${width}x${height}"
+    get() = "${width}x$height"
 
   val fileName: Path
     get() = Paths.get("$fileStem${MimeTypes.WEBP_EXTENSION}")

@@ -16,8 +16,8 @@ import de.flavormate.features.unit.dtos.mappers.UnitLocalizedDtoMapper
 import de.flavormate.shared.interfaces.L10nMapper
 
 object RecipeDtoFullMapper : L10nMapper<RecipeEntity, RecipeDtoFull>() {
-  override fun mapNotNullL10n(input: RecipeEntity, language: String): RecipeDtoFull {
-    return RecipeDtoFull(
+  override fun mapNotNullL10n(input: RecipeEntity, language: String): RecipeDtoFull =
+    RecipeDtoFull(
       id = input.id,
       createdOn = input.createdOn,
       version = input.version,
@@ -39,7 +39,6 @@ object RecipeDtoFullMapper : L10nMapper<RecipeEntity, RecipeDtoFull>() {
       files = input.files.take(8).map(RecipeFileDtoPreviewMapper::mapNotNullBasic),
       tags = input.tags.map(TagDtoMapper::mapNotNullBasic),
     )
-  }
 
   private fun mapServing(input: ServingEntity) =
     RecipeServingDto(id = input.id, amount = input.amount, label = input.label)
@@ -74,7 +73,7 @@ object RecipeDtoFullMapper : L10nMapper<RecipeEntity, RecipeDtoFull>() {
     )
 
   private fun mapNutrition(input: NutritionEntity) =
-    if (input.openFoodFactsId == null)
+    if (input.openFoodFactsId == null) {
       RecipeIngredientGroupItemNutritionDto(
         id = input.id,
         openFoodFactsId = null,
@@ -88,7 +87,7 @@ object RecipeDtoFullMapper : L10nMapper<RecipeEntity, RecipeDtoFull>() {
         sodium = input.sodium,
         sugars = input.sugars,
       )
-    else
+    } else {
       RecipeIngredientGroupItemNutritionDto(
         id = input.id,
         openFoodFactsId = input.openFoodFactsId!!.id,
@@ -102,4 +101,5 @@ object RecipeDtoFullMapper : L10nMapper<RecipeEntity, RecipeDtoFull>() {
         sodium = input.openFoodFactsId!!.sodium,
         sugars = input.openFoodFactsId!!.sugars,
       )
+    }
 }

@@ -21,11 +21,10 @@ class StoryEntity : OwnedEntity() {
   lateinit var recipe: RecipeEntity
 
   companion object {
-    fun create(account: AccountEntity): StoryEntity {
-      return StoryEntity().apply {
+    fun create(account: AccountEntity): StoryEntity =
+      StoryEntity().apply {
         this.ownedBy = account
         this.ownedById = account.id
       }
-    }
   }
 }

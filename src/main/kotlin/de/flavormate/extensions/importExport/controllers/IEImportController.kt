@@ -20,7 +20,6 @@ import org.jboss.resteasy.reactive.RestQuery
 @RolesAllowed(RoleTypes.IMPORT_VALUE)
 @Path("/v3/import-export/import")
 class IEImportController(private val service: IEService) {
-
   @GET
   @Path("/")
   fun getAvailableImporters(@RestQuery @NotBlank language: String): List<IEPluginMetadataDto> {

@@ -7,7 +7,6 @@ import java.nio.file.Path
 import kotlin.io.path.createDirectories
 
 object ImageUtils {
-
   /**
    * Creates multiple thumbnail images for the given images. The following images are created:
    * - Original => a scaled version of the original image if it's bigger than the max resolution
@@ -76,7 +75,7 @@ object ImageUtils {
         "magick",
         input.toString(),
         "-resize",
-        "${dimensions}^",
+        "$dimensions^",
         "-gravity",
         "center",
         "-extent",
@@ -119,7 +118,7 @@ object ImageUtils {
         "magick",
         input.toString(),
         "-thumbnail",
-        "${dimensions}>",
+        "$dimensions>",
         "-quality",
         "80",
         output.toString(),

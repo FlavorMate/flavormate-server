@@ -37,7 +37,7 @@ class AccountIdQueryService(
       accountRepository.findById(id)
         ?: throw FNotFoundException(message = "Account with id $id not found", id = "")
 
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val ids =
       listOf(

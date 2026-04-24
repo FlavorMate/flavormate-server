@@ -15,7 +15,6 @@ import jakarta.ws.rs.Path
 @RolesAllowed(RoleTypes.USER_VALUE)
 @Path("/v3/tokens")
 class TokenController(private val tokenService: TokenService) {
-
   @GET
   @Path("/")
   fun getAllTokens(@BeanParam pagination: Pagination) = tokenService.getAllTokens(pagination)

@@ -7,10 +7,9 @@ import de.flavormate.shared.interfaces.BasicMapper
 
 object InstructionDraftEntityInstructionEntityMapper :
   BasicMapper<InstructionEntity, RecipeDraftInstructionGroupItemEntity>() {
-  override fun mapNotNullBasic(input: InstructionEntity): RecipeDraftInstructionGroupItemEntity {
-    return RecipeDraftInstructionGroupItemEntity().apply {
+  override fun mapNotNullBasic(input: InstructionEntity): RecipeDraftInstructionGroupItemEntity =
+    RecipeDraftInstructionGroupItemEntity().apply {
       this.index = input.index
       this.label = input.label
     }
-  }
 }

@@ -18,9 +18,7 @@ class NoAuthenticationMechanism internal constructor() : HttpAuthenticationMecha
   override fun authenticate(
     context: RoutingContext,
     identityProviderManager: IdentityProviderManager,
-  ): Uni<SecurityIdentity> {
-    return Uni.createFrom().optional(Optional.empty())
-  }
+  ): Uni<SecurityIdentity> = Uni.createFrom().optional(Optional.empty())
 
   override fun getChallenge(context: RoutingContext): Uni<ChallengeData> {
     val challengeData =
@@ -28,11 +26,9 @@ class NoAuthenticationMechanism internal constructor() : HttpAuthenticationMecha
     return Uni.createFrom().item(challengeData)
   }
 
-  override fun getCredentialTypes(): Set<Class<out AuthenticationRequest?>> {
-    return setOf<Class<out AuthenticationRequest?>>(AnonymousAuthenticationRequest::class.java)
-  }
+  override fun getCredentialTypes(): Set<Class<out AuthenticationRequest?>> =
+    setOf<Class<out AuthenticationRequest?>>(AnonymousAuthenticationRequest::class.java)
 
-  override fun getCredentialTransport(context: RoutingContext): Uni<HttpCredentialTransport> {
-    return Uni.createFrom().nullItem()
-  }
+  override fun getCredentialTransport(context: RoutingContext): Uni<HttpCredentialTransport> =
+    Uni.createFrom().nullItem()
 }

@@ -6,7 +6,6 @@ import jakarta.enterprise.context.RequestScoped
 
 @RequestScoped
 class TagService(private val queryService: TagQueryService) {
-
   fun getTags(pagination: Pagination) = queryService.getTags(pagination = pagination)
 
   fun getTag(id: String) = queryService.getTag(id = id)

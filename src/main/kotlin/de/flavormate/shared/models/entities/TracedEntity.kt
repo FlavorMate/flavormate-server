@@ -12,7 +12,9 @@ import org.hibernate.annotations.UpdateTimestamp
 open class TracedEntity : CoreEntity() {
   @Version var version: Long = 0
 
-  @CreationTimestamp @Column(name = "created_on") var createdOn = LocalDateTime.now()
+  @CreationTimestamp @Column(name = "created_on") var createdOn: LocalDateTime = LocalDateTime.now()
 
-  @UpdateTimestamp @Column(name = "last_modified_on") var lastModifiedOn = LocalDateTime.now()
+  @UpdateTimestamp
+  @Column(name = "last_modified_on")
+  var lastModifiedOn: LocalDateTime = LocalDateTime.now()
 }

@@ -12,7 +12,6 @@ class RecipeDraftFileService(
   private val mutationService: RecipeDraftFileMutationService,
   private val queryService: RecipeDraftFileQueryService,
 ) {
-
   // Queries
   fun getRecipeDraftsIdFiles(id: String, pagination: Pagination) =
     queryService.getRecipeDraftsIdFiles(id = id, pagination = pagination)

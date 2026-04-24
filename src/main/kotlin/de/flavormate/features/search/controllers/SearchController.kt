@@ -26,7 +26,6 @@ class SearchController(
   private val searchRepository: SearchRepository,
   private val authorizationDetails: AuthorizationDetails,
 ) {
-
   @GET
   @Path("/{searchTerm}")
   fun search(
@@ -38,7 +37,7 @@ class SearchController(
     val dataQuery =
       searchRepository.findByQuery(
         q = searchTerm,
-        ownerId = authorizationDetails.getSelf().id,
+        ownerId = authorizationDetails.accountRequired.id,
         language = language,
         filter = filter,
       )

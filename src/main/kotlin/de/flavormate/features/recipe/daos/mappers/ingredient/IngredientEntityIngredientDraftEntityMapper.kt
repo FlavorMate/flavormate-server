@@ -11,23 +11,21 @@ import de.flavormate.shared.interfaces.BasicMapper
 
 object IngredientEntityIngredientDraftEntityMapper :
   BasicMapper<RecipeDraftIngredientGroupItemEntity, IngredientEntity>() {
-  override fun mapNotNullBasic(input: RecipeDraftIngredientGroupItemEntity): IngredientEntity {
-    return IngredientEntity().apply {
+  override fun mapNotNullBasic(input: RecipeDraftIngredientGroupItemEntity): IngredientEntity =
+    IngredientEntity().apply {
       this.amount = input.amount
       this.label = input.label!!
       this.index = input.index
-      this.unit = om.convertValue(input.unit)
+      this.unit = objectMapper.convertValue(input.unit)
       this.nutrition = if (!input.nutrition.isEmpty) mapNutrition(input.nutrition) else null
     }
-  }
 
-  fun mapNutrition(input: RecipeDraftIngredientGroupItemNutritionEntity): NutritionEntity {
-    return if (input.openFoodFactsId == null) {
-      om.convertValue(input)
+  fun mapNutrition(input: RecipeDraftIngredientGroupItemNutritionEntity): NutritionEntity =
+    if (input.openFoodFactsId == null) {
+      objectMapper.convertValue(input)
     } else {
       NutritionEntity().apply {
         this.openFoodFactsId = OFFProductEntity().apply { id = input.openFoodFactsId!! }
       }
     }
-  }
 }

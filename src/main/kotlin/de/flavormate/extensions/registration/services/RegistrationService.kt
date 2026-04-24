@@ -30,7 +30,6 @@ class RegistrationService(
   val accountCreateService: AccountCreateService,
   val flavorMateProperties: FlavorMateProperties,
 ) {
-
   @Location("registration/welcome.html") private lateinit var emailTemplate: Template
 
   @Location("registration/ok.html") private lateinit var successTemplate: Template
@@ -77,7 +76,7 @@ class RegistrationService(
 
   @Transactional
   fun verifyAccount(): TemplateInstance {
-    val account = authorizationDetails.getSelf()
+    val account = authorizationDetails.accountRequired
     account.verified = true
 
     tokenService.revokeJWT(authorizationDetails.token)

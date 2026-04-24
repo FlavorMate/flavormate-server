@@ -15,12 +15,12 @@ class StoryMutationService(
   private val storyDraftRepository: StoryDraftRepository,
   private val authorizationDetails: AuthorizationDetails,
 ) {
-
   fun deleteStoriesId(id: String): Boolean {
     val story = storyRepository.findById(id) ?: throw FNotFoundException("Story not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(story))
+    if (!authorizationDetails.isAdminOrOwner(story)) {
       throw FForbiddenException(message = "You are not allowed to delete this story!")
+    }
 
     return storyRepository.deleteById(id)
   }
@@ -30,14 +30,15 @@ class StoryMutationService(
     val story =
       storyRepository.findById(id) ?: throw FNotFoundException(message = "Story not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(story))
+    if (!authorizationDetails.isAdminOrOwner(story)) {
       throw FForbiddenException(message = "You are not allowed to create a draft for this story!")
+    }
 
     val originEntity = storyDraftRepository.findByOriginId(id)
 
     if (originEntity != null) return originEntity.id
 
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val entity =
       StoryDraftEntityStoryEntityMapper.mapNotNullOwned(input = story, account = self).also {

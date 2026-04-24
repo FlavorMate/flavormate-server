@@ -10,7 +10,6 @@ data class RecipeDraftIngredientGroupItemUpdateDto(
   val label: Optional<String>?,
   val unit: Optional<String>?,
   val nutrition: RecipeDraftIngredientGroupItemNutritionUpdateDto?,
-
   // CRUD flag
   val delete: Boolean?,
 )

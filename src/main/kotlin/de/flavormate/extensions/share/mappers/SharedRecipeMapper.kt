@@ -22,8 +22,8 @@ import java.time.format.FormatStyle
 import org.apache.commons.lang3.StringUtils
 
 class SharedRecipeMapper(private val templateService: TemplateService) {
-  fun map(input: RecipeEntity, images: List<String>): SharedRecipe {
-    return SharedRecipe(
+  fun map(input: RecipeEntity, images: List<String>): SharedRecipe =
+    SharedRecipe(
       id = input.id,
       label = input.label,
       cover = images.firstOrNull(),
@@ -43,52 +43,43 @@ class SharedRecipeMapper(private val templateService: TemplateService) {
       version = input.version,
       url = input.url,
     )
-  }
 
-  private fun mapDuration(input: Duration): String {
-    return DurationUtils.beautify(input, templateService.messages)
-  }
+  private fun mapDuration(input: Duration): String =
+    DurationUtils.beautify(input, templateService.messages)
 
   private fun mapServing(input: ServingEntity): String {
     val labels = listOfNotNull(NumberUtils.beautify(input.amount), input.label)
     return labels.joinToString(" ")
   }
 
-  private fun mapIngredientGroup(input: IngredientGroupEntity): SharedIngredientGroup {
-    return SharedIngredientGroup(
+  private fun mapIngredientGroup(input: IngredientGroupEntity): SharedIngredientGroup =
+    SharedIngredientGroup(
       label = input.label,
       ingredients = input.ingredients.map { mapIngredient(it) },
     )
-  }
 
-  private fun mapIngredient(input: IngredientEntity): String {
-    return listOf(
+  private fun mapIngredient(input: IngredientEntity): String =
+    listOf(
         input.amount?.let { NumberUtils.beautify(it) },
         input.unit?.getLabel(input.amount),
         input.label,
       )
       .filter(StringUtils::isNotBlank)
       .joinToString(" ")
-  }
 
-  private fun mapInstructionGroup(input: InstructionGroupEntity): SharedInstructionGroup {
-    return SharedInstructionGroup(
-      label = input.label,
-      instructions = input.instructions.map { it.label },
-    )
-  }
+  private fun mapInstructionGroup(input: InstructionGroupEntity): SharedInstructionGroup =
+    SharedInstructionGroup(label = input.label, instructions = input.instructions.map { it.label })
 
-  private fun mapDiet(input: Diet): String {
-    return when (input) {
+  private fun mapDiet(input: Diet): String =
+    when (input) {
       Diet.Meat -> templateService.getMessage { it.diet_meat() }
       Diet.Fish -> templateService.getMessage { it.diet_fish() }
       Diet.Vegetarian -> templateService.getMessage { it.diet_vegetarian() }
       Diet.Vegan -> templateService.getMessage { it.diet_vegan() }
     }
-  }
 
-  private fun mapCourse(input: Course): String {
-    return when (input) {
+  private fun mapCourse(input: Course): String =
+    when (input) {
       Course.Appetizer -> templateService.getMessage { it.course_appetizer() }
       Course.Dessert -> templateService.getMessage { it.course_dessert() }
       Course.Drink -> templateService.getMessage { it.course_drink() }
@@ -96,13 +87,11 @@ class SharedRecipeMapper(private val templateService: TemplateService) {
       Course.SideDish -> templateService.getMessage { it.course_sideDish() }
       Course.Bakery -> templateService.getMessage { it.course_bakery() }
     }
-  }
 
-  private fun mapCategory(input: CategoryEntity): String {
-    return input.localizations
+  private fun mapCategory(input: CategoryEntity): String =
+    input.localizations
       .filter { it.id.language == templateService.locale.language }
       .firstNotNullOf { it.value }
-  }
 
   private fun mapDateTime(input: LocalDateTime): String {
     val formatter =

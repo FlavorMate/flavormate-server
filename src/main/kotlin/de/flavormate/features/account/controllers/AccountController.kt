@@ -29,7 +29,6 @@ class AccountController(
   private val accountFileService: AccountFileService,
   private val accountIdService: AccountIdService,
 ) {
-
   @GET fun getAccounts(@BeanParam pagination: Pagination) = service.getAccounts(pagination)
 
   @GET @Path("/self") fun getAccountsSelf(): AccountFullDto = service.getAccountsSelf()

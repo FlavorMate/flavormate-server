@@ -24,7 +24,6 @@ class RecipeDraftFileMutationService(
   private val fileService: FileService,
   private val transactionService: TransactionService,
 ) {
-
   fun deleteRecipeDraftsIdFilesFile(id: String, file: String): Boolean {
     transactionService.initialize()
 
@@ -32,8 +31,9 @@ class RecipeDraftFileMutationService(
       draftRepository.findById(id = id)
         ?: throw FNotFoundException(message = "Recipe draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(target = draftEntity))
+    if (!authorizationDetails.isAdminOrOwner(target = draftEntity)) {
       throw FForbiddenException(message = "You are not allowed to delete files!")
+    }
 
     fileRepository.findById(id = file) ?: throw FNotFoundException(message = "File not found!")
 
@@ -48,13 +48,14 @@ class RecipeDraftFileMutationService(
   }
 
   fun createRecipeDraftsIdFilesFile(id: String, file: File) {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val recipeDraft =
       draftRepository.findById(id) ?: throw FNotFoundException(message = "Recipe draft not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(recipeDraft))
+    if (!authorizationDetails.isAdminOrOwner(recipeDraft)) {
       throw FForbiddenException(message = "You are not allowed to upload files!")
+    }
 
     val fileEntity =
       RecipeDraftFileEntity.create(

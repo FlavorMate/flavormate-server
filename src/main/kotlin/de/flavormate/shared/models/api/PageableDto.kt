@@ -6,7 +6,6 @@ import io.quarkus.panache.common.Page
 import kotlin.math.ceil
 
 data class PageableDto<Dto>(val metadata: Metadata, val data: List<Dto>) {
-
   companion object {
     fun <Dao : Any, Dto : Any> fromQuery(
       dataQuery: PanacheQuery<Dao>,
@@ -14,7 +13,6 @@ data class PageableDto<Dto>(val metadata: Metadata, val data: List<Dto>) {
       countQuery: PanacheQuery<Long>? = null,
       mapper: (Dao) -> Dto,
     ): PageableDto<Dto> {
-
       val data = dataQuery.page(page = page).list()
       val count = countQuery?.firstResult() ?: dataQuery.count()
 
