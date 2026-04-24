@@ -68,7 +68,7 @@ class RecoveryService(
    */
   @Transactional
   fun requestPasswordReset(email: String): Boolean {
-    val account = accountRepository.findByEmail(email) ?: return true
+    val account = accountRepository.findByEmail(email) ?: return false
 
     val token = tokenService.createAndSaveResetToken(account)
 
