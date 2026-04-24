@@ -1,9 +1,8 @@
 [versions]
-versions = "0.54.0"
 spotless = "8.4.0"
-kotlin = "2.3.20"
-quarkus = "3.34.5"
-commons-io = "2.21.0"
+kotlin = "2.3.21"
+quarkus = "3.34.6"
+commons-io = "2.22.0"
 commons-lang3 = "3.20.0"
 commons-compress = "1.28.0"
 jackson = "2.21.2"
@@ -41,5 +40,4 @@ assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertj
 quarkus = { id = "io.quarkus", version.ref = "quarkus" }
 kotlin-all-open = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

@@ -7,7 +7,6 @@ plugins {
   alias(libs.plugins.kotlin.all.open)
   alias(libs.plugins.quarkus)
   alias(libs.plugins.spotless)
-  alias(libs.plugins.versions)
 }
 
 repositories {
@@ -62,7 +61,7 @@ dependencies {
 
 group = "de.flavormate"
 
-version = "6.0.2"
+version = "6.0.3"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_25
