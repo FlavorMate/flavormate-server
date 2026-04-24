@@ -18,7 +18,6 @@ import org.jboss.resteasy.reactive.RestPath
 @RequestScoped
 @Path("/v3/registration")
 class RegistrationController(val service: RegistrationService) {
-
   @Path("/") @POST fun register(form: RegistrationForm) = service.register(form)
 
   @RolesAllowed(RoleTypes.VERIFY_VALUE)

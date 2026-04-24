@@ -9,8 +9,8 @@ object NutritionDraftEntityNutritionEntityMapper :
   BasicMapper<NutritionEntity, RecipeDraftIngredientGroupItemNutritionEntity>() {
   override fun mapNotNullBasic(
     input: NutritionEntity
-  ): RecipeDraftIngredientGroupItemNutritionEntity {
-    return RecipeDraftIngredientGroupItemNutritionEntity().apply {
+  ): RecipeDraftIngredientGroupItemNutritionEntity =
+    RecipeDraftIngredientGroupItemNutritionEntity().apply {
       this.openFoodFactsId = input.openFoodFactsId?.id
       this.carbohydrates = input.carbohydrates
       this.energyKcal = input.energyKcal
@@ -22,5 +22,4 @@ object NutritionDraftEntityNutritionEntityMapper :
       this.salt = input.salt
       this.sodium = input.sodium
     }
-  }
 }

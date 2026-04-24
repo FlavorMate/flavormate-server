@@ -45,8 +45,9 @@ class IEPluginManager(
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
-    if (plugin.metadata.import.isEmpty())
+    if (plugin.metadata.import.isEmpty()) {
       throw FBadRequestException("Plugin $pluginId does not support import")
+    }
 
     val workDirectory = Files.createTempDirectory("ie-import-$pluginId")
 
@@ -61,12 +62,12 @@ class IEPluginManager(
   }
 
   fun export(pluginId: String, recipes: List<RecipeEntity>): Path {
-
     val plugin =
       getPluginById(pluginId) ?: throw FInternalErrorException("Plugin $pluginId not found")
 
-    if (!plugin.metadata.export)
+    if (!plugin.metadata.export) {
       throw FBadRequestException("Plugin $pluginId does not support export")
+    }
 
     val workDirectory = Files.createTempDirectory("ie-export-single-$pluginId")
     val tmpFolder = Files.createTempDirectory("ie-export-tmp-$pluginId")

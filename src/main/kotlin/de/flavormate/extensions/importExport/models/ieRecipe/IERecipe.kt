@@ -30,11 +30,10 @@ data class IERecipe(
   val createdOn: Instant,
   val lastModifiedOn: Instant,
 ) {
-  fun calculateNutrition(): IENutrition? {
-    return ingredientGroups
+  fun calculateNutrition(): IENutrition? =
+    ingredientGroups
       .flatMap { it.ingredients }
       .map { it.nutrition }
       .fold(IENutrition.empty) { a, b -> a.plus(b) }
       .takeUnless { it.isEmpty }
-  }
 }

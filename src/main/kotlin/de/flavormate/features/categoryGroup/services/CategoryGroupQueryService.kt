@@ -11,7 +11,6 @@ import jakarta.enterprise.context.RequestScoped
 
 @RequestScoped
 class CategoryGroupQueryService(private val categoryGroupRepository: CategoryGroupRepository) {
-
   fun getCategoryGroups(language: String, pagination: Pagination): PageableDto<CategoryGroupDto> {
     val dataQuery =
       categoryGroupRepository.findAll(sort = pagination.sortRequest(AllowedSorts.categoryGroups))

@@ -10,7 +10,6 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "v3__recipe_draft__file")
 class RecipeDraftFileEntity : OwnedEntity() {
-
   @Column(name = "mime_type") lateinit var mimeType: String
 
   @Column(name = "origin_id") var originId: String? = null
@@ -32,15 +31,14 @@ class RecipeDraftFileEntity : OwnedEntity() {
       account: AccountEntity,
       recipeDraft: RecipeDraftEntity,
       temporaryFile: String?,
-    ): RecipeDraftFileEntity {
-      return RecipeDraftFileEntity().apply {
+    ): RecipeDraftFileEntity =
+      RecipeDraftFileEntity().apply {
         this.ownedBy = account
         this.ownedById = account.id
         this.recipeDraft = recipeDraft
         this.mimeType = MimeTypes.WEBP_MIME
         this.temporaryFile = temporaryFile
       }
-    }
 
     fun createFromRecipe(
       account: AccountEntity,

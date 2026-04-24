@@ -10,13 +10,10 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class TagRepository : PanacheRepositoryBase<TagEntity, String> {
-  override fun findAll(sort: Sort): PanacheQuery<TagEntity> {
-    return find("select t from TagEntity t", sort)
-  }
+  override fun findAll(sort: Sort): PanacheQuery<TagEntity> =
+    find("select t from TagEntity t", sort)
 
-  fun findByLabel(label: String): TagEntity? {
-    return find("label", label).firstResult()
-  }
+  fun findByLabel(label: String): TagEntity? = find("label", label).firstResult()
 
   fun findBySearch(sort: Sort, query: String): PanacheQuery<TagEntity> {
     val params = mapOf("query" to query)
@@ -38,7 +35,5 @@ class TagRepository : PanacheRepositoryBase<TagEntity, String> {
       .project(RecipeEntity::class.java)
   }
 
-  fun deleteOrphanTags(): Long {
-    return delete("from TagEntity t where t.recipes is empty")
-  }
+  fun deleteOrphanTags(): Long = delete("from TagEntity t where t.recipes is empty")
 }

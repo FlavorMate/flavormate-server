@@ -11,7 +11,6 @@ import org.hibernate.annotations.JdbcTypeCode
 @Entity
 @Table(name = "v3__ext__auth__oidc_provider")
 class OIDCProviderEntity : PanacheEntityBase {
-
   @Id var id: String = UUID.randomUUID().toString()
 
   lateinit var issuer: String
@@ -59,7 +58,6 @@ class OIDCProviderEntity : PanacheEntityBase {
   }
 
   companion object {
-
     fun create(issuer: String, clientId: String) =
       OIDCProviderEntity().apply {
         this.issuer = issuer

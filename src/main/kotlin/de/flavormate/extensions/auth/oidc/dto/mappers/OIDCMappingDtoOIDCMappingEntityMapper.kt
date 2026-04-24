@@ -5,8 +5,8 @@ import de.flavormate.extensions.auth.oidc.dao.models.OIDCMappingEntity
 import de.flavormate.extensions.auth.oidc.dto.models.OIDCMappingDto
 
 object OIDCMappingDtoOIDCMappingEntityMapper {
-  fun mapNotNullBasic(input: OIDCMappingEntity): OIDCMappingDto {
-    return OIDCMappingDto(
+  fun mapNotNullBasic(input: OIDCMappingEntity): OIDCMappingDto =
+    OIDCMappingDto(
       issuer = input.provider.issuer,
       subject = input.subject,
       name = input.email ?: input.name ?: input.subject,
@@ -15,5 +15,4 @@ object OIDCMappingDtoOIDCMappingEntityMapper {
       providerName = input.provider.label,
       icon = input.provider.icon,
     )
-  }
 }

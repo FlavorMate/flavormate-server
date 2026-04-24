@@ -17,9 +17,7 @@ class UnitConversionId {
   @JoinColumn(name = "target", referencedColumnName = "id")
   lateinit var target: UnitRefEntity
 
-  override fun hashCode(): Int {
-    return Objects.hash(source.id, target.id)
-  }
+  override fun hashCode(): Int = Objects.hash(source.id, target.id)
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

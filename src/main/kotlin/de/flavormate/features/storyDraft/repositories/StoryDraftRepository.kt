@@ -9,18 +9,12 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class StoryDraftRepository : PanacheRepositoryBase<StoryDraftEntity, String> {
+  override fun findAll(sort: Sort): PanacheQuery<StoryDraftEntity> =
+    find(query = "select s from StoryDraftEntity s", sort = sort)
 
-  override fun findAll(sort: Sort): PanacheQuery<StoryDraftEntity> {
-    return find(query = "select s from StoryDraftEntity s", sort = sort)
-  }
+  fun findByOriginId(id: String): StoryDraftEntity? = find("originId = ?1", id).firstResult()
 
-  fun findByOriginId(id: String): StoryDraftEntity? {
-    return find("originId = ?1", id).firstResult()
-  }
-
-  fun existsByOriginId(id: String): Boolean {
-    return count("originId = ?1", id) > 0
-  }
+  fun existsByOriginId(id: String): Boolean = count("originId = ?1", id) > 0
 
   fun findAllByOwnedBy(id: String, sort: Sort): PanacheQuery<StoryDraftEntity> {
     val params = mapOf("id" to id)

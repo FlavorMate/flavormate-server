@@ -120,8 +120,9 @@ class RecoveryService(
   @Transactional
   fun handlePasswordReset(@RestForm password: String): TemplateInstance {
     try {
-      if (!tokenService.revokeJWT(authorizationDetails.token))
+      if (!tokenService.revokeJWT(authorizationDetails.token)) {
         throw FBadRequestException("Invalid token")
+      }
 
       authorizationDetails.getSelf().password = BcryptUtil.bcryptHash(password)
 

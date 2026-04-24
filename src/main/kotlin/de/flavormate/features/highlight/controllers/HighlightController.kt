@@ -17,7 +17,6 @@ import org.jboss.resteasy.reactive.RestQuery
 @RolesAllowed(RoleTypes.USER_VALUE)
 @RequestScoped
 class HighlightController(private val service: HighlightService) {
-
   @GET
   fun getHighlights(@RestQuery @NotNull diet: Diet, @BeanParam pagination: Pagination) =
     service.getHighlights(diet = diet, pagination = pagination)

@@ -5,7 +5,7 @@ import de.flavormate.configuration.properties.FlavorMateProperties
 import de.flavormate.core.auth.services.AuthTokenService
 import de.flavormate.exceptions.FForbiddenException
 import de.flavormate.exceptions.FNotFoundException
-import de.flavormate.extensions.importExport.plugins.ld_json.services.exporter.IEPluginLDJsonExporter
+import de.flavormate.extensions.importExport.plugins.ldJson.services.exporter.IEPluginLDJsonExporter
 import de.flavormate.extensions.importExport.services.IERecipeConvertService
 import de.flavormate.extensions.share.controllers.ShareController
 import de.flavormate.extensions.share.mappers.SharedRecipeMapper
@@ -39,7 +39,6 @@ class ShareService(
   private val fileService: FileService,
   private val ieRecipeConvertService: IERecipeConvertService,
 ) {
-
   private val server
     get() = flavorMateProperties.server().url()
 
@@ -63,8 +62,9 @@ class ShareService(
   }
 
   fun shareFileId(id: String, fileId: String, resolution: ImageResolution?): StreamingOutput {
-    if (!authTokenService.validateAccess(authorizationDetails.token, id))
+    if (!authTokenService.validateAccess(authorizationDetails.token, id)) {
       throw FForbiddenException(message = "Token is invalid")
+    }
 
     val recipe =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")
@@ -76,14 +76,18 @@ class ShareService(
       prefix = FilePath.Recipe,
       uuid = file.id,
       fileName =
-        if (file.isTemporary) ImageResolution.Original.path
-        else resolution?.path ?: ImageResolution.Original.path,
+        if (file.isTemporary) {
+          ImageResolution.Original.path
+        } else {
+          resolution?.path ?: ImageResolution.Original.path
+        },
     )
   }
 
   fun shareWeb(id: String): TemplateInstance {
-    if (!authTokenService.validateAccess(authorizationDetails.token, id))
+    if (!authTokenService.validateAccess(authorizationDetails.token, id)) {
       throw FForbiddenException(message = "Token is invalid")
+    }
 
     val sharedRecipeMapper = SharedRecipeMapper(templateService)
 
@@ -130,8 +134,9 @@ class ShareService(
   }
 
   fun openInApp(id: String, language: String): RecipeDtoFull {
-    if (!authTokenService.validateAccess(authorizationDetails.token, id))
+    if (!authTokenService.validateAccess(authorizationDetails.token, id)) {
       throw FForbiddenException(message = "Token is invalid")
+    }
 
     val recipeEntity =
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found")

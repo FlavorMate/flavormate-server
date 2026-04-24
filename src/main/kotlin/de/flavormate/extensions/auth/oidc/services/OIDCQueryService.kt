@@ -22,7 +22,6 @@ class OIDCQueryService(
   private val oidcMappingRepository: OIDCMappingRepository,
   private val oidcProviderRepository: OIDCProviderRepository,
 ) {
-
   fun getProviders(): List<OIDCProviderDto> {
     val providers = oidcProviderRepository.findAllEnabled()
 

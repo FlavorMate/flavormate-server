@@ -5,4 +5,4 @@ data class IERecipeIngredientGroup(
   var label: String?,
   var index: Int,
   var ingredients: List<IERecipeIngredientGroupItem>,
-) {}
+)

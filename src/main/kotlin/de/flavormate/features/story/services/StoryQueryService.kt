@@ -14,7 +14,6 @@ import jakarta.enterprise.context.RequestScoped
 
 @RequestScoped
 class StoryQueryService(private val repository: StoryRepository) {
-
   fun getStories(pagination: Pagination): PageableDto<StoryDtoPreview> {
     val dataQuery = repository.findAll(sort = pagination.sortRequest(AllowedSorts.stories))
 

@@ -9,6 +9,5 @@ import jakarta.ws.rs.Path
 @Path("/v3/features")
 @RequestScoped
 class FeaturesController(val service: FeaturesService) {
-
   @Path("/") @GET fun getEnabledFeatures() = service.getEnabledFeatures()
 }

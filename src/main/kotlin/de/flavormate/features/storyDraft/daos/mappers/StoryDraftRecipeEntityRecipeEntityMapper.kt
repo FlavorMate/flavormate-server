@@ -7,11 +7,10 @@ import de.flavormate.shared.interfaces.BasicMapper
 
 object StoryDraftRecipeEntityRecipeEntityMapper :
   BasicMapper<RecipeEntity, StoryDraftRecipeEntity>() {
-  override fun mapNotNullBasic(input: RecipeEntity): StoryDraftRecipeEntity {
-    return StoryDraftRecipeEntity().apply {
+  override fun mapNotNullBasic(input: RecipeEntity): StoryDraftRecipeEntity =
+    StoryDraftRecipeEntity().apply {
       this.id = input.id
       this.label = input.label
       this.cover = input.files.firstOrNull()?.id
     }
-  }
 }

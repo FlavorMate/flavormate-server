@@ -12,7 +12,6 @@ import jakarta.transaction.Transactional
 
 @ApplicationScoped
 class TagCron(private val tagRepository: TagRepository) {
-
   @Scheduled(cron = "0 0 0 * * ?")
   @Startup
   @Transactional

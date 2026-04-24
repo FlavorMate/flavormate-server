@@ -15,11 +15,10 @@ class ShortenerEntity : TracedEntity() {
   @Column(name = "original_path") lateinit var originalPath: String
 
   companion object {
-    fun create(originalPath: String): ShortenerEntity {
-      return ShortenerEntity().apply {
+    fun create(originalPath: String): ShortenerEntity =
+      ShortenerEntity().apply {
         this.originalPath = originalPath
         this.shortPath = NanoId.generate(size = 7)
       }
-    }
   }
 }

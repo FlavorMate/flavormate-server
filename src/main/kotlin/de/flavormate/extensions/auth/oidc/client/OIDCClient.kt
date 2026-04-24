@@ -15,9 +15,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.message.BasicNameValuePair
 
 object OIDCClient {
-
   fun fetchEndpoints(url: String): JsonNode {
-
     val cleanedUrl = OIDCUtils.cleanURL(url)
 
     val httpGet = HttpGet(cleanedUrl)
@@ -45,8 +43,9 @@ object OIDCClient {
         BasicNameValuePair("redirect_uri", form.redirectUri),
       )
 
-    if (provider.clientSecret != null)
+    if (provider.clientSecret != null) {
       params.add(BasicNameValuePair("client_secret", provider.clientSecret))
+    }
 
     httpPost.entity = UrlEncodedFormEntity(params)
 

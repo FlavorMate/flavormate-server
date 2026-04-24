@@ -101,7 +101,6 @@ class AccountEntity : OwnedEntity() {
   @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
   var sessions: MutableSet<SessionEntity> = mutableSetOf()
 
-  override fun hashCode(): Int {
-    return Objects.hash(id, displayName, username, password, enabled, diet, email, firstLogin)
-  }
+  override fun hashCode(): Int =
+    Objects.hash(id, displayName, username, password, enabled, diet, email, firstLogin)
 }

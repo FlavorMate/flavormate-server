@@ -20,8 +20,9 @@ class BookIdMutationService(
 
     val self = authorizationDetails.getSelf()
 
-    if (book.ownedById != self.id && !book.visible)
+    if (book.ownedById != self.id && !book.visible) {
       throw FForbiddenException(message = "You are not allowed to subscribe to this book!")
+    }
 
     book.toggleSubscriber(self)
 
@@ -32,8 +33,9 @@ class BookIdMutationService(
     val book =
       bookRepository.findById(bookId) ?: throw FNotFoundException(message = "Book not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(book))
+    if (!authorizationDetails.isAdminOrOwner(book)) {
       throw FForbiddenException(message = "You are not allowed to toggle recipes in this book!")
+    }
 
     val recipe =
       recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found!")
@@ -48,8 +50,9 @@ class BookIdMutationService(
   fun deleteBooksId(id: String): Boolean {
     val book = bookRepository.findById(id) ?: throw FNotFoundException(message = "Book not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(book))
+    if (!authorizationDetails.isAdminOrOwner(book)) {
       throw FForbiddenException(message = "You are not allowed to delete this book!")
+    }
 
     return bookRepository.deleteById(id)
   }
@@ -57,8 +60,9 @@ class BookIdMutationService(
   fun putBooksId(id: String, form: BookUpdateDto) {
     val book = bookRepository.findById(id) ?: throw FNotFoundException(message = "Book not found!")
 
-    if (!authorizationDetails.isAdminOrOwner(book))
+    if (!authorizationDetails.isAdminOrOwner(book)) {
       throw FForbiddenException(message = "You are not allowed to update this book!")
+    }
 
     if (form.label != null && form.label.isPresent) {
       book.label = form.label.get()

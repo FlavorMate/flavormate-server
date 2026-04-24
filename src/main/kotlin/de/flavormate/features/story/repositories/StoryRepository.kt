@@ -9,9 +9,8 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class StoryRepository : PanacheRepositoryBase<StoryEntity, String> {
-  override fun findAll(sort: Sort): PanacheQuery<StoryEntity> {
-    return find(query = "select s from StoryEntity s", sort = sort)
-  }
+  override fun findAll(sort: Sort): PanacheQuery<StoryEntity> =
+    find(query = "select s from StoryEntity s", sort = sort)
 
   fun findBySearch(query: String, sort: Sort): PanacheQuery<StoryEntity> {
     val params = mapOf("query" to query)

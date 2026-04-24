@@ -12,7 +12,6 @@ class OIDCServices(
   private val mutationService: OIDCMutationService,
   private val queryService: OIDCQueryService,
 ) {
-
   fun getProviders() = queryService.getProviders()
 
   fun getLinks(pagination: Pagination) = queryService.getLinks(pagination = pagination)

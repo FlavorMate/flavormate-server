@@ -15,11 +15,9 @@ interface IEPlugin {
     inputs: List<IEInputSource>,
     workDirectory: Path,
     context: IEPluginContext,
-  ): List<IERecipeDraft> {
+  ): List<IERecipeDraft> =
     throw UnsupportedOperationException("Import not supported by plugin ${metadata.name}")
-  }
 
-  fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path {
+  fun export(inputs: List<IERecipe>, workDirectory: Path, context: IEPluginContext): Path =
     throw UnsupportedOperationException("Export not supported by plugin ${metadata.name}")
-  }
 }

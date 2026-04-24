@@ -17,8 +17,9 @@ class AdminQueryService(
   private val authorizationDetails: AuthorizationDetails,
 ) {
   fun getAdminAccounts(pagination: Pagination): PageableDto<AccountFullDto> {
-    if (!authorizationDetails.isAdmin())
+    if (!authorizationDetails.isAdmin()) {
       throw FForbiddenException(message = "You are not allowed to access this resource")
+    }
 
     val query = accountRepository.findAll(sort = pagination.sortRequest(AllowedSorts.adminAccounts))
 

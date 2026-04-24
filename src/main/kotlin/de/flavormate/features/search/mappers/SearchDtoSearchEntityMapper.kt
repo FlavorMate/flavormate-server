@@ -12,21 +12,25 @@ import jakarta.ws.rs.core.UriBuilder
 object SearchDtoSearchEntityMapper : BasicMapper<SearchEntity, SearchDto>() {
   override fun mapNotNullBasic(input: SearchEntity): SearchDto {
     val coverUrl =
-      if (input.fileId != null)
+      if (input.fileId != null) {
         when (input.source) {
-          SearchFilter.Account ->
+          SearchFilter.Account -> {
             UriBuilder.fromResource(AccountController::class.java)
               .path(AccountController::class.java, AccountController::getAccountsAvatar.name)
               .build(input.entityId, input.fileId)
               .toString()
+          }
 
-          else ->
+          else -> {
             UriBuilder.fromResource(RecipeController::class.java)
               .path(RecipeController::class.java, RecipeController::getRecipesFilesId.name)
               .build(input.recipeId, input.fileId)
               .toString()
+          }
         }
-      else null
+      } else {
+        null
+      }
 
     return SearchDto(
       id = input.entityId,

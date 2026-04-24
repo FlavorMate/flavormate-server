@@ -20,11 +20,10 @@ class StoryDraftEntity : OwnedEntity() {
   @Column(name = "origin_id") var originId: String? = null
 
   companion object {
-    fun create(account: AccountEntity): StoryDraftEntity {
-      return StoryDraftEntity().apply {
+    fun create(account: AccountEntity): StoryDraftEntity =
+      StoryDraftEntity().apply {
         this.ownedBy = account.ownedBy
         this.ownedById = account.ownedById
       }
-    }
   }
 }

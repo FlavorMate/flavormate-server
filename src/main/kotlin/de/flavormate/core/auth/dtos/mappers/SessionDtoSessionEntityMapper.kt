@@ -6,8 +6,8 @@ import de.flavormate.core.auth.dtos.models.SessionDto
 import de.flavormate.shared.interfaces.BasicMapper
 
 object SessionDtoSessionEntityMapper : BasicMapper<SessionEntity, SessionDto>() {
-  override fun mapNotNullBasic(input: SessionEntity): SessionDto {
-    return SessionDto(
+  override fun mapNotNullBasic(input: SessionEntity): SessionDto =
+    SessionDto(
       id = input.id,
       tokenHash = input.tokenHash,
       createdAt = input.createdOn,
@@ -16,5 +16,4 @@ object SessionDtoSessionEntityMapper : BasicMapper<SessionEntity, SessionDto>() 
       revoked = input.revoked,
       userAgent = input.userAgent,
     )
-  }
 }

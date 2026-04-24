@@ -9,8 +9,8 @@ import de.flavormate.shared.extensions.mapToSet
 import de.flavormate.shared.interfaces.BasicMapper
 
 object RecipeEntityRecipeDraftEntityMapper : BasicMapper<RecipeDraftEntity, RecipeEntity>() {
-  override fun mapNotNullBasic(input: RecipeDraftEntity): RecipeEntity {
-    return RecipeEntity().apply {
+  override fun mapNotNullBasic(input: RecipeDraftEntity): RecipeEntity =
+    RecipeEntity().apply {
       this.ownedBy = input.ownedBy
       this.ownedById = input.ownedById
       this.label = input.label!!
@@ -39,5 +39,4 @@ object RecipeEntityRecipeDraftEntityMapper : BasicMapper<RecipeDraftEntity, Reci
       this.diet = input.diet!!
       this.url = input.url
     }
-  }
 }

@@ -23,7 +23,6 @@ import jakarta.ws.rs.Produces
  */
 class CustomObjectMapper {
   companion object {
-
     /**
      * Singleton instance of the [ObjectMapper] that is lazily initialized in a thread-safe manner.
      * The configuration and creation of the ObjectMapper are encapsulated within the companion

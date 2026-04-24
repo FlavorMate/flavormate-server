@@ -16,7 +16,6 @@ data class IENutrition(
   val salt: Double?,
   val sodium: Double?,
 ) {
-
   @get:JsonIgnore
   val isEmpty
     get() = openFoodFactsId.isNullOrBlank() && !hasAnyNutritionalValue

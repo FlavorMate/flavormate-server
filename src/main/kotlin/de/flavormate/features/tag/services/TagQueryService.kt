@@ -14,7 +14,6 @@ import jakarta.enterprise.context.RequestScoped
 
 @RequestScoped
 class TagQueryService(private val repository: TagRepository) {
-
   fun getTags(pagination: Pagination): PageableDto<TagDto> {
     val dataQuery = repository.findAll(sort = pagination.sortRequest(map = AllowedSorts.tags))
 

@@ -3,6 +3,7 @@ package de.flavormate.shared.resourceBundles
 
 import io.quarkus.qute.i18n.MessageBundle
 
+@Suppress("ktlint:standard:function-naming")
 @MessageBundle
 interface AppMessages {
   // Error page

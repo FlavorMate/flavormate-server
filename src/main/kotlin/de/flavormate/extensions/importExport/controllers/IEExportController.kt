@@ -21,7 +21,6 @@ import org.jboss.resteasy.reactive.RestQuery
 @RolesAllowed(RoleTypes.EXPORT_VALUE)
 @Path("/v3/import-export/export")
 class IEExportController(private val service: IEService) {
-
   @GET
   @Path("/")
   fun getAvailableExporters(@RestQuery @NotBlank language: String): List<IEPluginMetadataDto> {

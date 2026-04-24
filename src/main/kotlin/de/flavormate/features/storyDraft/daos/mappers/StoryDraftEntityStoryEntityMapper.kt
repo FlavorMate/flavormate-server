@@ -7,8 +7,8 @@ import de.flavormate.features.storyDraft.daos.models.StoryDraftEntity
 import de.flavormate.shared.interfaces.OwnedMapper
 
 object StoryDraftEntityStoryEntityMapper : OwnedMapper<StoryEntity, StoryDraftEntity>() {
-  override fun mapNotNullOwned(input: StoryEntity, account: AccountEntity): StoryDraftEntity {
-    return StoryDraftEntity().apply {
+  override fun mapNotNullOwned(input: StoryEntity, account: AccountEntity): StoryDraftEntity =
+    StoryDraftEntity().apply {
       this.ownedBy = account.ownedBy
       this.ownedById = account.ownedById
       this.originId = input.id
@@ -17,5 +17,4 @@ object StoryDraftEntityStoryEntityMapper : OwnedMapper<StoryEntity, StoryDraftEn
       this.recipe = input.recipe
       //      this.recipe = StoryDraftRecipeEntityRecipeEntityMapper.mapNotNullBasic(input.recipe)
     }
-  }
 }

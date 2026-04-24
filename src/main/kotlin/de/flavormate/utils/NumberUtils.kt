@@ -9,20 +9,18 @@ import java.util.regex.Pattern
 import kotlin.math.floor
 
 object NumberUtils {
-  fun beautify(value: Double): String? {
-    return when {
+  fun beautify(value: Double): String? =
+    when {
       isInteger(value) -> value.toInt().toString()
       value < 0 -> null
       else -> DecimalFormat("0.00").format(value)
     }
-  }
 
   fun tryParseDouble(value: String, defaultVal: Double): Double =
     runCatching { value.toDouble() }.getOrDefault(defaultVal)
 
-  fun isInteger(value: Double): Boolean {
-    return (value == floor(value)) && !java.lang.Double.isInfinite(value)
-  }
+  fun isInteger(value: Double): Boolean =
+    (value == floor(value)) && !java.lang.Double.isInfinite(value)
 
   fun convertExtendedFractionString(input: String): String {
     // Define a regular expression pattern to match fractions like "¼", "½", "⅓", "⅔", etc.

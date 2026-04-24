@@ -26,7 +26,6 @@ class AuthSessionService(
   private val accountSessionRepository: AccountSessionRepository,
   private val authorizationDetails: AuthorizationDetails,
 ) {
-
   @Context private lateinit var httpHeaders: HttpHeaders
 
   val jwtProperties
@@ -80,14 +79,13 @@ class AuthSessionService(
     )
   }
 
-  private fun createRefreshToken(accountId: String): String {
-    return JwtUtils.generateToken(
+  private fun createRefreshToken(accountId: String): String =
+    JwtUtils.generateToken(
       issuer = jwtProperties.issuer(),
       accountId = accountId,
       roles = setOf(RoleTypes.Refresh),
       duration = jwtProperties.refreshToken().duration(),
     )
-  }
 
   private fun createAccessToken(account: AccountEntity): String {
     val roles = account.roles.map { it.role }.toSet()
@@ -122,16 +120,14 @@ class AuthSessionService(
     return accountSessionRepository.deleteByTokenHash(hash)
   }
 
-  fun logoutAll(): Boolean {
-    return accountSessionRepository.deleteByAccountId(accountId = authorizationDetails.subject)
-  }
+  fun logoutAll(): Boolean =
+    accountSessionRepository.deleteByAccountId(accountId = authorizationDetails.subject)
 
-  fun deleteSession(id: String): Boolean {
-    return accountSessionRepository.deleteByAccountIdAndId(
+  fun deleteSession(id: String): Boolean =
+    accountSessionRepository.deleteByAccountIdAndId(
       accountId = authorizationDetails.subject,
       id = id,
     )
-  }
 
   fun deleteAllSessionsButCurrent(): Boolean {
     val token = authorizationDetails.token

@@ -39,8 +39,9 @@ class StoryDraftQueryService(
       repository.findById(id)
         ?: throw FNotFoundException(message = "Story draft with id $id not found")
 
-    if (!authorizationDetails.isAdminOrOwner(entity))
+    if (!authorizationDetails.isAdminOrOwner(entity)) {
       throw FForbiddenException(message = "You are not allowed to access this recipe draft!")
+    }
 
     return StoryDraftDtoFullMapper.mapNotNullBasic(input = entity)
   }

@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "v3__account__session")
 class SessionEntity : TracedEntity() {
-
   @Column(name = "token_hash") lateinit var tokenHash: String
 
   @Column(name = "expires_at") lateinit var expiresAt: LocalDateTime
@@ -36,15 +35,14 @@ class SessionEntity : TracedEntity() {
       expiresIn: Duration,
       account: AccountEntity,
       userAgent: String?,
-    ): SessionEntity {
-      return SessionEntity().apply {
+    ): SessionEntity =
+      SessionEntity().apply {
         this.tokenHash = tokenHash
         this.expiresAt = LocalDateTime.now().plus(expiresIn)
         this.revoked = false
         this.accountId = account.id
         this.userAgent = userAgent
       }
-    }
   }
 
   fun update(tokenHash: String, expiresIn: Duration, userAgent: String?) {

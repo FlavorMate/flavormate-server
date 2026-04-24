@@ -5,4 +5,4 @@ data class IEFlavorMateRecipeInstructionGroup(
   val label: String?,
   val index: Int,
   val instructions: List<IEFlavorMateRecipeInstructionGroupItem>,
-) {}
+)

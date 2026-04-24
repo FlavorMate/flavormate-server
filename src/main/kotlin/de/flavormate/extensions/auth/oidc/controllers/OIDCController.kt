@@ -18,7 +18,6 @@ import org.jboss.resteasy.reactive.RestPath
 
 @Path("/v3/oidc2")
 class OIDCController(private val service: OIDCServices) {
-
   @GET @Path("/") fun getProviders() = service.getProviders()
 
   @GET @Authenticated @Path("/login") fun login() = service.login()

@@ -8,7 +8,6 @@ data class RecipeDraftIngredientGroupUpdateDto(
   val label: Optional<String>?,
   val index: Int?,
   val ingredients: List<RecipeDraftIngredientGroupItemUpdateDto>?,
-
   // CRUD flag
   val delete: Boolean?,
 )

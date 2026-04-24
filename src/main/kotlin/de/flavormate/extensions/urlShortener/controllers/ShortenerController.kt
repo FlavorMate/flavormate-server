@@ -12,7 +12,6 @@ import java.net.URI
 @RequestScoped
 @Path("/s")
 class ShortenerController(val shortenerService: ShortenerService) {
-
   @GET
   @Path("/{shortPath}")
   fun redirectToOriginalUrl(@PathParam("shortPath") shortPath: String): Response {

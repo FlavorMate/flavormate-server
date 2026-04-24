@@ -25,7 +25,6 @@ import jakarta.ws.rs.*
 @Path("/v3/auth")
 @RequestScoped
 class AuthController(val authService: AuthService) {
-
   /**
    * Authenticates a user based on the provided login details and generates a token pair.
    *

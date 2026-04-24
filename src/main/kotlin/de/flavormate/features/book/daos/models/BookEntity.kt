@@ -48,22 +48,19 @@ class BookEntity : OwnedEntity() {
     }
   }
 
-  override fun hashCode(): Int {
-    return Objects.hash(id, label, visible)
-  }
+  override fun hashCode(): Int = Objects.hash(id, label, visible)
 
   fun setCoverRecipe() {
     coverRecipe = recipes.filter { it.coverFile != null }.maxByOrNull { it.coverFile!!.createdOn }
   }
 
   companion object {
-    fun create(account: AccountEntity, label: String): BookEntity {
-      return BookEntity().apply {
+    fun create(account: AccountEntity, label: String): BookEntity =
+      BookEntity().apply {
         this.ownedBy = account
         this.ownedById = account.id
         this.label = label
         this.visible = false
       }
-    }
   }
 }
