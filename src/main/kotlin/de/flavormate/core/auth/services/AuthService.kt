@@ -60,7 +60,7 @@ class AuthService(
 
   @Transactional
   fun renewRefreshToken(): TokenResponseDao {
-    val account = authorizationDetails.getSelf()
+    val account = authorizationDetails.accountRequired
 
     val jwt = authorizationDetails.token
     // Generate new tokens

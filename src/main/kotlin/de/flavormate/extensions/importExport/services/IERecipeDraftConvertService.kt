@@ -44,7 +44,7 @@ class IERecipeDraftConvertService(
   fun convert(input: IERecipeDraft): RecipeDraftEntity {
     val language = input.language.value
     val recipe =
-      RecipeDraftEntity.create(authorizationDetails.getSelf())
+      RecipeDraftEntity.create(authorizationDetails.accountRequired)
         .apply {
           this.cookTime = (input.cookTime ?: Duration.ZERO)
           this.course = input.course
@@ -179,7 +179,7 @@ class IERecipeDraftConvertService(
     try {
       entity =
         RecipeDraftFileEntity.create(
-            authorizationDetails.getSelf(),
+            authorizationDetails.accountRequired,
             draft,
             ImageResolution.Original.fileName.name,
           )

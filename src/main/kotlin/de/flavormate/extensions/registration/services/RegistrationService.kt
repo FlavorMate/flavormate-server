@@ -76,7 +76,7 @@ class RegistrationService(
 
   @Transactional
   fun verifyAccount(): TemplateInstance {
-    val account = authorizationDetails.getSelf()
+    val account = authorizationDetails.accountRequired
     account.verified = true
 
     tokenService.revokeJWT(authorizationDetails.token)

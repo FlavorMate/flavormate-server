@@ -38,7 +38,7 @@ class StoryMutationService(
 
     if (originEntity != null) return originEntity.id
 
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val entity =
       StoryDraftEntityStoryEntityMapper.mapNotNullOwned(input = story, account = self).also {

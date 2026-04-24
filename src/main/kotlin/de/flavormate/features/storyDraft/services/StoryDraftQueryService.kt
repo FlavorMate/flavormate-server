@@ -20,7 +20,7 @@ class StoryDraftQueryService(
   private val authorizationDetails: AuthorizationDetails,
 ) {
   fun getStoryDrafts(pagination: Pagination): PageableDto<StoryDraftDtoPreview> {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
     val dataQuery =
       repository.findAllByOwnedBy(
         id = self.id,

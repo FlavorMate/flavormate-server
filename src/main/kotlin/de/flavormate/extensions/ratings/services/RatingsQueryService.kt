@@ -12,7 +12,7 @@ class RatingsQueryService(
   private val repository: RatingsRepository,
 ) {
   fun getRecipesIdRating(recipeId: String): RatingsDto? {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
     return repository.findByRecipeId(accountId = self.id, recipeId = recipeId)
   }
 }

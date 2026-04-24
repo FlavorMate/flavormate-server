@@ -37,7 +37,7 @@ class SearchController(
     val dataQuery =
       searchRepository.findByQuery(
         q = searchTerm,
-        ownerId = authorizationDetails.getSelf().id,
+        ownerId = authorizationDetails.accountRequired.id,
         language = language,
         filter = filter,
       )

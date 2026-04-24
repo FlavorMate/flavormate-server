@@ -22,7 +22,7 @@ class StoryDraftMutationService(
   private val authorizationDetails: AuthorizationDetails,
 ) {
   fun postStoryDrafts(): String {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val draft = StoryDraftEntity.create(account = self).also { storyDraftRepository.persist(it) }
 
@@ -63,7 +63,7 @@ class StoryDraftMutationService(
   }
 
   fun postStoryDraftsId(id: String): String {
-    val account = authorizationDetails.getSelf()
+    val account = authorizationDetails.accountRequired
 
     val draftEntity =
       storyDraftRepository.findById(id)

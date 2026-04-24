@@ -53,15 +53,14 @@ class AuthorizationDetails(
 
   fun isAdminOrOwner(target: OwnedEntity): Boolean = isAdmin() || isOwner(target)
 
-  // TODO: introduce null aware cache
   private var cachedAccount: AccountEntity? = null
 
   val account
     get(): AccountEntity? =
       cachedAccount ?: accountRepository.findById(subject).also { cachedAccount = it }
 
-  // TODO: make this a property named something like "requireAccount"
-  fun getSelf() =
-    account
-      ?: throw FNotFoundException(message = "AccountEntity with id $subject not found", id = "")
+  val accountRequired
+    get() =
+      account
+        ?: throw FNotFoundException(message = "AccountEntity with id $subject not found", id = "")
 }

@@ -124,7 +124,7 @@ class RecoveryService(
         throw FBadRequestException("Invalid token")
       }
 
-      authorizationDetails.getSelf().password = BcryptUtil.bcryptHash(password)
+      authorizationDetails.accountRequired.password = BcryptUtil.bcryptHash(password)
 
       return templateService.handleTemplate(successTemplate)
     } catch (_: Exception) {

@@ -48,7 +48,7 @@ class RecipeDraftFileMutationService(
   }
 
   fun createRecipeDraftsIdFilesFile(id: String, file: File) {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val recipeDraft =
       draftRepository.findById(id) ?: throw FNotFoundException(message = "Recipe draft not found!")

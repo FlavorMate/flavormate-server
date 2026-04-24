@@ -83,7 +83,7 @@ class BookIdQueryService(
       throw FForbiddenException(message = "You are not allowed to access this book!")
     }
 
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     return repository.findSubscriber(id = id, accountId = self.id)
   }

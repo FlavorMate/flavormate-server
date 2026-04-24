@@ -50,7 +50,7 @@ class ShareService(
       recipeRepository.findById(id) ?: throw FNotFoundException(message = "Recipe not found!")
 
     val token =
-      authTokenService.createAndSaveShareToken(authorizationDetails.getSelf(), recipeEntity)
+      authTokenService.createAndSaveShareToken(authorizationDetails.accountRequired, recipeEntity)
 
     val path =
       UriBuilder.fromResource(ShareController::class.java)

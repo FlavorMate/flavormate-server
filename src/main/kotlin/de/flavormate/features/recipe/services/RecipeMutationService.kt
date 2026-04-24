@@ -80,7 +80,7 @@ class RecipeMutationService(
 
     if (draftEntity != null) return draftEntity.id
 
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val entity =
       RecipeDraftEntityRecipeEntityMapper.mapNotNullOwned(input = recipe, account = self).also {

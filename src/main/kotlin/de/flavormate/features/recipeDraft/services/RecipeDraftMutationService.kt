@@ -76,7 +76,7 @@ class RecipeDraftMutationService(
 
   // Returns the created draft id
   fun initializeDraft(): String {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
     val draft = RecipeDraftEntity.create(account = self).also { recipeDraftRepository.persist(it) }
 
     return draft.id
@@ -383,7 +383,7 @@ class RecipeDraftMutationService(
 
     val recipe =
       if (draftEntity.originId == null) {
-        RecipeEntity.create(authorizationDetails.getSelf())
+        RecipeEntity.create(authorizationDetails.accountRequired)
       } else {
         recipeRepository.findById(draftEntity.originId!!)
           ?: throw FNotFoundException(message = "Recipe not found!")
@@ -470,9 +470,8 @@ class RecipeDraftMutationService(
 
     for (file in addedFiles) {
       val fileEntity =
-        RecipeFileEntity.create(authorizationDetails.getSelf(), recipe, file.temporaryFile).also {
-          recipeFileRepository.persist(it)
-        }
+        RecipeFileEntity.create(authorizationDetails.accountRequired, recipe, file.temporaryFile)
+          .also { recipeFileRepository.persist(it) }
 
       recipe.files.add(fileEntity)
       fileOperations.add {

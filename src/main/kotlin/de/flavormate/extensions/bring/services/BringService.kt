@@ -40,7 +40,7 @@ class BringService(
     val recipe =
       recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found")
 
-    val token = tokenService.createAndSaveBringToken(authorizationDetails.getSelf(), recipe)
+    val token = tokenService.createAndSaveBringToken(authorizationDetails.accountRequired, recipe)
 
     val path =
       UriBuilder.fromResource(BringController::class.java)

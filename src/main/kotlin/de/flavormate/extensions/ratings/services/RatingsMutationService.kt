@@ -19,7 +19,7 @@ class RatingsMutationService(
     val recipe =
       recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found!")
 
-    val account = authorizationDetails.getSelf()
+    val account = authorizationDetails.accountRequired
 
     val rating =
       ratingRepository.findByAccountAndRecipe(accountId = account.id, recipeId = recipe.id)
@@ -31,7 +31,7 @@ class RatingsMutationService(
   }
 
   fun deleteRecipesIdRating(recipeId: String) {
-    val account = authorizationDetails.getSelf()
+    val account = authorizationDetails.accountRequired
 
     ratingRepository.deleteByAccountAndRecipe(accountId = account.id, recipeId = recipeId)
   }

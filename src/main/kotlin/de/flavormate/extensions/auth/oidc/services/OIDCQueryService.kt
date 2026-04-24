@@ -48,7 +48,7 @@ class OIDCQueryService(
   }
 
   fun getLinks(pagination: Pagination): PageableDto<OIDCMappingDto> {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     val query =
       oidcMappingRepository.findByAccountId(

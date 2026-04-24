@@ -18,7 +18,7 @@ class BookIdMutationService(
   fun putBooksIdSubscriber(id: String) {
     val book = bookRepository.findById(id) ?: throw FNotFoundException(message = "Book not found!")
 
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
 
     if (book.ownedById != self.id && !book.visible) {
       throw FForbiddenException(message = "You are not allowed to subscribe to this book!")

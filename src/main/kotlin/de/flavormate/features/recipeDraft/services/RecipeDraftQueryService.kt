@@ -21,7 +21,7 @@ class RecipeDraftQueryService(
 ) {
   // GET
   fun getRecipeDrafts(pagination: Pagination): PageableDto<RecipeDraftDtoPreview> {
-    val self = authorizationDetails.getSelf()
+    val self = authorizationDetails.accountRequired
     val dataQuery =
       repository.findAllByOwnedBy(
         id = self.id,
