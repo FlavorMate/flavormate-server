@@ -55,9 +55,9 @@ class AuthHeaderFilter(private val flavorMateProperties: FlavorMateProperties) {
 
       val hasAuthorization = !request.getHeader(HttpHeaders.AUTHORIZATION).isNullOrBlank()
 
-      if (!hasAuthorization) {
-        val path = request.path()
+      val path = request.path()
 
+      if (!hasAuthorization && path != null) {
         val token =
           when {
             path.startsWith(BRING_PATH) -> extractPathSegment(path, BRING_INDEX)
