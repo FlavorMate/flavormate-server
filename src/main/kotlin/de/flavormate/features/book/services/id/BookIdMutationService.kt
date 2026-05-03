@@ -6,6 +6,7 @@ import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.features.book.dtos.models.BookUpdateDto
 import de.flavormate.features.book.repositories.BookRepository
 import de.flavormate.features.recipe.repositories.RecipeRepository
+import de.flavormate.features.websocket.services.BookWebSocketService
 import de.flavormate.shared.services.AuthorizationDetails
 import jakarta.enterprise.context.RequestScoped
 
@@ -14,6 +15,7 @@ class BookIdMutationService(
   private val bookRepository: BookRepository,
   private val recipeRepository: RecipeRepository,
   private val authorizationDetails: AuthorizationDetails,
+  private val connectionService: BookWebSocketService,
 ) {
   fun putBooksIdSubscriber(id: String) {
     val book = bookRepository.findById(id) ?: throw FNotFoundException(message = "Book not found!")
@@ -27,6 +29,8 @@ class BookIdMutationService(
     book.toggleSubscriber(self)
 
     bookRepository.persist(book)
+
+    connectionService.sendMessage(id)
   }
 
   fun putBooksIdRecipe(bookId: String, recipeId: String) {
@@ -45,6 +49,8 @@ class BookIdMutationService(
     book.setCoverRecipe()
 
     bookRepository.persist(book)
+
+    connectionService.sendMessage(bookId)
   }
 
   fun deleteBooksId(id: String): Boolean {
