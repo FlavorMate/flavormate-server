@@ -38,6 +38,7 @@ dependencies {
   implementation("io.quarkus:quarkus-qute")
   implementation("io.quarkus:quarkus-mailer")
   implementation("io.quarkus:quarkus-oidc-client")
+  implementation("io.quarkus:quarkus-websockets-next")
   implementation(libs.kotlin.stdlib.jdk8)
   implementation(libs.apache.commons.io)
   implementation(libs.apache.commons.lang3)

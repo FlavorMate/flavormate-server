@@ -6,6 +6,8 @@ import de.flavormate.exceptions.FNotFoundException
 import de.flavormate.features.story.repositories.StoryRepository
 import de.flavormate.features.storyDraft.daos.mappers.StoryDraftEntityStoryEntityMapper
 import de.flavormate.features.storyDraft.repositories.StoryDraftRepository
+import de.flavormate.features.websocket.enums.CommonWebSocketType
+import de.flavormate.features.websocket.services.CommonWebSocketService
 import de.flavormate.shared.services.AuthorizationDetails
 import jakarta.enterprise.context.RequestScoped
 
@@ -14,6 +16,7 @@ class StoryMutationService(
   private val storyRepository: StoryRepository,
   private val storyDraftRepository: StoryDraftRepository,
   private val authorizationDetails: AuthorizationDetails,
+  private val connections: CommonWebSocketService,
 ) {
   fun deleteStoriesId(id: String): Boolean {
     val story = storyRepository.findById(id) ?: throw FNotFoundException("Story not found!")
@@ -21,6 +24,9 @@ class StoryMutationService(
     if (!authorizationDetails.isAdminOrOwner(story)) {
       throw FForbiddenException(message = "You are not allowed to delete this story!")
     }
+
+    // Refreshes the frontend stories list
+    connections.sendMessage(CommonWebSocketType.NewStories)
 
     return storyRepository.deleteById(id)
   }
