@@ -131,7 +131,9 @@ class FileCron(
         // Check filesystem existence outside the main logic if possible
         val path = fileService.readPath(prefix, data.id)
         val isNonExistent =
-          !path.exists() || Files.list(path).use { stream -> stream.findAny().isEmpty }
+          !path.exists() ||
+            Files.list(path).use { stream -> stream.findAny().isEmpty } ||
+            !path.resolve(ImageResolution.Original.path).exists()
 
         if (isNonExistent) {
           Log.info("Deleting entry with non-existent files: ${data.id}")
@@ -149,7 +151,9 @@ class FileCron(
         // Check filesystem existence outside the main logic if possible
         val path = fileService.readPath(prefix, data.id)
         val isNonExistent =
-          !path.exists() || Files.list(path).use { stream -> stream.findAny().isEmpty }
+          !path.exists() ||
+            Files.list(path).use { stream -> stream.findAny().isEmpty } ||
+            !path.resolve(ImageResolution.Original.path).exists()
 
         if (isNonExistent) {
           Log.info("Deleting entry with non-existent files: ${data.id}")
