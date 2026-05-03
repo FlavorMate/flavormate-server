@@ -6,6 +6,8 @@ import de.flavormate.features.highlight.daos.models.HighlightEntity
 import de.flavormate.features.highlight.repositories.HighlightRepository
 import de.flavormate.features.recipe.daos.models.RecipeEntity
 import de.flavormate.features.recipe.repositories.RecipeRepository
+import de.flavormate.features.websocket.enums.CommonWebSocketType
+import de.flavormate.features.websocket.services.CommonWebSocketService
 import de.flavormate.shared.enums.Diet
 import io.quarkus.logging.Log
 import io.quarkus.runtime.Startup
@@ -20,6 +22,7 @@ class HighlightCron(
   private val recipeRepository: RecipeRepository,
   private val highlightRepository: HighlightRepository,
   private val flavorMateProperties: FlavorMateProperties,
+  private val connections: CommonWebSocketService,
 ) {
   val daysToGenerate
     get() = flavorMateProperties.general().highlights().daysToGenerate()
@@ -37,6 +40,8 @@ class HighlightCron(
       val deletedHighlights = deleteHighlightsByDiet(diet)
       Log.info("Deleted old $deletedHighlights highlights for $diet")
     }
+
+    connections.sendMessage(CommonWebSocketType.NewHighlights)
   }
 
   private fun deleteHighlightsByDiet(diet: Diet): Long {

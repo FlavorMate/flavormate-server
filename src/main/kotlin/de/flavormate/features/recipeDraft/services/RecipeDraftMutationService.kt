@@ -24,6 +24,8 @@ import de.flavormate.features.recipeDraft.repositories.*
 import de.flavormate.features.tag.daos.models.TagEntity
 import de.flavormate.features.tag.repositories.TagRepository
 import de.flavormate.features.unit.repositories.UnitLocalizedRepository
+import de.flavormate.features.websocket.enums.CommonWebSocketType
+import de.flavormate.features.websocket.services.CommonWebSocketService
 import de.flavormate.shared.enums.FilePath
 import de.flavormate.shared.extensions.mapToSet
 import de.flavormate.shared.extensions.toKebabCase
@@ -52,6 +54,7 @@ class RecipeDraftMutationService(
   private val recipeDraftIngredientGroupItemRepository: RecipeDraftIngredientGroupItemRepository,
   private val recipeDraftInstructionGroupRepository: RecipeDraftInstructionGroupRepository,
   private val recipeDraftInstructionGroupItemRepository: RecipeDraftInstructionGroupItemRepository,
+  private val connections: CommonWebSocketService,
 ) {
   fun delete(id: String): Boolean {
     transactionService.initialize()
@@ -392,6 +395,8 @@ class RecipeDraftMutationService(
     saveRecipe(draftEntity, recipe, transactionService.pendingOperations)
 
     recipeDraftRepository.deleteById(id)
+
+    connections.sendMessage(CommonWebSocketType.NewRecipes)
 
     return recipe.id
   }
