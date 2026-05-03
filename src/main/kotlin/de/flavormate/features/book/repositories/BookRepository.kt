@@ -75,6 +75,16 @@ class BookRepository : PanacheRepositoryBase<BookEntity, String> {
       .project(Long::class.java)
   }
 
+  fun isBookAuthorized(accountId: String, bookId: String): Boolean {
+    val params = mapOf("accountId" to accountId, "bookId" to bookId)
+
+    return count(
+      query =
+        "select b from BookEntity b left join b.subscriber bs where (b.ownedById = :accountId or bs.id = :accountId) and b.id = :bookId",
+      params = params,
+    ) > 0
+  }
+
   fun findRecipes(sort: Sort, id: String): PanacheQuery<RecipeEntity> {
     val params = mapOf("id" to id)
 

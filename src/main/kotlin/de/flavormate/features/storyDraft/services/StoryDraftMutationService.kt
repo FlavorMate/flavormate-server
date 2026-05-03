@@ -10,6 +10,8 @@ import de.flavormate.features.story.repositories.StoryRepository
 import de.flavormate.features.storyDraft.daos.models.StoryDraftEntity
 import de.flavormate.features.storyDraft.dtos.models.StoryDraftUpdateDto
 import de.flavormate.features.storyDraft.repositories.StoryDraftRepository
+import de.flavormate.features.websocket.enums.CommonWebSocketType
+import de.flavormate.features.websocket.services.CommonWebSocketService
 import de.flavormate.shared.services.AuthorizationDetails
 import jakarta.enterprise.context.RequestScoped
 import kotlin.jvm.optionals.getOrNull
@@ -20,6 +22,7 @@ class StoryDraftMutationService(
   private val recipeRepository: RecipeRepository,
   private val storyDraftRepository: StoryDraftRepository,
   private val authorizationDetails: AuthorizationDetails,
+  private val connections: CommonWebSocketService,
 ) {
   fun postStoryDrafts(): String {
     val self = authorizationDetails.accountRequired
@@ -81,6 +84,9 @@ class StoryDraftMutationService(
       }
 
     storyDraftRepository.deleteById(id)
+
+    // Refreshes the frontend stories list
+    connections.sendMessage(CommonWebSocketType.NewStories)
 
     return story.id
   }

@@ -11,6 +11,8 @@ import de.flavormate.features.recipeDraft.daos.mapper.RecipeDraftEntityRecipeEnt
 import de.flavormate.features.recipeDraft.daos.models.RecipeDraftFileEntity
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftFileRepository
 import de.flavormate.features.recipeDraft.repositories.RecipeDraftRepository
+import de.flavormate.features.websocket.enums.CommonWebSocketType
+import de.flavormate.features.websocket.services.CommonWebSocketService
 import de.flavormate.shared.enums.FilePath
 import de.flavormate.shared.services.AuthorizationDetails
 import de.flavormate.shared.services.FileService
@@ -27,6 +29,7 @@ class RecipeMutationService(
   private val recipeFileService: FileService,
   private val transactionService: TransactionService,
   private val categoryRepository: CategoryRepository,
+  private val connections: CommonWebSocketService,
 ) {
   fun delete(id: String): Boolean {
     transactionService.initialize()
@@ -44,27 +47,9 @@ class RecipeMutationService(
       }
     }
 
+    connections.sendMessage(CommonWebSocketType.NewRecipes)
+
     return recipeRepository.deleteById(id)
-  }
-
-  fun transferRecipe(recipeId: String, ownerId: String) {
-    val recipe =
-      recipeRepository.findById(recipeId) ?: throw FNotFoundException(message = "Recipe not found!")
-
-    if (!authorizationDetails.isAdmin()) {
-      throw FForbiddenException(message = "You are not allowed to transfer this recipe!")
-    }
-
-    val account =
-      accountRepository.findById(ownerId)
-        ?: throw FNotFoundException(message = "Account not found!")
-
-    recipe
-      .apply {
-        this.ownedBy = account
-        this.ownedById = account.id
-      }
-      .also { recipeRepository.persist(it) }
   }
 
   // Returns the created draft id
