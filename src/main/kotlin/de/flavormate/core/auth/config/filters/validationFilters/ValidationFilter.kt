@@ -35,7 +35,6 @@ class ValidationFilter(private val tokenService: AuthTokenService) : ContainerRe
       BringController::shareFileId.javaMethod,
       RecoveryController::showPasswordResetPage.javaMethod,
       RecoveryController::handlePasswordReset.javaMethod,
-      RegistrationController::register.javaMethod,
       ShareController::shareWeb.javaMethod,
       ShareController::shareFileId.javaMethod,
       ShareController::openInApp.javaMethod,

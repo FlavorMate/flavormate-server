@@ -1,6 +1,5 @@
 import java.time.LocalDate
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   alias(libs.plugins.kotlin.jvm)
@@ -62,7 +61,7 @@ dependencies {
 
 group = "de.flavormate"
 
-version = "6.1.2"
+version = "6.1.3"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_25
@@ -84,6 +83,8 @@ kotlin {
   compilerOptions {
     jvmTarget = JvmTarget.JVM_25
     javaParameters = true
+
+    freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
   }
 }
 
@@ -132,9 +133,3 @@ spotless {
 }
 
 apply(from = "$projectDir/gradle/preCommit.gradle")
-
-val compileKotlin: KotlinCompile by tasks
-
-compileKotlin.compilerOptions {
-  freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
-}
