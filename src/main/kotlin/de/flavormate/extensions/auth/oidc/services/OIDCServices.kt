@@ -24,5 +24,8 @@ class OIDCServices(
   fun exchangeToken(form: OIDCExchangeForm) = mutationService.exchangeToken(form = form)
 
   @Transactional
-  fun deleteLink(providerId: String) = mutationService.deleteLink(providerId = providerId)
+  fun deleteLink(
+    providerId: String,
+    subject: String,
+  ) = mutationService.deleteLink(providerId = providerId, subject = subject)
 }

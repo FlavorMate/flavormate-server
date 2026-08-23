@@ -9,7 +9,10 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class OIDCMappingRepository : PanacheRepositoryBase<OIDCMappingEntity, String> {
-  fun findByAccountId(accountId: String, sort: Sort): PanacheQuery<OIDCMappingEntity> {
+  fun findByAccountId(
+    accountId: String,
+    sort: Sort,
+  ): PanacheQuery<OIDCMappingEntity> {
     val params = mapOf("accountId" to accountId)
     return find(
       "select m from OIDCMappingEntity m left join m.provider p where m.accountId = :accountId",
@@ -18,9 +21,17 @@ class OIDCMappingRepository : PanacheRepositoryBase<OIDCMappingEntity, String> {
     )
   }
 
-  fun deleteByAccountIdAndProviderId(accountId: String, providerId: String): Boolean {
-    val params = mapOf("accountId" to accountId, "providerId" to providerId)
-    val response = delete("accountId = :accountId and provider.id = :providerId", params = params)
+  fun deleteByAccountIdAndProviderId(
+    accountId: String,
+    providerId: String,
+    subject: String,
+  ): Boolean {
+    val params = mapOf("accountId" to accountId, "providerId" to providerId, "subject" to subject)
+    val response =
+      delete(
+        "accountId = :accountId and provider.id = :providerId and subject = :subject",
+        params = params,
+      )
     return response > 0
   }
 

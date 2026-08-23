@@ -74,11 +74,15 @@ class OIDCMutationService(
     return OIDCClient.exchangeToken(provider, form)
   }
 
-  fun deleteLink(providerId: String): Boolean {
+  fun deleteLink(
+    providerId: String,
+    subject: String,
+  ): Boolean {
     val self = authorizationDetails.accountRequired
     return oidcMappingRepository.deleteByAccountIdAndProviderId(
       accountId = self.id,
       providerId = providerId,
+      subject = subject,
     )
   }
 }

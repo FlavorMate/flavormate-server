@@ -51,7 +51,9 @@ class OIDCController(private val service: OIDCServices) {
     service.getLinks(pagination = pagination)
 
   @DELETE
-  @Path("link/{providerId}")
-  fun deleteLink(@RestPath providerId: String): Boolean =
-    service.deleteLink(providerId = providerId)
+  @Path("link/{providerId}/{subject}")
+  fun deleteLink(
+    @RestPath providerId: String,
+    @RestPath subject: String,
+  ): Boolean = service.deleteLink(providerId = providerId, subject = subject)
 }
