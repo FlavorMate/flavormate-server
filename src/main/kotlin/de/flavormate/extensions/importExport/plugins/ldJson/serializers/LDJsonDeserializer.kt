@@ -11,9 +11,12 @@ import de.flavormate.configuration.jackson.CustomObjectMapper
 import org.apache.commons.lang3.StringUtils
 
 abstract class LDJsonDeserializer<T> : JsonDeserializer<T?>() {
-  protected var objectMapper: ObjectMapper = CustomObjectMapper.instance
+  protected var objectMapper: ObjectMapper = CustomObjectMapper.ieInstance
 
-  override fun deserialize(jsonParser: JsonParser, context: DeserializationContext?): T? {
+  override fun deserialize(
+    jsonParser: JsonParser,
+    context: DeserializationContext?,
+  ): T? {
     val node = jsonParser.readValueAsTree<JsonNode>()
     return handleNode(node)
   }

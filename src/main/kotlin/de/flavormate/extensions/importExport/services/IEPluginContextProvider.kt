@@ -19,5 +19,5 @@ class IEPluginContextProvider(private val authorizationDetails: AuthorizationDet
     get() = maxBodySize
 
   val objectMapper
-    get() = CustomObjectMapper.instance
+    get() = CustomObjectMapper.ieInstance
 }

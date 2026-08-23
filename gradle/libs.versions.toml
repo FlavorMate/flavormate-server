@@ -11,7 +11,7 @@ ksoup = "0.2.6"
 google-java-format = "1.31.0"
 assertj = "3.27.7"
 http-client5 = "5.6.4"
-tika = "3.3.2"
+tika = "4.0.0"
 
 [libraries]
 quarkus-platform = { group = "io.quarkus.platform", name = "quarkus-bom", version.ref = "quarkus" }
