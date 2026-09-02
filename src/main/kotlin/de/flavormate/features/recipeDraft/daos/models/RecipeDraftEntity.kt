@@ -70,8 +70,7 @@ class RecipeDraftEntity : OwnedEntity() {
   @OneToMany(mappedBy = "recipe", cascade = [CascadeType.ALL], orphanRemoval = true)
   lateinit var ingredientGroups: MutableList<RecipeDraftIngredientGroupEntity>
 
-  @ManyToMany(mappedBy = "recipeDrafts", cascade = [CascadeType.ALL])
-  lateinit var categories: MutableList<CategoryEntity>
+  @ManyToMany(mappedBy = "recipeDrafts") lateinit var categories: MutableList<CategoryEntity>
 
   lateinit var tags: MutableList<String>
 

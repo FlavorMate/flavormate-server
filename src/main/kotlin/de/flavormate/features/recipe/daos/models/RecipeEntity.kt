@@ -65,11 +65,9 @@ class RecipeEntity : OwnedEntity() {
   @ManyToMany(mappedBy = "recipes", fetch = FetchType.LAZY)
   lateinit var books: MutableList<BookEntity>
 
-  @ManyToMany(mappedBy = "recipes", cascade = [CascadeType.ALL])
-  lateinit var categories: MutableList<CategoryEntity>
+  @ManyToMany(mappedBy = "recipes") lateinit var categories: MutableList<CategoryEntity>
 
-  @ManyToMany(mappedBy = "recipes", cascade = [CascadeType.ALL])
-  lateinit var tags: MutableList<TagEntity>
+  @ManyToMany(mappedBy = "recipes") lateinit var tags: MutableList<TagEntity>
 
   @Enumerated(EnumType.STRING) lateinit var course: Course
 
