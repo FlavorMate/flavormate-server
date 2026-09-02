@@ -14,7 +14,7 @@ class BookEntity : OwnedEntity() {
 
   var visible: Boolean = false
 
-  @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
     name = "v3__book__subscriber",
     joinColumns = [JoinColumn(name = "book_id")],
@@ -55,7 +55,10 @@ class BookEntity : OwnedEntity() {
   }
 
   companion object {
-    fun create(account: AccountEntity, label: String): BookEntity =
+    fun create(
+      account: AccountEntity,
+      label: String,
+    ): BookEntity =
       BookEntity().apply {
         this.ownedBy = account
         this.ownedById = account.id
