@@ -1,5 +1,5 @@
 [versions]
-spotless = "8.10.1"
+spotless = "8.10.2"
 kotlin = "2.4.20"
 quarkus = "3.39.3"
 commons-io = "2.22.0"
