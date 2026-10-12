@@ -61,7 +61,7 @@ dependencies {
 
 group = "de.flavormate"
 
-version = "6.2.2"
+version = "6.2.3"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_25
