@@ -1,6 +1,6 @@
 [versions]
-spotless = "8.10.3"
-kotlin = "2.4.20"
+spotless = "8.10.4"
+kotlin = "2.4.21"
 quarkus = "3.40.1"
 commons-io = "2.22.0"
 commons-lang3 = "3.21.0"
@@ -10,7 +10,7 @@ nanoid = "2.0.1"
 ksoup = "0.2.6"
 google-java-format = "1.31.0"
 assertj = "3.27.7"
-http-client5 = "5.6.4"
+http-client5 = "5.6.5"
 tika = "4.1.0"
 
 [libraries]
