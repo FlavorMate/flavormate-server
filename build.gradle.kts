@@ -61,7 +61,7 @@ dependencies {
 
 group = "de.flavormate"
 
-version = "6.2.3"
+version = "6.2.4"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_25
@@ -101,7 +101,9 @@ spotless {
   }
   java {
     cleanthat()
-    googleJavaFormat(libs.versions.google.java.format.get())
+    googleJavaFormat(
+        libs.versions.google.java.format.get(),
+      )
       .reflowLongStrings()
       .formatJavadoc(true)
       .reorderImports(true)
@@ -122,7 +124,7 @@ spotless {
     ktlint()
     ktfmt().googleStyle()
     licenseHeader(
-      "/* Licensed under AGPLv3 2024 - ${LocalDate.now().year} */"
+      "/* Licensed under AGPLv3 2024 - ${LocalDate.now().year} */",
     ) // or licenseHeaderFile
   }
   kotlinGradle {
